@@ -152,11 +152,9 @@ public class ElementTreePanel extends JPanel implements CaretListener,
             Document oldDoc = (Document) e.getOldValue();
             Document newDoc = (Document) e.getNewValue();
 
-            // Reset the DocumentListener
             oldDoc.removeDocumentListener(this);
             newDoc.addDocumentListener(this);
 
-            // Recreate the TreeModel.
             treeModel = new ElementTreeModel(newDoc);
             tree.setModel(treeModel);
         }

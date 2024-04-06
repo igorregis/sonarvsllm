@@ -147,7 +147,6 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
             case SEPTEMBER -> 244 + leap;
             case OCTOBER   -> 274 + leap;
             case NOVEMBER  -> 305 + leap;
-            // otherwise (DECEMBER)
             default -> 335 + leap;
         };
     }

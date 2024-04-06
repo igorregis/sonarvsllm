@@ -8,7 +8,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 @SuppressWarnings("serial")
 public class DynamicTreeNode extends DefaultMutableTreeNode {
-    // Class stuff.
 
     protected static float nameCount;
     protected static final String[] NAMES;
@@ -37,8 +36,6 @@ public class DynamicTreeNode extends DefaultMutableTreeNode {
                         "Georges Saab", "Scott Violet",
                         "Kathy Walrath", "Arnaud Weber" };
         } else {
-            /* Create the Fonts, creating fonts is slow, much better to
-            do it once. */
             int fontSize = 12;
 
             NAMES = fontNames;
@@ -98,12 +95,8 @@ public class DynamicTreeNode extends DefaultMutableTreeNode {
                 data = new SampleData(font, Color.blue, displayString);
             }
             newNode = new DynamicTreeNode(data);
-            /* Don't use add() here, add calls insert(newNode, getChildCount())
-            so if you want to use add, just be sure to set hasLoaded = true
-            first. */
             insert(newNode, counter);
         }
-        /* This node has now been loaded, mark it so. */
         hasLoaded = true;
     }
 }
