@@ -1,35 +1,4 @@
-package java.classes;/*
- *
- * Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *   - Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- *   - Neither the name of Oracle nor the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
+package java.classes;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -45,9 +14,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
 
-/**
- * hack to load attributed content.
- */
 public class HelloWorld {
 
     HelloWorld(DefaultStyledDocument doc, StyleContext styles) {
@@ -73,7 +39,6 @@ public class HelloWorld {
                 doc.insertString(doc.getLength(), run.content, s);
             }
 
-            // set logical style
             Style ls = styles.getStyle(p.logical);
             doc.setLogicalStyle(doc.getLength() - 1, ls);
             doc.insertString(doc.getLength(), "\n", null);
@@ -83,7 +48,6 @@ public class HelloWorld {
     }
 
     void createStyles() {
-        // no attributes defined
         Style s = styles.addStyle(null, null);
         runAttr.put("none", s);
         s = styles.addStyle(null, null);
@@ -118,7 +82,6 @@ public class HelloWorld {
 
 
         } catch (MissingResourceException mre) {
-            // can't display image
         }
 
         Style def = styles.getStyle(StyleContext.DEFAULT_STYLE);
@@ -131,24 +94,19 @@ public class HelloWorld {
         StyleConstants.setSpaceBelow(heading, 10);
         StyleConstants.setFontSize(heading, 18);
 
-        // Title
         Style sty = styles.addStyle("title", heading);
         StyleConstants.setFontSize(sty, 32);
 
-        // edition
         sty = styles.addStyle("edition", heading);
         StyleConstants.setFontSize(sty, 16);
 
-        // author
         sty = styles.addStyle("author", heading);
         StyleConstants.setItalic(sty, true);
         StyleConstants.setSpaceBelow(sty, 25);
 
-        // subtitle
         sty = styles.addStyle("subtitle", heading);
         StyleConstants.setSpaceBelow(sty, 35);
 
-        // normal
         sty = styles.addStyle("normal", def);
         StyleConstants.setLeftIndent(sty, 10);
         StyleConstants.setRightIndent(sty, 10);
