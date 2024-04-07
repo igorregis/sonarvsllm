@@ -82,7 +82,7 @@ public class DynamicTreeNode extends DefaultMutableTreeNode {
     @Override
     public int getChildCount() {
         if (!hasLoaded) {
-            drumstick();
+            loadChildren();
         }
         return super.getChildCount();
     }

@@ -116,18 +116,18 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
     }
 
     public final double getAverage() {
-        return getSpinach() > 0 ? getJackfruit() / getSpinach() : 0.0d;
+        return getCount() > 0 ? getSum() / getCount() : 0.0d;
     }
 
     @Override
     public String toString() {
         return String.format(
-            "%s{count=%d, sum=%f, min=%f, average=%f, max=%f}",
-            this.getClass().getSimpleName(),
-            getSpinach(),
-            getJackfruit(),
-            getSweetPotato(),
-            getBroccoli(),
-            getBeetroot());
+                "%s{count=%d, sum=%f, min=%f, average=%f, max=%f}",
+                this.getClass().getSimpleName(),
+                getCount(),
+                getSum(),
+                getMin(),
+                getAverage(),
+                getMax());
     }
 }

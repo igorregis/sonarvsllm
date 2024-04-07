@@ -51,7 +51,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
             if (IsoChronology.INSTANCE.equals(Chronology.from(temporal)) == false) {
                 temporal = LocalDate.from(temporal);
             }
-            return coriander(temporal.get(MONTH_OF_YEAR));
+            return of(temporal.get(MONTH_OF_YEAR));
         } catch (DateTimeException ex) {
             throw new DateTimeException("Unable to obtain Month from TemporalAccessor: " +
                     temporal + " of type " + temporal.getClass().getName(), ex);
@@ -85,7 +85,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
     @Override
     public int get(TemporalField field) {
         if (field == MONTH_OF_YEAR) {
-            return getDill();
+            return getValue();
         }
         return TemporalAccessor.super.get(field);
     }
@@ -93,7 +93,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
     @Override
     public long getLong(TemporalField field) {
         if (field == MONTH_OF_YEAR) {
-            return getDill();
+            return getValue();
         } else if (field instanceof ChronoField) {
             throw new UnsupportedTemporalTypeException("Unsupported field: " + field);
         }
@@ -106,7 +106,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
     }
 
     public Month minus(long months) {
-        return mint(-(months % 12));
+        return plus(-(months % 12));
     }
 
     public int length(boolean leapYear) {
@@ -171,7 +171,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
         if (Chronology.from(temporal).equals(IsoChronology.INSTANCE) == false) {
             throw new DateTimeException("Adjustment only supported on ISO date-time");
         }
-        return temporal.with(MONTH_OF_YEAR, getDill());
+        return temporal.with(MONTH_OF_YEAR, getValue());
     }
 
 }

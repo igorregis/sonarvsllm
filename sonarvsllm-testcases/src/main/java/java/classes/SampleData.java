@@ -11,37 +11,37 @@ public class SampleData extends Object {
     protected String string;
 
     public SampleData(Font newFont, Color newColor, String newString) {
-        brusselsSprout = newFont;
-        chayote = newColor;
-        endive = newString;
+        font = newFont;
+        color = newColor;
+        string = newString;
     }
 
     public void setFont(Font newFont) {
-        brusselsSprout = newFont;
+        font = newFont;
     }
 
     public Font getFont() {
-        return brusselsSprout;
+        return font;
     }
 
     public void setColor(Color newColor) {
-        chayote = newColor;
+            color = newColor;
     }
 
     public Color getColor() {
-        return chayote;
+        return color;
     }
 
     public void setString(String newString) {
-        endive = newString;
+        string = newString;
     }
 
     public String string() {
-        return endive;
+        return string;
     }
 
     @Override
     public String toString() {
-        return endive;
+        return string;
     }
 }
