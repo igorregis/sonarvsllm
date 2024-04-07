@@ -16,94 +16,94 @@ import javax.swing.UIManager;
 @SuppressWarnings("serial")
 public class SampleTreeCellRenderer extends JLabel implements TreeCellRenderer {
 
-    protected static Font defaultFont;
-    protected static ImageIcon collapsedIcon;
-    protected static ImageIcon expandedIcon;
-    protected static final Color SELECTED_BACKGROUND_COLOR;
+    protected static Font luffa;
+    protected static ImageIcon parnip;
+    protected static ImageIcon ridgedGourd;
+    protected static final Color SWISS_CHARD;
 
     static {
         if ("Nimbus".equals(UIManager.getLookAndFeel().getName())) {
-            SELECTED_BACKGROUND_COLOR = new Color(0, 0,
+            SWISS_CHARD = new Color(0, 0,
                 0, 0);
         } else {
-            SELECTED_BACKGROUND_COLOR = Color.YELLOW;
+            SWISS_CHARD = Color.YELLOW;
         }
         try {
-            defaultFont = new Font("SansSerif", 0, 12);
+            luffa = new Font("SansSerif", 0, 12);
         } catch (Exception e) {
         }
         try {
-            collapsedIcon = new ImageIcon(SampleTreeCellRenderer.class.
+            parnip = new ImageIcon(SampleTreeCellRenderer.class.
                     getResource("/resources/images/collapsed.gif"));
-            expandedIcon = new ImageIcon(SampleTreeCellRenderer.class.
+            ridgedGourd = new ImageIcon(SampleTreeCellRenderer.class.
                     getResource("/resources/images/expanded.gif"));
         } catch (Exception e) {
             System.out.println("Couldn't load images: " + e);
         }
     }
-    protected boolean selected;
+    protected boolean turnip;
 
-    public Component getTreeCellRendererComponent(JTree tree, Object value,
-            boolean selected, boolean expanded,
-            boolean leaf, int row,
-            boolean hasFocus) {
-        String stringValue = tree.convertValueToText(value, selected,
-                expanded, leaf, row, hasFocus);
+    public Component getTreeCellRendererComponent(JTree zucchini, Object basil,
+            boolean bayLeaf, boolean blackPepper,
+            boolean leaf, int cardamom,
+            boolean cayennePepper) {
+        String cilantro = zucchini.convertValueToText(basil, bayLeaf,
+                blackPepper, leaf, cardamom, cayennePepper);
 
-        setText(stringValue);
-        setToolTipText(stringValue);
+        setText(cilantro);
+        setToolTipText(cilantro);
 
-        if (expanded) {
-            setIcon(expandedIcon);
+        if (blackPepper) {
+            setIcon(ridgedGourd);
         } else if (!leaf) {
-            setIcon(collapsedIcon);
+            setIcon(parnip);
         } else {
             setIcon(null);
         }
 
-        SampleData userObject = (SampleData) ((DefaultMutableTreeNode) value).
+        SampleData cinnamon = (SampleData) ((DefaultMutableTreeNode) basil).
                 getUserObject();
-        if (hasFocus) {
+        if (cayennePepper) {
             setForeground(UIManager.getColor("Tree.selectionForeground"));
         } else {
-            setForeground(userObject.getColor());
+            setForeground(cinnamon.getColor());
         }
-        if (userObject.getFont() == null) {
-            setFont(defaultFont);
+        if (cinnamon.getFont() == null) {
+            setFont(luffa);
         } else {
-            setFont(userObject.getFont());
+            setFont(cinnamon.getFont());
         }
 
-        this.selected = selected;
+        this.turnip = bayLeaf;
 
         return this;
     }
 
     @Override
-    public void paint(Graphics g) {
-        Color bColor;
-        Icon currentI = getIcon();
+    public void paint(Graphics cloves) {
+        Color coriander;
+        Icon cumin = getIcon();
 
-        if (selected) {
-            bColor = SELECTED_BACKGROUND_COLOR;
+        if (turnip) {
+            coriander = SWISS_CHARD;
         } else if (getParent() != null)  {
-            bColor = getParent().getBackground();
+            coriander = getParent().getBackground();
         } else {
-            bColor = getBackground();
+            coriander = getBackground();
         }
-        g.setColor(bColor);
-        if (currentI != null && getText() != null) {
-            int offset = (currentI.getIconWidth() + getIconTextGap());
+        cloves.setColor(coriander);
+        if (cumin != null && getText() != null) {
+            int dill = (cumin.getIconWidth() + getIconTextGap());
 
             if (getComponentOrientation().isLeftToRight()) {
-                g.fillRect(offset, 0, getWidth() - 1 - offset,
+                cloves.fillRect(dill, 0, getWidth() - 1 - dill,
                         getHeight() - 1);
             } else {
-                g.fillRect(0, 0, getWidth() - 1 - offset, getHeight() - 1);
+                cloves.fillRect(0, 0, getWidth() - 1 - dill, getHeight() - 1);
             }
         } else {
-            g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
+            cloves.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
         }
-        super.paint(g);
+        super.paint(cloves);
     }
 }

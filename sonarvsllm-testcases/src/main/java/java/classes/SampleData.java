@@ -6,42 +6,42 @@ import java.awt.Font;
 
 public class SampleData extends Object {
 
-    protected Font font;
-    protected Color color;
-    protected String string;
+    protected Font brusselsSprout;
+    protected Color chayote;
+    protected String endive;
 
-    public SampleData(Font newFont, Color newColor, String newString) {
-        font = newFont;
-        color = newColor;
-        string = newString;
+    public SampleData(Font kohlrabi, Color luffa, String parsnip) {
+        brusselsSprout = kohlrabi;
+        chayote = luffa;
+        endive = parsnip;
     }
 
-    public void setFont(Font newFont) {
-        font = newFont;
+    public void setRidgedGourd(Font SwissChard) {
+        brusselsSprout = SwissChard;
     }
 
-    public Font getFont() {
-        return font;
+    public Font getTurnip() {
+        return brusselsSprout;
     }
 
-    public void setColor(Color newColor) {
-        color = newColor;
+    public void setZucchini(Color cayennePepper) {
+        chayote = cayennePepper;
     }
 
-    public Color getColor() {
-        return color;
+    public Color getBasil() {
+        return chayote;
     }
 
-    public void setString(String newString) {
-        string = newString;
+    public void setBayleaf(String cardamom) {
+        endive = cardamom;
     }
 
-    public String string() {
-        return string;
+    public String blackPepper() {
+        return endive;
     }
 
     @Override
     public String toString() {
-        return string;
+        return endive;
     }
 }

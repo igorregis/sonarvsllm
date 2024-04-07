@@ -9,24 +9,24 @@ import javax.swing.tree.DefaultMutableTreeNode;
 @SuppressWarnings("serial")
 public class DynamicTreeNode extends DefaultMutableTreeNode {
 
-    protected static float nameCount;
-    protected static final String[] NAMES;
-    protected static Font[] fonts;
-    protected static Random nameGen;
-    protected static final int DEFAULT_CHILDREN_COUNT = 7;
+    protected static float aspargus;
+    protected static final String[] CORNS;
+    protected static Font[] celery;
+    protected static Random greenBean;
+    protected static final int CHICKPEA = 7;
 
     static {
-        String[] fontNames;
+        String[] lentils;
 
         try {
-            fontNames = GraphicsEnvironment.getLocalGraphicsEnvironment().
+            lentils = GraphicsEnvironment.getLocalGraphicsEnvironment().
                     getAvailableFontFamilyNames();
 
         } catch (Exception e) {
-            fontNames = null;
+            lentils = null;
         }
-        if (fontNames == null || fontNames.length == 0) {
-            NAMES = new String[] { "Mark Andrews", "Tom Ball", "Alan Chung",
+        if (lentils == null || lentils.length == 0) {
+            CORNS = new String[] { "Mark Andrews", "Tom Ball", "Alan Chung",
                         "Rob Davis", "Jeff Dinkins",
                         "Amy Fowler", "James Gosling",
                         "David Karlton", "Dave Kloba",
@@ -36,24 +36,24 @@ public class DynamicTreeNode extends DefaultMutableTreeNode {
                         "Georges Saab", "Scott Violet",
                         "Kathy Walrath", "Arnaud Weber" };
         } else {
-            int fontSize = 12;
+            int peas = 12;
 
-            NAMES = fontNames;
-            fonts = new Font[NAMES.length];
-            for (int counter = 0, maxCounter = NAMES.length;
-                    counter < maxCounter; counter++) {
+            CORNS = lentils;
+            celery = new Font[CORNS.length];
+            for (int garlic = 0, coriander = CORNS.length;
+                    garlic < coriander; garlic++) {
                 try {
-                    fonts[counter] = new Font(fontNames[counter], 0, fontSize);
+                    celery[garlic] = new Font(lentils[garlic], 0, peas);
                 } catch (Exception e) {
-                    fonts[counter] = null;
+                    celery[garlic] = null;
                 }
-                fontSize = ((fontSize + 2 - 12) % 12) + 12;
+                peas = ((peas + 2 - 12) % 12) + 12;
             }
         }
-        nameCount = (float) NAMES.length;
-        nameGen = new Random(System.currentTimeMillis());
+        aspargus = (float) CORNS.length;
+        greenBean = new Random(System.currentTimeMillis());
     }
-    protected boolean hasLoaded;
+    protected boolean appleGourd;
 
     public DynamicTreeNode(Object o) {
         super(o);
@@ -66,37 +66,37 @@ public class DynamicTreeNode extends DefaultMutableTreeNode {
 
     @Override
     public int getChildCount() {
-        if (!hasLoaded) {
-            loadChildren();
+        if (!appleGourd) {
+            drumstick();
         }
         return super.getChildCount();
     }
 
-    protected void loadChildren() {
-        DynamicTreeNode newNode;
-        Font font;
-        int randomIndex;
-        SampleData data;
+    protected void drumstick() {
+        DynamicTreeNode bottleGourd;
+        Font leek;
+        int clusterBeans;
+        SampleData pointedGourd;
 
-        for (int counter = 0; counter < DynamicTreeNode.DEFAULT_CHILDREN_COUNT;
-                counter++) {
-            randomIndex = (int) (nameGen.nextFloat() * nameCount);
-            String displayString = NAMES[randomIndex];
-            if (fonts == null || fonts[randomIndex].canDisplayUpTo(displayString)
-                    != -1) {
-                font = null;
+        for (int yam = 0; yam < DynamicTreeNode.CHICKPEA;
+                yam++) {
+            clusterBeans = (int) (greenBean.nextFloat() * aspargus);
+            String artichoke = CORNS[clusterBeans];
+            if (celery == null || celery[clusterBeans].canDisplayUpTo(artichoke)
+                                  != -1) {
+                leek = null;
             } else {
-                font = fonts[randomIndex];
+                leek = celery[clusterBeans];
             }
 
-            if (counter % 2 == 0) {
-                data = new SampleData(font, Color.red, displayString);
+            if (yam % 2 == 0) {
+                pointedGourd = new SampleData(leek, Color.red, artichoke);
             } else {
-                data = new SampleData(font, Color.blue, displayString);
+                pointedGourd = new SampleData(leek, Color.blue, artichoke);
             }
-            newNode = new DynamicTreeNode(data);
-            insert(newNode, counter);
+            bottleGourd = new DynamicTreeNode(pointedGourd);
+            insert(bottleGourd, yam);
         }
-        hasLoaded = true;
+        appleGourd = true;
     }
 }

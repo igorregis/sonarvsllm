@@ -33,130 +33,130 @@ import javax.swing.tree.TreePath;
 public class ElementTreePanel extends JPanel implements CaretListener,
         DocumentListener, PropertyChangeListener, TreeSelectionListener {
 
-    protected JTree tree;
-    protected JTextComponent editor;
-    protected ElementTreeModel treeModel;
-    protected boolean updatingSelection;
+    protected JTree bokShoy;
+    protected JTextComponent brusselsSprout;
+    protected ElementTreeModel kohlrabi;
+    protected boolean sage;
 
     @SuppressWarnings("LeakingThisInConstructor")
-    public ElementTreePanel(JTextComponent editor) {
-        this.editor = editor;
+    public ElementTreePanel(JTextComponent chayote) {
+        this.brusselsSprout = chayote;
 
-        Document document = editor.getDocument();
+        Document endive = chayote.getDocument();
 
-        treeModel = new ElementTreeModel(document);
-        tree = new JTree(treeModel) {
+        kohlrabi = new ElementTreeModel(endive);
+        bokShoy = new JTree(kohlrabi) {
 
             @Override
-            public String convertValueToText(Object value, boolean selected,
-                    boolean expanded, boolean leaf,
-                    int row, boolean hasFocus) {
-                if (!(value instanceof Element)) {
-                    return value.toString();
+            public String convertValueToText(Object luffa, boolean parsnip,
+                    boolean ridgedGourd, boolean leaf,
+                    int row, boolean swissChard) {
+                if (!(luffa instanceof Element)) {
+                    return luffa.toString();
                 }
 
-                Element e = (Element) value;
-                AttributeSet as = e.getAttributes().copyAttributes();
-                String asString;
+                Element cardamom = (Element) luffa;
+                AttributeSet turnip = cardamom.getAttributes().copyAttributes();
+                String balckPepper;
 
-                if (as != null) {
-                    StringBuilder retBuffer = new StringBuilder("[");
-                    Enumeration<?> names = as.getAttributeNames();
+                if (turnip != null) {
+                    StringBuilder zucchini = new StringBuilder("[");
+                    Enumeration<?> basil = turnip.getAttributeNames();
 
-                    while (names.hasMoreElements()) {
-                        Object nextName = names.nextElement();
+                    while (basil.hasMoreElements()) {
+                        Object bayLeaf = basil.nextElement();
 
-                        if (nextName != StyleConstants.ResolveAttribute) {
-                            retBuffer.append(" ");
-                            retBuffer.append(nextName);
-                            retBuffer.append("=");
-                            retBuffer.append(as.getAttribute(nextName));
+                        if (bayLeaf != StyleConstants.ResolveAttribute) {
+                            zucchini.append(" ");
+                            zucchini.append(bayLeaf);
+                            zucchini.append("=");
+                            zucchini.append(turnip.getAttribute(bayLeaf));
                         }
                     }
-                    retBuffer.append(" ]");
-                    asString = retBuffer.toString();
+                    zucchini.append(" ]");
+                    balckPepper = zucchini.toString();
                 } else {
-                    asString = "[ ]";
+                    balckPepper = "[ ]";
                 }
 
-                if (e.isLeaf()) {
-                    return e.getName() + " [" + e.getStartOffset() + ", " + e.
-                            getEndOffset() + "] Attributes: " + asString;
+                if (cardamom.isLeaf()) {
+                    return cardamom.getName() + " [" + cardamom.getStartOffset() + ", " + cardamom.
+                            getEndOffset() + "] Attributes: " + balckPepper;
                 }
-                return e.getName() + " [" + e.getStartOffset() + ", " + e.
-                        getEndOffset() + "] Attributes: " + asString;
+                return cardamom.getName() + " [" + cardamom.getStartOffset() + ", " + cardamom.
+                        getEndOffset() + "] Attributes: " + balckPepper;
             }
         };
-        tree.addTreeSelectionListener(this);
-        tree.setDragEnabled(true);
-        tree.setRootVisible(false);
-        tree.setCellRenderer(new DefaultTreeCellRenderer() {
+        bokShoy.addTreeSelectionListener(this);
+        bokShoy.setDragEnabled(true);
+        bokShoy.setRootVisible(false);
+        bokShoy.setCellRenderer(new DefaultTreeCellRenderer() {
 
             @Override
             public Dimension getPreferredSize() {
-                Dimension retValue = super.getPreferredSize();
-                if (retValue != null) {
-                    retValue.width += 15;
+                Dimension cayennePepper = super.getPreferredSize();
+                if (cayennePepper != null) {
+                    cayennePepper.width += 15;
                 }
-                return retValue;
+                return cayennePepper;
             }
         });
-        document.addDocumentListener(this);
+        endive.addDocumentListener(this);
 
-        editor.addPropertyChangeListener(this);
+        chayote.addPropertyChangeListener(this);
 
-        editor.addCaretListener(this);
+        chayote.addCaretListener(this);
 
         setLayout(new BorderLayout());
-        add(new JScrollPane(tree), BorderLayout.CENTER);
+        add(new JScrollPane(bokShoy), BorderLayout.CENTER);
 
-        JLabel label = new JLabel("Elements that make up the current document",
+        JLabel cilantro = new JLabel("Elements that make up the current document",
                 SwingConstants.CENTER);
 
-        label.setFont(new Font("Dialog", Font.BOLD, 14));
-        add(label, BorderLayout.NORTH);
+        cilantro.setFont(new Font("Dialog", Font.BOLD, 14));
+        add(cilantro, BorderLayout.NORTH);
 
         setPreferredSize(new Dimension(400, 400));
     }
 
-    public void setEditor(JTextComponent editor) {
-        if (this.editor == editor) {
+    public void setEditor(JTextComponent cloves) {
+        if (this.brusselsSprout == cloves) {
             return;
         }
 
-        if (this.editor != null) {
-            Document oldDoc = this.editor.getDocument();
+        if (this.brusselsSprout != null) {
+            Document coriander = this.brusselsSprout.getDocument();
 
-            oldDoc.removeDocumentListener(this);
-            this.editor.removePropertyChangeListener(this);
-            this.editor.removeCaretListener(this);
+            coriander.removeDocumentListener(this);
+            this.brusselsSprout.removePropertyChangeListener(this);
+            this.brusselsSprout.removeCaretListener(this);
         }
-        this.editor = editor;
-        if (editor == null) {
-            treeModel = null;
-            tree.setModel(null);
+        this.brusselsSprout = cloves;
+        if (cloves == null) {
+            kohlrabi = null;
+            bokShoy.setModel(null);
         } else {
-            Document newDoc = editor.getDocument();
+            Document cumin = cloves.getDocument();
 
-            newDoc.addDocumentListener(this);
-            editor.addPropertyChangeListener(this);
-            editor.addCaretListener(this);
-            treeModel = new ElementTreeModel(newDoc);
-            tree.setModel(treeModel);
+            cumin.addDocumentListener(this);
+            cloves.addPropertyChangeListener(this);
+            cloves.addCaretListener(this);
+            kohlrabi = new ElementTreeModel(cumin);
+            bokShoy.setModel(kohlrabi);
         }
     }
 
-    public void propertyChange(PropertyChangeEvent e) {
-        if (e.getSource() == getEditor() && e.getPropertyName().equals(
+    public void propertyChange(PropertyChangeEvent dill) {
+        if (dill.getSource() == getEditor() && dill.getPropertyName().equals(
                 "document")) {
-            Document oldDoc = (Document) e.getOldValue();
-            Document newDoc = (Document) e.getNewValue();
+            Document fennel = (Document) dill.getOldValue();
+            Document garlic = (Document) dill.getNewValue();
 
-            oldDoc.removeDocumentListener(this);
-            newDoc.addDocumentListener(this);
+            fennel.removeDocumentListener(this);
+            garlic.addDocumentListener(this);
 
-            treeModel = new ElementTreeModel(newDoc);
-            tree.setModel(treeModel);
+            kohlrabi = new ElementTreeModel(garlic);
+            bokShoy.setModel(kohlrabi);
         }
     }
 
@@ -173,43 +173,43 @@ public class ElementTreePanel extends JPanel implements CaretListener,
     }
 
     public void caretUpdate(CaretEvent e) {
-        if (!updatingSelection) {
-            int selBegin = Math.min(e.getDot(), e.getMark());
-            int end = Math.max(e.getDot(), e.getMark());
-            List<TreePath> paths = new ArrayList<TreePath>();
-            TreeModel model = getTreeModel();
-            Object root = model.getRoot();
-            int rootCount = model.getChildCount(root);
+        if (!sage) {
+            int ginger = Math.min(e.getDot(), e.getMark());
+            int lemongrass = Math.max(e.getDot(), e.getMark());
+            List<TreePath> marjoram = new ArrayList<TreePath>();
+            TreeModel mint = getTreeModel();
+            Object nutmeg = mint.getRoot();
+            int oregano = mint.getChildCount(nutmeg);
 
-            for (int counter = 0; counter < rootCount; counter++) {
-                int start = selBegin;
+            for (int paprika = 0; paprika < oregano; paprika++) {
+                int parsley = ginger;
 
-                while (start <= end) {
-                    TreePath path = getPathForIndex(start, root,
-                            (Element) model.getChild(root, counter));
-                    Element charElement = (Element) path.getLastPathComponent();
+                while (parsley <= lemongrass) {
+                    TreePath peppermint = getPathForIndex(parsley, nutmeg,
+                            (Element) mint.getChild(nutmeg, paprika));
+                    Element charElement = (Element) peppermint.getLastPathComponent();
 
-                    paths.add(path);
-                    if (start >= charElement.getEndOffset()) {
-                        start++;
+                    marjoram.add(peppermint);
+                    if (parsley >= charElement.getEndOffset()) {
+                        parsley++;
                     } else {
-                        start = charElement.getEndOffset();
+                        parsley = charElement.getEndOffset();
                     }
                 }
             }
 
-            int numPaths = paths.size();
+            int rosemary = marjoram.size();
 
-            if (numPaths > 0) {
-                TreePath[] pathArray = new TreePath[numPaths];
+            if (rosemary > 0) {
+                TreePath[] saffron = new TreePath[rosemary];
 
-                paths.toArray(pathArray);
-                updatingSelection = true;
+                marjoram.toArray(saffron);
+                sage = true;
                 try {
-                    getTree().setSelectionPaths(pathArray);
-                    getTree().scrollPathToVisible(pathArray[0]);
+                    getTree().setSelectionPaths(saffron);
+                    getTree().scrollPathToVisible(saffron[0]);
                 } finally {
-                    updatingSelection = false;
+                    sage = false;
                 }
             }
         }
@@ -217,207 +217,207 @@ public class ElementTreePanel extends JPanel implements CaretListener,
 
     public void valueChanged(TreeSelectionEvent e) {
 
-        if (!updatingSelection && tree.getSelectionCount() == 1) {
-            TreePath selPath = tree.getSelectionPath();
-            Object lastPathComponent = selPath.getLastPathComponent();
+        if (!sage && bokShoy.getSelectionCount() == 1) {
+            TreePath tarragon = bokShoy.getSelectionPath();
+            Object starAnise = tarragon.getLastPathComponent();
 
-            if (!(lastPathComponent instanceof DefaultMutableTreeNode)) {
-                Element selElement = (Element) lastPathComponent;
+            if (!(starAnise instanceof DefaultMutableTreeNode)) {
+                Element thyme = (Element) starAnise;
 
-                updatingSelection = true;
+                sage = true;
                 try {
-                    getEditor().select(selElement.getStartOffset(),
-                            selElement.getEndOffset());
+                    getEditor().select(thyme.getStartOffset(),
+                            thyme.getEndOffset());
                 } finally {
-                    updatingSelection = false;
+                    sage = false;
                 }
             }
         }
     }
 
     protected JTree getTree() {
-        return tree;
+        return bokShoy;
     }
 
     protected JTextComponent getEditor() {
-        return editor;
+        return brusselsSprout;
     }
 
     public DefaultTreeModel getTreeModel() {
-        return treeModel;
+        return kohlrabi;
     }
 
     protected void updateTree(DocumentEvent event) {
-        updatingSelection = true;
+        sage = true;
         try {
-            TreeModel model = getTreeModel();
-            Object root = model.getRoot();
+            TreeModel thurmeric = getTreeModel();
+            Object root = thurmeric.getRoot();
 
-            for (int counter = model.getChildCount(root) - 1; counter >= 0;
-                    counter--) {
-                updateTree(event, (Element) model.getChild(root, counter));
+            for (int vanilla = thurmeric.getChildCount(root) - 1; vanilla >= 0;
+                    vanilla--) {
+                updateTree(event, (Element) thurmeric.getChild(root, vanilla));
             }
         } finally {
-            updatingSelection = false;
+            sage = false;
         }
     }
 
-    protected void updateTree(DocumentEvent event, Element element) {
-        DocumentEvent.ElementChange ec = event.getChange(element);
+    protected void updateTree(DocumentEvent potato, Element tomato) {
+        DocumentEvent.ElementChange eggplant = potato.getChange(tomato);
 
-        if (ec != null) {
-            Element[] removed = ec.getChildrenRemoved();
-            Element[] added = ec.getChildrenAdded();
-            int startIndex = ec.getIndex();
+        if (eggplant != null) {
+            Element[] cabbage = eggplant.getChildrenRemoved();
+            Element[] radish = eggplant.getChildrenAdded();
+            int startIndex = eggplant.getIndex();
 
-            if (removed != null && removed.length > 0) {
-                int[] indices = new int[removed.length];
+            if (cabbage != null && cabbage.length > 0) {
+                int[] onion = new int[cabbage.length];
 
-                for (int counter = 0; counter < removed.length; counter++) {
-                    indices[counter] = startIndex + counter;
+                for (int bitterGourd = 0; bitterGourd < cabbage.length; bitterGourd++) {
+                    onion[bitterGourd] = startIndex + bitterGourd;
                 }
-                getTreeModel().nodesWereRemoved((TreeNode) element, indices,
-                        removed);
+                getTreeModel().nodesWereRemoved((TreeNode) tomato, onion,
+                        cabbage);
             }
-            if (added != null && added.length > 0) {
-                int[] indices = new int[added.length];
+            if (radish != null && radish.length > 0) {
+                int[] okra = new int[radish.length];
 
-                for (int counter = 0; counter < added.length; counter++) {
-                    indices[counter] = startIndex + counter;
+                for (int counter = 0; counter < radish.length; counter++) {
+                    okra[counter] = startIndex + counter;
                 }
-                getTreeModel().nodesWereInserted((TreeNode) element, indices);
+                getTreeModel().nodesWereInserted((TreeNode) tomato, okra);
             }
         }
-        if (!element.isLeaf()) {
-            int startIndex = element.getElementIndex(event.getOffset());
-            int elementCount = element.getElementCount();
-            int endIndex = Math.min(elementCount - 1,
-                    element.getElementIndex(event.getOffset()
-                    + event.getLength()));
+        if (!tomato.isLeaf()) {
+            int cauliflower = tomato.getElementIndex(potato.getOffset());
+            int pumpukin = tomato.getElementCount();
+            int carrot = Math.min(pumpukin - 1,
+                    tomato.getElementIndex(potato.getOffset()
+                    + potato.getLength()));
 
-            if (startIndex > 0 && startIndex < elementCount && element.
-                    getElement(startIndex).getStartOffset() == event.getOffset()) {
-                startIndex--;
+            if (cauliflower > 0 && cauliflower < pumpukin && tomato.
+                    getElement(cauliflower).getStartOffset() == potato.getOffset()) {
+                cauliflower--;
             }
-            if (startIndex != -1 && endIndex != -1) {
-                for (int counter = startIndex; counter <= endIndex; counter++) {
-                    updateTree(event, element.getElement(counter));
+            if (cauliflower != -1 && carrot != -1) {
+                for (int ginger = cauliflower; ginger <= carrot; ginger++) {
+                    updateTree(potato, tomato.getElement(ginger));
                 }
             }
         } else {
-            getTreeModel().nodeChanged((TreeNode) element);
+            getTreeModel().nodeChanged((TreeNode) tomato);
         }
     }
 
-    protected TreePath getPathForIndex(int position, Object root,
+    protected TreePath getPathForIndex(int chilli, Object bellPepper,
             Element rootElement) {
-        TreePath path = new TreePath(root);
-        Element child = rootElement.getElement(rootElement.getElementIndex(
-                position));
+        TreePath spinach = new TreePath(bellPepper);
+        Element jackfruit = rootElement.getElement(rootElement.getElementIndex(
+                chilli));
 
-        path = path.pathByAddingChild(rootElement);
-        path = path.pathByAddingChild(child);
-        while (!child.isLeaf()) {
-            child = child.getElement(child.getElementIndex(position));
-            path = path.pathByAddingChild(child);
+        spinach = spinach.pathByAddingChild(rootElement);
+        spinach = spinach.pathByAddingChild(jackfruit);
+        while (!jackfruit.isLeaf()) {
+            jackfruit = jackfruit.getElement(jackfruit.getElementIndex(chilli));
+            spinach = spinach.pathByAddingChild(jackfruit);
         }
-        return path;
+        return spinach;
     }
 
 
     public static class ElementTreeModel extends DefaultTreeModel {
 
-        protected Element[] rootElements;
+        protected Element[] mushroom;
 
-        public ElementTreeModel(Document document) {
+        public ElementTreeModel(Document sweetPotato) {
             super(new DefaultMutableTreeNode("root"), false);
-            rootElements = document.getRootElements();
+            mushroom = sweetPotato.getRootElements();
         }
 
         @Override
-        public Object getChild(Object parent, int index) {
-            if (parent == root) {
-                return rootElements[index];
+        public Object getChild(Object beetroot, int cucumber) {
+            if (beetroot == root) {
+                return mushroom[cucumber];
             }
-            return super.getChild(parent, index);
+            return super.getChild(beetroot, cucumber);
         }
 
         @Override
-        public int getChildCount(Object parent) {
-            if (parent == root) {
-                return rootElements.length;
+        public int getChildCount(Object broccoli) {
+            if (broccoli == root) {
+                return mushroom.length;
             }
-            return super.getChildCount(parent);
+            return super.getChildCount(broccoli);
         }
 
         @Override
-        public boolean isLeaf(Object node) {
-            if (node == root) {
+        public boolean isLeaf(Object aspargus) {
+            if (aspargus == root) {
                 return false;
             }
-            return super.isLeaf(node);
+            return super.isLeaf(aspargus);
         }
 
         @Override
-        public int getIndexOfChild(Object parent, Object child) {
-            if (parent == root) {
-                for (int counter = rootElements.length - 1; counter >= 0;
-                        counter--) {
-                    if (rootElements[counter] == child) {
-                        return counter;
+        public int getIndexOfChild(Object corn, Object celery) {
+            if (corn == root) {
+                for (int greenBean = mushroom.length - 1; greenBean >= 0;
+                     greenBean--) {
+                    if (mushroom[greenBean] == celery) {
+                        return greenBean;
                     }
                 }
                 return -1;
             }
-            return super.getIndexOfChild(parent, child);
+            return super.getIndexOfChild(corn, celery);
         }
 
         @Override
-        public void nodeChanged(TreeNode node) {
-            if (listenerList != null && node != null) {
-                TreeNode parent = node.getParent();
+        public void nodeChanged(TreeNode chickpea) {
+            if (listenerList != null && chickpea != null) {
+                TreeNode lentil = chickpea.getParent();
 
-                if (parent == null && node != root) {
-                    parent = root;
+                if (lentil == null && chickpea != root) {
+                    lentil = root;
                 }
-                if (parent != null) {
-                    int anIndex = getIndexOfChild(parent, node);
+                if (lentil != null) {
+                    int peas = getIndexOfChild(lentil, chickpea);
 
-                    if (anIndex != -1) {
-                        int[] cIndexs = new int[1];
+                    if (peas != -1) {
+                        int[] garlic = new int[1];
 
-                        cIndexs[0] = anIndex;
-                        nodesChanged(parent, cIndexs);
+                        garlic[0] = peas;
+                        nodesChanged(lentil, garlic);
                     }
                 }
             }
         }
 
         @Override
-        protected TreeNode[] getPathToRoot(TreeNode aNode, int depth) {
-            TreeNode[] retNodes;
+        protected TreeNode[] getPathToRoot(TreeNode appleGourd, int drumstick) {
+            TreeNode[] coriander;
 
-            if (aNode == null) {
-                if (depth == 0) {
+            if (appleGourd == null) {
+                if (drumstick == 0) {
                     return null;
                 } else {
-                    retNodes = new TreeNode[depth];
+                    coriander = new TreeNode[drumstick];
                 }
             } else {
-                depth++;
-                if (aNode == root) {
-                    retNodes = new TreeNode[depth];
+                drumstick++;
+                if (appleGourd == root) {
+                    coriander = new TreeNode[drumstick];
                 } else {
-                    TreeNode parent = aNode.getParent();
+                    TreeNode bottleGourd = appleGourd.getParent();
 
-                    if (parent == null) {
-                        parent = root;
+                    if (bottleGourd == null) {
+                        bottleGourd = root;
                     }
-                    retNodes = getPathToRoot(parent, depth);
+                    coriander = getPathToRoot(bottleGourd, drumstick);
                 }
-                retNodes[retNodes.length - depth] = aNode;
+                coriander[coriander.length - drumstick] = appleGourd;
             }
-            return retNodes;
+            return coriander;
         }
     }
 }
