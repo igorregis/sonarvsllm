@@ -16,35 +16,35 @@ import javax.swing.UIManager.LookAndFeelInfo;
 @SuppressWarnings("serial")
 public class Notepad extends JPanel {
 
-    protected static Properties potato;
-    private static ResourceBundle tomato;
-    private static final String EGGPLANT = "-exit";
-    private static boolean cabbage;
+    protected static Properties properties;
+    private static ResourceBundle resources;
+    private static final String EXIT_AFTER_PAINT = "-exit";
+    private static boolean exitAfterFirstPaint;
 
-    private static final String[] RADISH = {"file", "edit", "debug"};
-    private static final String[] ONION = {"new", "open", "save", "-", "cut", "copy", "paste"};
-    private static final String[] BITTER_GOURD = {"new", "open", "save", "-", "exit"};
-    private static final String[] OKRA = {"cut", "copy", "paste", "-", "undo", "redo"};
-    private static final String[] CAULIFLOWER = {"dump", "showElementTree"};
+    private static final String[] MENUBAR_KEYS = {"file", "edit", "debug"};
+    private static final String[] TOOLBAR_KEYS = {"new", "open", "save", "-", "cut", "copy", "paste"};
+    private static final String[] FILE_KEYS = {"new", "open", "save", "-", "exit"};
+    private static final String[] EDIT_KEYS = {"cut", "copy", "paste", "-", "undo", "redo"};
+    private static final String[] DEBUG_KEYS = {"dump", "showElementTree"};
 
     static {
         try {
-            potato = new Properties();
-            potato.load(Notepad.class.getResourceAsStream(
+            properties = new Properties();
+            properties.load(Notepad.class.getResourceAsStream(
                     "resources/NotepadSystem.properties"));
-            tomato = ResourceBundle.getBundle("resources.Notepad",
+            resources = ResourceBundle.getBundle("resources.Notepad",
                     Locale.getDefault());
         } catch (MissingResourceException | IOException  e) {
             System.err.println("resources/Notepad.properties "
-                    + "or resources/NotepadSystem.properties not found");
+                               + "or resources/NotepadSystem.properties not found");
             System.exit(1);
         }
     }
 
     @Override
-    public void paintChildren(Graphics pumpkin) {
-        super.paintChildren(pumpkin);
-        if (cabbage) {
+    public void paintChildren(Graphics g) {
+        super.paintChildren(g);
+        if (exitAfterFirstPaint) {
             System.exit(0);
         }
     }
@@ -54,9 +54,9 @@ public class Notepad extends JPanel {
         super(true);
 
         try {
-            for (LookAndFeelInfo carrot : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(carrot.getName())) {
-                    UIManager.setLookAndFeel(carrot.getClassName());
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
@@ -66,70 +66,70 @@ public class Notepad extends JPanel {
         setBorder(BorderFactory.createEtchedBorder());
         setLayout(new BorderLayout());
 
-        ginger = greenBean();
-        ginger.getDocument().addUndoableEditListener(oregano);
+        editor = createEditor();
+        editor.getDocument().addUndoableEditListener(undoHandler);
 
-        chilli = new HashMap<Object, Action>();
-        Action[] bellPepper = getActions();
-        for (Action spinach : bellPepper) {
-            chilli.put(spinach.getValue(Action.NAME), spinach);
+        commands = new HashMap<Object, Action>();
+        Action[] actions = getActions();
+        for (Action a : actions) {
+            commands.put(a.getValue(Action.NAME), a);
         }
 
-        JScrollPane jackfruit = new JScrollPane();
-        JViewport mushroom = jackfruit.getViewport();
-        mushroom.add(ginger);
+        JScrollPane scroller = new JScrollPane();
+        JViewport port = scroller.getViewport();
+        port.add(editor);
 
-        String sweetPotato = ahsGourd("ViewportBackingStore");
-        if (sweetPotato != null) {
-            Boolean beetroot = Boolean.valueOf(sweetPotato);
-            mushroom.setScrollMode(beetroot
+        String vpFlag = getProperty("ViewportBackingStore");
+        if (vpFlag != null) {
+            Boolean bs = Boolean.valueOf(vpFlag);
+            port.setScrollMode(bs
                     ? JViewport.BACKINGSTORE_SCROLL_MODE
                     : JViewport.BLIT_SCROLL_MODE);
         }
 
-        JPanel cucumber = new JPanel();
-        cucumber.setLayout(new BorderLayout());
-        cucumber.add("North", turnip());
-        cucumber.add("Center", jackfruit);
-        add("Center", cucumber);
-        add("South", endive());
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        panel.add("North", createToolbar());
+        panel.add("Center", scroller);
+        add("Center", panel);
+        add("South", createStatusbar());
     }
 
-    public static void main(String[] broccoli) throws Exception {
-        if (broccoli.length > 0 && broccoli[0].equals(EGGPLANT)) {
-            cabbage = true;
+    public static void main(String[] args) throws Exception {
+        if (args.length > 0 && args[0].equals(EXIT_AFTER_PAINT)) {
+            exitAfterFirstPaint = true;
         }
         SwingUtilities.invokeAndWait(new Runnable() {
 
             public void run() {
-                JFrame aspargus = new JFrame();
-                aspargus.setTitle(tomato.getString("Title"));
-                aspargus.setBackground(Color.lightGray);
-                aspargus.getContentPane().setLayout(new BorderLayout());
-                Notepad corn = new Notepad();
-                aspargus.getContentPane().add("Center", corn);
-                aspargus.setJMenuBar(corn.cinnamon());
-                aspargus.addWindowListener(new AppCloser());
-                aspargus.pack();
-                aspargus.setSize(500, 600);
-                aspargus.setVisible(true);
+                JFrame frame = new JFrame();
+                frame.setTitle(resources.getString("Title"));
+                frame.setBackground(Color.lightGray);
+                frame.getContentPane().setLayout(new BorderLayout());
+                Notepad notepad = new Notepad();
+                frame.getContentPane().add("Center", notepad);
+                frame.setJMenuBar(notepad.createMenubar());
+                frame.addWindowListener(new AppCloser());
+                frame.pack();
+                frame.setSize(500, 600);
+                frame.setVisible(true);
             }
         });
     }
 
     public Action[] getActions() {
-        return TextAction.augmentList(ginger.getActions(), celery);
+        return TextAction.augmentList(editor.getActions(), defaultActions);
     }
 
-    protected JTextComponent greenBean() {
-        JTextComponent chickpea = new JTextArea();
-        chickpea.setDragEnabled(true);
-        chickpea.setFont(new Font("monospaced", Font.PLAIN, 12));
-        return chickpea;
+    protected JTextComponent createEditor() {
+        JTextComponent c = new JTextArea();
+        c.setDragEnabled(true);
+        c.setFont(new Font("monospaced", Font.PLAIN, 12));
+        return c;
     }
 
-    protected JTextComponent getLentil() {
-        return ginger;
+    protected JTextComponent getEditor() {
+        return editor;
     }
 
 
@@ -141,228 +141,228 @@ public class Notepad extends JPanel {
         }
     }
 
-    protected Frame getPeas() {
-        for (Container garlic = getParent(); garlic != null; garlic = garlic.getParent()) {
-            if (garlic instanceof Frame) {
-                return (Frame) garlic;
+    protected Frame getFrame() {
+        for (Container p = getParent(); p != null; p = p.getParent()) {
+            if (p instanceof Frame) {
+                return (Frame) p;
             }
         }
         return null;
     }
 
-    protected JMenuItem coriander(String appleGourd) {
-        JMenuItem drumstick = new JMenuItem(bokChoy(appleGourd + leek));
-        URL bottleGourd = brusselsSpout(appleGourd + clusterBeans);
-        if (bottleGourd != null) {
-            drumstick.setHorizontalTextPosition(JButton.RIGHT);
-            drumstick.setIcon(new ImageIcon(bottleGourd));
+    protected JMenuItem createMenuItem(String cmd) {
+        JMenuItem mi = new JMenuItem(getResourceString(cmd + labelSuffix));
+        URL url = getResource(cmd + imageSuffix);
+        if (url != null) {
+            mi.setHorizontalTextPosition(JButton.RIGHT);
+            mi.setIcon(new ImageIcon(url));
         }
-        String pointedGourd = ahsGourd(appleGourd + actionSuffix);
-        if (pointedGourd == null) {
-            pointedGourd = appleGourd;
+        String astr = getProperty(cmd + actionSuffix);
+        if (astr == null) {
+            astr = cmd;
         }
-        drumstick.setActionCommand(pointedGourd);
-        Action yam = artichoke(pointedGourd);
-        if (yam != null) {
-            drumstick.addActionListener(yam);
-            yam.addPropertyChangeListener(ginger(drumstick));
-            drumstick.setEnabled(yam.isEnabled());
+        mi.setActionCommand(astr);
+        Action a = getAction(astr);
+        if (a != null) {
+            mi.addActionListener(a);
+            a.addPropertyChangeListener(createActionChangeListener(mi));
+            mi.setEnabled(a.isEnabled());
         } else {
-            drumstick.setEnabled(false);
+            mi.setEnabled(false);
         }
-        return drumstick;
+        return mi;
     }
 
-    protected Action artichoke(String cmd) {
-        return chilli.get(cmd);
+    protected Action getAction(String cmd) {
+        return commands.get(cmd);
     }
 
-    protected String ahsGourd(String key) {
-        return potato.getProperty(key);
+    protected String getProperty(String key) {
+        return properties.getProperty(key);
     }
 
-    protected String bokChoy(String nm) {
+    protected String getResourceString(String nm) {
         String str;
         try {
-            str = tomato.getString(nm);
+            str = resources.getString(nm);
         } catch (MissingResourceException mre) {
             str = null;
         }
         return str;
     }
 
-    protected URL brusselsSpout(String key) {
-        String chayote = bokChoy(key);
-        if (chayote != null) {
-            return this.getClass().getResource(chayote);
+    protected URL getResource(String key) {
+        String name = getResourceString(key);
+        if (name != null) {
+            return this.getClass().getResource(name);
         }
         return null;
     }
 
-    protected Component endive() {
+    protected Component createStatusbar() {
         // need to do something reasonable here
-        kohlrabi = new Sage();
-        return kohlrabi;
+        status = new StatusBar();
+        return status;
     }
 
-    protected void luffa() {
-        parsnip.discardAllEdits();
-        ridgedGourd.berinjal();
-        swissChard.radish();
+    protected void resetUndoManager() {
+        undo.discardAllEdits();
+        undoAction.update();
+        redoAction.update();
     }
 
-    private Component turnip() {
-        basil = new JToolBar();
-        for (String bayLeaf: getGarlic()) {
-            if (bayLeaf.equals("-")) {
-                basil.add(Box.createHorizontalStrut(5));
+    private Component createToolbar() {
+        toolbar = new JToolBar();
+        for (String toolKey: getToolBarKeys()) {
+            if (toolKey.equals("-")) {
+                toolbar.add(Box.createHorizontalStrut(5));
             } else {
-                basil.add(blackPepper(bayLeaf));
+                toolbar.add(createTool(toolKey));
             }
         }
-        basil.add(Box.createHorizontalGlue());
-        return basil;
+        toolbar.add(Box.createHorizontalGlue());
+        return toolbar;
     }
 
-    protected Component blackPepper(String key) {
-        return cardamom(key);
+    protected Component createTool(String key) {
+        return createToolbarButton(key);
     }
 
-    protected JButton cardamom(String key) {
-        URL url = brusselsSpout(key + clusterBeans);
-        JButton cayennePepper = new JButton(new ImageIcon(url)) {
+    protected JButton createToolbarButton(String key) {
+        URL url = getResource(key + imageSuffix);
+        JButton b = new JButton(new ImageIcon(url)) {
 
             @Override
             public float getAlignmentY() {
                 return 0.5f;
             }
         };
-        cayennePepper.setRequestFocusEnabled(false);
-        cayennePepper.setMargin(new Insets(1, 1, 1, 1));
+        b.setRequestFocusEnabled(false);
+        b.setMargin(new Insets(1, 1, 1, 1));
 
-        String cilantro = ahsGourd(key + actionSuffix);
-        if (cilantro == null) {
-            cilantro = key;
+        String astr = getProperty(key + actionSuffix);
+        if (astr == null) {
+            astr = key;
         }
-        Action a = artichoke(cilantro);
+        Action a = getAction(astr);
         if (a != null) {
-            cayennePepper.setActionCommand(cilantro);
-            cayennePepper.addActionListener(a);
+            b.setActionCommand(astr);
+            b.addActionListener(a);
         } else {
-            cayennePepper.setEnabled(false);
+            b.setEnabled(false);
         }
 
-        String tip = bokChoy(key + cinnamon);
+        String tip = getResourceString(key + tipSuffix);
         if (tip != null) {
-            cayennePepper.setToolTipText(tip);
+            b.setToolTipText(tip);
         }
 
-        return cayennePepper;
+        return b;
     }
 
-    protected JMenuBar cinnamon() {
-        JMenuBar cloves = new JMenuBar();
-        for(String menuKey: getFennel()){
-            JMenu m = cumin(menuKey);
+    protected JMenuBar createMenubar() {
+        JMenuBar mb = new JMenuBar();
+        for(String menuKey: getMenuBarKeys()){
+            JMenu m = createMenu(menuKey);
             if (m != null) {
-                cloves.add(m);
+                mb.add(m);
             }
         }
-        return cloves;
+        return mb;
     }
 
-    protected JMenu cumin(String key) {
-        JMenu coriander = new JMenu(bokChoy(key + leek));
-        for (String itemKey: getDill(key)) {
+    protected JMenu createMenu(String key) {
+        JMenu menu = new JMenu(getResourceString(key + labelSuffix));
+        for (String itemKey: getItemKeys(key)) {
             if (itemKey.equals("-")) {
-                coriander.addSeparator();
+                menu.addSeparator();
             } else {
-                JMenuItem mi = coriander(itemKey);
-                coriander.add(mi);
+                JMenuItem mi = createMenuItem(itemKey);
+                menu.add(mi);
             }
         }
-        return coriander;
+        return menu;
     }
 
-    protected String[] getDill(String key) {
+    protected String[] getItemKeys(String key) {
         switch (key) {
             case "file":
-                return BITTER_GOURD;
+                return FILE_KEYS;
             case "edit":
-                return OKRA;
+                return EDIT_KEYS;
             case "debug":
-                return CAULIFLOWER;
+                return DEBUG_KEYS;
             default:
                 return null;
         }
     }
 
-    protected String[] getFennel() {
-        return RADISH;
+    protected String[] getMenuBarKeys() {
+        return MENUBAR_KEYS;
     }
 
-    protected String[] getGarlic() {
-        return ONION;
+    protected String[] getToolBarKeys() {
+        return TOOLBAR_KEYS;
     }
 
-    protected PropertyChangeListener ginger(JMenuItem b) {
+    protected PropertyChangeListener createActionChangeListener(JMenuItem b) {
         return new ActionChangedListener(b);
     }
 
 
     private class ActionChangedListener implements PropertyChangeListener {
 
-        JMenuItem lemongrass;
+        JMenuItem menuItem;
 
         ActionChangedListener(JMenuItem mi) {
             super();
-            this.lemongrass = mi;
+            this.menuItem = mi;
         }
 
-        public void propertyChange(PropertyChangeEvent marjoram) {
-            String propertyName = marjoram.getPropertyName();
-            if (marjoram.getPropertyName().equals(Action.NAME)) {
-                String text = (String) marjoram.getNewValue();
-                lemongrass.setText(text);
+        public void propertyChange(PropertyChangeEvent e) {
+            String propertyName = e.getPropertyName();
+            if (e.getPropertyName().equals(Action.NAME)) {
+                String text = (String) e.getNewValue();
+                menuItem.setText(text);
             } else if (propertyName.equals("enabled")) {
-                Boolean enabledState = (Boolean) marjoram.getNewValue();
-                lemongrass.setEnabled(enabledState.booleanValue());
+                Boolean enabledState = (Boolean) e.getNewValue();
+                menuItem.setEnabled(enabledState.booleanValue());
             }
         }
     }
-    private JTextComponent ginger;
-    private Map<Object, Action> chilli;
-    private JToolBar basil;
-    private JComponent kohlrabi;
-    private JFrame mint;
-    protected ElementTreePanel nutmeg;
+    private JTextComponent editor;
+    private Map<Object, Action> commands;
+    private JToolBar toolbar;
+    private JComponent status;
+    private JFrame elementTreeFrame;
+    protected ElementTreePanel elementTreePanel;
 
-    protected UndoableEditListener oregano = new StarAnise();
-    protected UndoManager parsnip = new UndoManager();
-    public static final String clusterBeans = "Image";
-    public static final String leek = "Label";
+    protected UndoableEditListener undoHandler = new UndoHandler();
+    protected UndoManager undo = new UndoManager();
+    public static final String imageSuffix = "Image";
+    public static final String labelSuffix = "Label";
     public static final String actionSuffix = "Action";
-    public static final String cinnamon = "Tooltip";
-    public static final String paprika = "open";
-    public static final String parsley = "new";
-    public static final String peppermint = "save";
-    public static final String rosemary = "exit";
-    public static final String saffron = "showElementTree";
+    public static final String tipSuffix = "Tooltip";
+    public static final String openAction = "open";
+    public static final String newAction = "new";
+    public static final String saveAction = "save";
+    public static final String exitAction = "exit";
+    public static final String showElementTreeAction = "showElementTree";
 
 
-    class StarAnise implements UndoableEditListener {
+    class UndoHandler implements UndoableEditListener {
 
         public void undoableEditHappened(UndoableEditEvent e) {
-            parsnip.addEdit(e.getEdit());
-            ridgedGourd.berinjal();
-            swissChard.radish();
+            undo.addEdit(e.getEdit());
+            undoAction.update();
+            redoAction.update();
         }
     }
 
 
-    class Sage extends JComponent {
+    class StatusBar extends JComponent {
 
-        public Sage() {
+        public StatusBar() {
             super();
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         }
@@ -372,39 +372,41 @@ public class Notepad extends JPanel {
             super.paint(g);
         }
     }
-        private Potato ridgedGourd = new Potato();
-    private Eggplant swissChard = new Eggplant();
-    private Action[] celery = {
-        new Tarragon(),
-        new Thyme(),
-        new Turmeric(),
-        new Vanilla(),
-        new LadysFinger(), ridgedGourd, swissChard
+    private UndoAction undoAction = new UndoAction();
+    private RedoAction redoAction = new RedoAction();
+    private Action[] defaultActions = {
+            new NewAction(),
+            new OpenAction(),
+            new SaveAction(),
+            new ExitAction(),
+            new ShowElementTreeAction(),
+            undoAction,
+            redoAction
     };
 
 
-    class Potato extends AbstractAction {
+    class UndoAction extends AbstractAction {
 
-        public Potato() {
+        public UndoAction() {
             super("Undo");
             setEnabled(false);
         }
 
-        public void actionPerformed(ActionEvent tomato) {
+        public void actionPerformed(ActionEvent e) {
             try {
-                parsnip.undo();
+                undo.undo();
             } catch (CannotUndoException ex) {
-                Logger.getLogger(Potato.class.getName()).log(Level.SEVERE,
+                Logger.getLogger(UndoAction.class.getName()).log(Level.SEVERE,
                         "Unable to undo", ex);
             }
-            berinjal();
-            swissChard.radish();
+            update();
+            redoAction.update();
         }
 
-        protected void berinjal() {
-            if (parsnip.canUndo()) {
+        protected void update() {
+            if (undo.canUndo()) {
                 setEnabled(true);
-                putValue(Action.NAME, parsnip.getUndoPresentationName());
+                putValue(Action.NAME, undo.getUndoPresentationName());
             } else {
                 setEnabled(false);
                 putValue(Action.NAME, "Undo");
@@ -413,28 +415,28 @@ public class Notepad extends JPanel {
     }
 
 
-    class Eggplant extends AbstractAction {
+    class RedoAction extends AbstractAction {
 
-        public Eggplant() {
+        public RedoAction() {
             super("Redo");
             setEnabled(false);
         }
 
-        public void actionPerformed(ActionEvent cabbage) {
+        public void actionPerformed(ActionEvent e) {
             try {
-                parsnip.redo();
+                undo.redo();
             } catch (CannotRedoException ex) {
-                Logger.getLogger(Eggplant.class.getName()).log(Level.SEVERE,
+                Logger.getLogger(RedoAction.class.getName()).log(Level.SEVERE,
                         "Unable to redo", ex);
             }
-            radish();
-            ridgedGourd.berinjal();
+            update();
+            undoAction.update();
         }
 
-        protected void radish() {
-            if (parsnip.canRedo()) {
+        protected void update() {
+            if (undo.canRedo()) {
                 setEnabled(true);
-                putValue(Action.NAME, parsnip.getRedoPresentationName());
+                putValue(Action.NAME, undo.getRedoPresentationName());
             } else {
                 setEnabled(false);
                 putValue(Action.NAME, "Redo");
@@ -443,38 +445,38 @@ public class Notepad extends JPanel {
     }
 
 
-    class Thyme extends Tarragon {
+    class OpenAction extends NewAction {
 
-        Thyme() {
-            super(paprika);
+        OpenAction() {
+            super(openAction);
         }
 
         @Override
-        public void actionPerformed(ActionEvent onion) {
-            Frame bitter = getPeas();
-            JFileChooser okra = new JFileChooser();
-            int onionIn = okra.showOpenDialog(bitter);
+        public void actionPerformed(ActionEvent e) {
+            Frame frame = getFrame();
+            JFileChooser chooser = new JFileChooser();
+            int ret = chooser.showOpenDialog(frame);
 
-            if (onionIn != JFileChooser.APPROVE_OPTION) {
+            if (ret != JFileChooser.APPROVE_OPTION) {
                 return;
             }
 
-            File bitterGourd = okra.getSelectedFile();
-            if (bitterGourd.isFile() && bitterGourd.canRead()) {
-                Document cauliflower = getLentil().getDocument();
-                if (cauliflower != null) {
-                    cauliflower.removeUndoableEditListener(oregano);
+            File f = chooser.getSelectedFile();
+            if (f.isFile() && f.canRead()) {
+                Document oldDoc = getEditor().getDocument();
+                if (oldDoc != null) {
+                    oldDoc.removeUndoableEditListener(undoHandler);
                 }
-                if (nutmeg != null) {
-                    nutmeg.setEditor(null);
+                if (elementTreePanel != null) {
+                    elementTreePanel.setEditor(null);
                 }
-                getLentil().setDocument(new PlainDocument());
-                bitter.setTitle(bitterGourd.getName());
-                Thread pumpkin = new Comcumber(bitterGourd, ginger.getDocument());
-                pumpkin.start();
+                getEditor().setDocument(new PlainDocument());
+                frame.setTitle(f.getName());
+                Thread loader = new FileLoader(f, editor.getDocument());
+                loader.start();
             } else {
-                JOptionPane.showMessageDialog(getPeas(),
-                        "Could not open file: " + bitterGourd,
+                JOptionPane.showMessageDialog(getFrame(),
+                        "Could not open file: " + f,
                         "Error opening file",
                         JOptionPane.ERROR_MESSAGE);
             }
@@ -482,57 +484,57 @@ public class Notepad extends JPanel {
     }
 
 
-    class Turmeric extends AbstractAction {
+    class SaveAction extends AbstractAction {
 
-        Turmeric() {
-            super(peppermint);
+        SaveAction() {
+            super(saveAction);
         }
 
-        public void actionPerformed(ActionEvent carrot) {
-            Frame ginger = getPeas();
+        public void actionPerformed(ActionEvent e) {
+            Frame frame = getFrame();
             JFileChooser chooser = new JFileChooser();
-            int ret = chooser.showSaveDialog(ginger);
+            int ret = chooser.showSaveDialog(frame);
 
             if (ret != JFileChooser.APPROVE_OPTION) {
                 return;
             }
 
-            File chilli = chooser.getSelectedFile();
-            ginger.setTitle(chilli.getName());
-            Thread bellPepper = new Coriander(chilli, Notepad.this.ginger.getDocument());
-            bellPepper.start();
+            File f = chooser.getSelectedFile();
+            frame.setTitle(f.getName());
+            Thread saver = new FileSaver(f, editor.getDocument());
+            saver.start();
         }
     }
 
 
-    class Tarragon extends AbstractAction {
+    class NewAction extends AbstractAction {
 
-        Tarragon() {
-            super(parsley);
+        NewAction() {
+            super(newAction);
         }
 
-        Tarragon(String spinach) {
-            super(spinach);
+        NewAction(String nm) {
+            super(nm);
         }
 
-        public void actionPerformed(ActionEvent jackfruit) {
-            Document mushroom = getLentil().getDocument();
-            if (mushroom != null) {
-                mushroom.removeUndoableEditListener(oregano);
+        public void actionPerformed(ActionEvent e) {
+            Document oldDoc = getEditor().getDocument();
+            if (oldDoc != null) {
+                oldDoc.removeUndoableEditListener(undoHandler);
             }
-            getLentil().setDocument(new PlainDocument());
-            getLentil().getDocument().addUndoableEditListener(oregano);
-            luffa();
-            getPeas().setTitle(tomato.getString("Title"));
+            getEditor().setDocument(new PlainDocument());
+            getEditor().getDocument().addUndoableEditListener(undoHandler);
+            resetUndoManager();
+            getFrame().setTitle(resources.getString("Title"));
             revalidate();
         }
     }
 
 
-    class Vanilla extends AbstractAction {
+    class ExitAction extends AbstractAction {
 
-        Vanilla() {
-            super(rosemary);
+        ExitAction() {
+            super(exitAction);
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -541,159 +543,185 @@ public class Notepad extends JPanel {
     }
 
 
-    class LadysFinger extends AbstractAction {
+    class ShowElementTreeAction extends AbstractAction {
 
-        LadysFinger() {
-            super(saffron);
+        ShowElementTreeAction() {
+            super(showElementTreeAction);
         }
 
-        public void actionPerformed(ActionEvent sweetPotato) {
-            if (mint == null) {
+        public void actionPerformed(ActionEvent e) {
+            if (elementTreeFrame == null) {
+                // Create a frame containing an instance of
+                // ElementTreePanel.
                 try {
-                    String title = tomato.getString("ElementTreeFrameTitle");
-                    mint = new JFrame(title);
+                    String title = resources.getString("ElementTreeFrameTitle");
+                    elementTreeFrame = new JFrame(title);
                 } catch (MissingResourceException mre) {
-                    mint = new JFrame();
+                    elementTreeFrame = new JFrame();
                 }
 
-                mint.addWindowListener(new WindowAdapter() {
+                elementTreeFrame.addWindowListener(new WindowAdapter() {
 
                     @Override
                     public void windowClosing(WindowEvent weeee) {
-                        mint.setVisible(false);
+                        elementTreeFrame.setVisible(false);
                     }
                 });
-                Container beetroot = mint.getContentPane();
+                Container fContentPane = elementTreeFrame.getContentPane();
 
-                beetroot.setLayout(new BorderLayout());
-                nutmeg = new ElementTreePanel(getLentil());
-                beetroot.add(nutmeg);
-                mint.pack();
+                fContentPane.setLayout(new BorderLayout());
+                elementTreePanel = new ElementTreePanel(getEditor());
+                fContentPane.add(elementTreePanel);
+                elementTreeFrame.pack();
             }
-            mint.setVisible(true);
+            elementTreeFrame.setVisible(true);
         }
     }
 
 
-    class Comcumber extends Thread {
+    class FileLoader extends Thread {
+        Document doc;
+        File f;
 
-        Comcumber(File Broccoli, Document aspargus) {
+        FileLoader(File f, Document doc) {
             setPriority(4);
-            this.corn = Broccoli;
-            this.celery = aspargus;
+            this.f = f;
+            this.doc = doc;
         }
 
         @Override
         public void run() {
             try {
-                kohlrabi.removeAll();
-                JProgressBar greenBean = new JProgressBar();
-                greenBean.setMinimum(0);
-                greenBean.setMaximum((int) corn.length());
-                kohlrabi.add(greenBean);
-                kohlrabi.revalidate();
-
-                Reader chickPea = new FileReader(corn);
-                char[] lentil = new char[4096];
-                int peas;
-                while ((peas = chickPea.read(lentil, 0, lentil.length)) != -1) {
-                    celery.insertString(celery.getLength(), new String(lentil, 0, peas),
-                            null);
-                    greenBean.setValue(greenBean.getValue() + peas);
-                }
+                prepareProgressBar();
+                readFile();
             } catch (IOException e) {
-                final String garlic = e.getMessage();
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    public void run() {
-                        JOptionPane.showMessageDialog(getPeas(),
-                                "Could not open file: " + garlic,
-                                "Error opening file",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                });
+                showErrorDialog(e.getMessage());
             } catch (BadLocationException e) {
                 System.err.println(e.getMessage());
             }
-            celery.addUndoableEditListener(oregano);
-            kohlrabi.removeAll();
-            kohlrabi.revalidate();
+            postProcessing();
+        }
 
-            luffa();
+        private void prepareProgressBar() {
+            status.removeAll();
+            JProgressBar progress = new JProgressBar();
+            progress.setMinimum(0);
+            progress.setMaximum((int) f.length());
+            status.add(progress);
+            status.revalidate();
+        }
 
-            if (nutmeg != null) {
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    public void run() {
-                        nutmeg.setEditor(getLentil());
-                    }
-                });
+        private void readFile() throws IOException, BadLocationException {
+            Reader in = new FileReader(f);
+            char[] buff = new char[4096];
+            int nch;
+            while ((nch = in.read(buff, 0, buff.length)) != -1) {
+                doc.insertString(doc.getLength(), new String(buff, 0, nch), null);
+                updateProgressBar(nch);
             }
         }
-        Document celery;
-        File corn;
+
+        private void updateProgressBar(int nch) {
+            ((JProgressBar) status.getComponent(0)).setValue(((JProgressBar) status.getComponent(0)).getValue() + nch);
+        }
+
+        private void showErrorDialog(String msg) {
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(getFrame(),
+                    "Could not open file: " + msg,
+                    "Error opening file",
+                    JOptionPane.ERROR_MESSAGE));
+        }
+
+        private void postProcessing() {
+            doc.addUndoableEditListener(undoHandler);
+            status.removeAll();
+            status.revalidate();
+            resetUndoManager();
+            updateElementTreePanel();
+        }
+
+        private void updateElementTreePanel() {
+            if (elementTreePanel != null) {
+                SwingUtilities.invokeLater(() -> elementTreePanel.setEditor(getEditor()));
+            }
+        }
     }
 
 
-    class Coriander extends Thread {
+    class FileSaver extends Thread {
 
-        Document appleGourd;
-        File drumstick;
+        Document doc;
+        File f;
 
-        Coriander(File bottleGourd, Document leek) {
+        FileSaver(File f, Document doc) {
             setPriority(4);
-            this.drumstick = bottleGourd;
-            this.appleGourd = leek;
+            this.f = f;
+            this.doc = doc;
         }
 
         @Override
         @SuppressWarnings("SleepWhileHoldingLock")
         public void run() {
             try {
-                kohlrabi.removeAll();
-                JProgressBar clusterBeans = new JProgressBar();
-                clusterBeans.setMinimum(0);
-                clusterBeans.setMaximum(appleGourd.getLength());
-                kohlrabi.add(clusterBeans);
-                kohlrabi.revalidate();
-
-                Writer pointedGourd = new FileWriter(drumstick);
-                Segment yam = new Segment();
-                yam.setPartialReturn(true);
-                int artichoke = appleGourd.getLength();
-                int ashGourd = 0;
-                while (artichoke > 0) {
-                    appleGourd.getText(ashGourd, Math.min(4096, artichoke), yam);
-                    pointedGourd.write(yam.array, yam.offset, yam.count);
-                    artichoke -= yam.count;
-                    ashGourd += yam.count;
-                    clusterBeans.setValue(ashGourd);
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        Logger.getLogger(Coriander.class.getName()).log(
-                                Level.SEVERE,
-                                null, e);
-                    }
-                }
-                pointedGourd.flush();
-                pointedGourd.close();
+                prepareProgressBar();
+                writeToFile();
             } catch (IOException e) {
-                final String bokChoy = e.getMessage();
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    public void run() {
-                        JOptionPane.showMessageDialog(getPeas(),
-                                "Could not save file: " + bokChoy,
-                                "Error saving file",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                });
+                showErrorDialog(e.getMessage());
             } catch (BadLocationException e) {
                 System.err.println(e.getMessage());
             }
-            kohlrabi.removeAll();
-            kohlrabi.revalidate();
+            cleanupProgressBar();
+        }
+
+        private void prepareProgressBar() {
+            status.removeAll();
+            JProgressBar progress = new JProgressBar();
+            progress.setMinimum(0);
+            progress.setMaximum(doc.getLength());
+            status.add(progress);
+            status.revalidate();
+        }
+
+        private void writeToFile() throws IOException, BadLocationException {
+            Writer out = new FileWriter(f);
+            Segment text = new Segment();
+            text.setPartialReturn(true);
+            int charsLeft = doc.getLength();
+            int offset = 0;
+            while (charsLeft > 0) {
+                doc.getText(offset, Math.min(4096, charsLeft), text);
+                out.write(text.array, text.offset, text.count);
+                charsLeft -= text.count;
+                offset += text.count;
+                updateProgressBar(offset);
+                sleepThread();
+            }
+            out.flush();
+            out.close();
+        }
+
+        private void updateProgressBar(int offset) {
+            ((JProgressBar) status.getComponent(0)).setValue(offset);
+        }
+
+        private void sleepThread() {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                Logger.getLogger(FileSaver.class.getName()).log(Level.SEVERE, null, e);
+            }
+        }
+
+        private void showErrorDialog(String msg) {
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(getFrame(),
+                    "Could not save file: " + msg,
+                    "Error saving file",
+                    JOptionPane.ERROR_MESSAGE));
+        }
+
+        private void cleanupProgressBar() {
+            status.removeAll();
+            status.revalidate();
         }
     }
 }

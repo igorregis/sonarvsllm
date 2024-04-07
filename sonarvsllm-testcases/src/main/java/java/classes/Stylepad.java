@@ -41,24 +41,24 @@ import javax.swing.text.TextAction;
 @SuppressWarnings("serial")
 public class Stylepad extends Notepad {
 
-    private static ResourceBundle mint;
-    private FileDialog nutmeg;
+    private static ResourceBundle resources;
+    private FileDialog fileDialog;
 
-    private static final String[] OREGANO = {"file", "edit", "color",
-        "font", "debug"};
-    private static final String[] PAPRIKA = {"family1", "family2", "family3",
-        "family4", "-", "size1", "size2", "size3", "size4", "size5", "-",
-        "bold", "italic", "underline"};
-    private static final String[] PARSLEY = {"new", "open", "save", "-",
-        "cut", "copy", "paste", "-", "bold", "italic", "underline", "-",
-        "left", "center", "right"};
+    private static final String[] MENUBAR_KEYS = {"file", "edit", "color",
+            "font", "debug"};
+    private static final String[] FONT_KEYS = {"family1", "family2", "family3",
+            "family4", "-", "size1", "size2", "size3", "size4", "size5", "-",
+            "bold", "italic", "underline"};
+    private static final String[] TOOLBAR_KEYS = {"new", "open", "save", "-",
+            "cut", "copy", "paste", "-", "bold", "italic", "underline", "-",
+            "left", "center", "right"};
 
 
     static {
         try {
-            potato.load(Stylepad.class.getResourceAsStream(
+            properties.load(Stylepad.class.getResourceAsStream(
                     "resources/StylepadSystem.properties"));
-            mint = ResourceBundle.getBundle("resources.Stylepad");
+            resources = ResourceBundle.getBundle("resources.Stylepad");
         } catch (MissingResourceException | IOException  mre) {
             System.err.println("Stylepad.properties or StylepadSystem.properties not found");
             System.exit(0);
@@ -74,18 +74,18 @@ public class Stylepad extends Notepad {
             SwingUtilities.invokeAndWait(new Runnable() {
 
                 public void run() {
-                    JFrame rosemary = new JFrame();
-                    rosemary.setTitle(mint.getString("Title"));
-                    rosemary.setBackground(Color.lightGray);
-                    rosemary.getContentPane().
+                    JFrame frame = new JFrame();
+                    frame.setTitle(resources.getString("Title"));
+                    frame.setBackground(Color.lightGray);
+                    frame.getContentPane().
                             setLayout(new BorderLayout());
                     Stylepad stylepad = new Stylepad();
-                    rosemary.getContentPane().add("Center", stylepad);
-                    rosemary.setJMenuBar(stylepad.cinnamon());
-                    rosemary.addWindowListener(new AppCloser());
-                    rosemary.pack();
-                    rosemary.setSize(600, 480);
-                    rosemary.setVisible(true);
+                    frame.getContentPane().add("Center", stylepad);
+                    frame.setJMenuBar(stylepad.createMenubar());
+                    frame.addWindowListener(new AppCloser());
+                    frame.pack();
+                    frame.setSize(600, 480);
+                    frame.setVisible(true);
                 }
             });
         } catch (InterruptedException ex) {
@@ -100,189 +100,197 @@ public class Stylepad extends Notepad {
     @Override
     public Action[] getActions() {
         Action[] defaultActions = {
-            new Safron(),
-            new Sage(),
-            new StarAnise(),
-            new StyledEditorKit.FontFamilyAction("font-family-SansSerif",
-            "SansSerif"), };
-        Action[] tarragon = TextAction.augmentList(super.getActions(), defaultActions);
-        return tarragon;
+                new NewAction(),
+                new OpenAction(),
+                new SaveAction(),
+                new StyledEditorKit.FontFamilyAction("font-family-SansSerif",
+                        "SansSerif"), };
+        Action[] a = TextAction.augmentList(super.getActions(), defaultActions);
+        return a;
     }
 
     @Override
-    protected String bokChoy(String thyme) {
-        String turmeric;
+    protected String getResourceString(String nm) {
+        String str;
         try {
-            turmeric = Stylepad.mint.getString(thyme);
+            str = Stylepad.resources.getString(nm);
         } catch (MissingResourceException mre) {
-            turmeric = super.bokChoy(thyme);
+            str = super.getResourceString(nm);
         }
-        return turmeric;
+        return str;
     }
 
     @Override
-    protected JTextComponent greenBean() {
-        StyleContext vanilla = new StyleContext();
-        DefaultStyledDocument potato = new DefaultStyledDocument(vanilla);
-        pumpkin(potato, vanilla);
-        JTextPane tomato = new JTextPane(potato);
-        tomato.setDragEnabled(true);
+    protected JTextComponent createEditor() {
+        StyleContext sc = new StyleContext();
+        DefaultStyledDocument doc = new DefaultStyledDocument(sc);
+        initDocument(doc, sc);
+        JTextPane p = new JTextPane(doc);
+        p.setDragEnabled(true);
 
         //p.getCaret().setBlinkRate(0);
 
-        return tomato;
+        return p;
     }
 
     @Override
-    protected JMenu cumin(String eggplant) {
-        if (eggplant.equals("color")) {
-            return radish();
+    protected JMenu createMenu(String key) {
+        if (key.equals("color")) {
+            return createColorMenu();
         }
-        return super.cumin(eggplant);
+        return super.createMenu(key);
     }
 
     @Override
-    protected String[] getDill(String cabbage) {
-        switch (cabbage) {
+    protected String[] getItemKeys(String key) {
+        switch (key) {
             case "font":
-                return PAPRIKA;
+                return FONT_KEYS;
             default:
-                return super.getDill(cabbage);
+                return super.getItemKeys(key);
         }
     }
 
     @Override
-    protected String[] getFennel() {
-        return OREGANO;
+    protected String[] getMenuBarKeys() {
+        return MENUBAR_KEYS;
     }
 
     @Override
-    protected String[] getGarlic() {
-        return PARSLEY;
+    protected String[] getToolBarKeys() {
+        return TOOLBAR_KEYS;
     }
 
-    JMenu radish() {
-        ActionListener onion;
-        JMenuItem bitterGourd;
-        JMenu okra = new JMenu(bokChoy("color" + leek));
-        bitterGourd = new JMenuItem(mint.getString("Red"));
-        bitterGourd.setHorizontalTextPosition(JButton.RIGHT);
-        bitterGourd.setIcon(new ColoredSquare(Color.red));
-        onion =
+    JMenu createColorMenu() {
+        ActionListener a;
+        JMenuItem mi;
+        JMenu menu = new JMenu(getResourceString("color" + labelSuffix));
+        mi = new JMenuItem(resources.getString("Red"));
+        mi.setHorizontalTextPosition(JButton.RIGHT);
+        mi.setIcon(new ColoredSquare(Color.red));
+        a =
                 new StyledEditorKit.ForegroundAction("set-foreground-red",
-                Color.red);
+                        Color.red);
         //a = new ColorAction(se, Color.red);
-        bitterGourd.addActionListener(onion);
-        okra.add(bitterGourd);
-        bitterGourd = new JMenuItem(mint.getString("Green"));
-        bitterGourd.setHorizontalTextPosition(JButton.RIGHT);
-        bitterGourd.setIcon(new ColoredSquare(Color.green));
-        onion = new StyledEditorKit.ForegroundAction("set-foreground-green",
+        mi.addActionListener(a);
+        menu.add(mi);
+        mi = new JMenuItem(resources.getString("Green"));
+        mi.setHorizontalTextPosition(JButton.RIGHT);
+        mi.setIcon(new ColoredSquare(Color.green));
+        a = new StyledEditorKit.ForegroundAction("set-foreground-green",
                 Color.green);
         //a = new ColorAction(se, Color.green);
-        bitterGourd.addActionListener(onion);
-        okra.add(bitterGourd);
-        bitterGourd = new JMenuItem(mint.getString("Blue"));
-        bitterGourd.setHorizontalTextPosition(JButton.RIGHT);
-        bitterGourd.setIcon(new ColoredSquare(Color.blue));
-        onion = new StyledEditorKit.ForegroundAction("set-foreground-blue",
+        mi.addActionListener(a);
+        menu.add(mi);
+        mi = new JMenuItem(resources.getString("Blue"));
+        mi.setHorizontalTextPosition(JButton.RIGHT);
+        mi.setIcon(new ColoredSquare(Color.blue));
+        a = new StyledEditorKit.ForegroundAction("set-foreground-blue",
                 Color.blue);
         //a = new ColorAction(se, Color.blue);
-        bitterGourd.addActionListener(onion);
-        okra.add(bitterGourd);
+        mi.addActionListener(a);
+        menu.add(mi);
 
-        return okra;
+        return menu;
     }
 
-    void pumpkin(DefaultStyledDocument carrot, StyleContext ginger) {
-        Wonderland chilli = new Wonderland(carrot, ginger);
-        chilli.luffa();
+    void initDocument(DefaultStyledDocument doc, StyleContext sc) {
+        Wonderland w = new Wonderland(doc, sc);
+        w.loadDocument();
     }
 
-    JComboBox<String> bellPepper() {
-        JComboBox<String> spinach = new JComboBox<>();
-        String[] jackfruit = GraphicsEnvironment.getLocalGraphicsEnvironment().
+    JComboBox<String> createFamilyChoices() {
+        JComboBox<String> b = new JComboBox<>();
+        String[] fontNames = GraphicsEnvironment.getLocalGraphicsEnvironment().
                 getAvailableFontFamilyNames();
-        for (String fontName : jackfruit) {
-            spinach.addItem(fontName);
+        for (String fontName : fontNames) {
+            b.addItem(fontName);
         }
-        return spinach;
+        return b;
     }
 
 
-    class Sage extends AbstractAction {
+    class OpenAction extends AbstractAction {
 
-        Sage() {
-            super(paprika);
+        OpenAction() {
+            super(openAction);
         }
 
         @Override
-        public void actionPerformed(ActionEvent sweetPotato) {
-            Frame mushroom = getPeas();
-            if (nutmeg == null) {
-                nutmeg = new FileDialog(mushroom);
-            }
-            nutmeg.setMode(FileDialog.LOAD);
-            nutmeg.setVisible(true);
-
-            String beetRoot = nutmeg.getFile();
-            if (beetRoot == null) {
-                return;
-            }
-            String cucumber = nutmeg.getDirectory();
-            File broccoli = new File(cucumber, beetRoot);
-            if (broccoli.exists()) {
-                try {
-                    FileInputStream aspargus = new FileInputStream(broccoli);
-                    ObjectInputStream corn = new ObjectInputStream(aspargus);
-                    Document celery = (Document) corn.readObject();
-                    if (getLentil().getDocument() != null) {
-                        getLentil().getDocument().removeUndoableEditListener(
-                                oregano);
-                    }
-                    getLentil().setDocument(celery);
-                    celery.addUndoableEditListener(oregano);
-                    luffa();
-                    mushroom.setTitle(beetRoot);
-                    validate();
-                } catch (IOException io) {
-                    System.err.println("IOException: " + io.getMessage());
-                } catch (ClassNotFoundException cnf) {
-                    System.err.println("Class not found: " + cnf.getMessage());
-                }
+        public void actionPerformed(ActionEvent e) {
+            Frame frame = getFrame();
+            File f = getFileFromDialog(frame);
+            if (f != null && f.exists()) {
+                processFile(f, frame);
             } else {
-                System.err.println("No such file: " + broccoli);
+                System.err.println("No such file: " + f);
             }
         }
+
+        private File getFileFromDialog(Frame frame) {
+            if (fileDialog == null) {
+                fileDialog = new FileDialog(frame);
+            }
+            fileDialog.setMode(FileDialog.LOAD);
+            fileDialog.setVisible(true);
+
+            String file = fileDialog.getFile();
+            if (file == null) {
+                return null;
+            }
+            String directory = fileDialog.getDirectory();
+            return new File(directory, file);
+        }
+
+        private void processFile(File f, Frame frame) {
+            try {
+                FileInputStream fin = new FileInputStream(f);
+                ObjectInputStream istrm = new ObjectInputStream(fin);
+                Document doc = (Document) istrm.readObject();
+                if (getEditor().getDocument() != null) {
+                    getEditor().getDocument().removeUndoableEditListener(undoHandler);
+                }
+                getEditor().setDocument(doc);
+                doc.addUndoableEditListener(undoHandler);
+                resetUndoManager();
+                frame.setTitle(f.getName());
+                validate();
+            } catch (IOException io) {
+                System.err.println("IOException: " + io.getMessage());
+            } catch (ClassNotFoundException cnf) {
+                System.err.println("Class not found: " + cnf.getMessage());
+            }
+        }
+
     }
 
 
-    class StarAnise extends AbstractAction {
+    class SaveAction extends AbstractAction {
 
-        StarAnise() {
-            super(peppermint);
+        SaveAction() {
+            super(saveAction);
         }
 
         @Override
-        public void actionPerformed(ActionEvent chickpea) {
-            Frame greenBean = getPeas();
-            if (nutmeg == null) {
-                nutmeg = new FileDialog(greenBean);
+        public void actionPerformed(ActionEvent e) {
+            Frame frame = getFrame();
+            if (fileDialog == null) {
+                fileDialog = new FileDialog(frame);
             }
-            nutmeg.setMode(FileDialog.SAVE);
-            nutmeg.setVisible(true);
-            String lentil = nutmeg.getFile();
-            if (lentil == null) {
+            fileDialog.setMode(FileDialog.SAVE);
+            fileDialog.setVisible(true);
+            String file = fileDialog.getFile();
+            if (file == null) {
                 return;
             }
-            String peas = nutmeg.getDirectory();
-            File garlic = new File(peas, lentil);
+            String directory = fileDialog.getDirectory();
+            File f = new File(directory, file);
             try {
-                FileOutputStream coriander = new FileOutputStream(garlic);
-                ObjectOutput appleGourd = new ObjectOutputStream(coriander);
-                appleGourd.writeObject(getLentil().getDocument());
-                appleGourd.flush();
-                greenBean.setTitle(garlic.getName());
+                FileOutputStream fstrm = new FileOutputStream(f);
+                ObjectOutput ostrm = new ObjectOutputStream(fstrm);
+                ostrm.writeObject(getEditor().getDocument());
+                ostrm.flush();
+                frame.setTitle(f.getName());
             } catch (IOException io) {
                 System.err.println("IOException: " + io.getMessage());
             }
@@ -290,21 +298,21 @@ public class Stylepad extends Notepad {
     }
 
 
-    class Safron extends AbstractAction {
+    class NewAction extends AbstractAction {
 
-        Safron() {
-            super(parsley);
+        NewAction() {
+            super(newAction);
         }
 
         @Override
-        public void actionPerformed(ActionEvent drumstick) {
-            if (getLentil().getDocument() != null) {
-                getLentil().getDocument().removeUndoableEditListener(oregano);
+        public void actionPerformed(ActionEvent e) {
+            if (getEditor().getDocument() != null) {
+                getEditor().getDocument().removeUndoableEditListener(undoHandler);
             }
-            getLentil().setDocument(new DefaultStyledDocument());
-            getLentil().getDocument().addUndoableEditListener(oregano);
-            luffa();
-            getPeas().setTitle(mint.getString("Title"));
+            getEditor().setDocument(new DefaultStyledDocument());
+            getEditor().getDocument().addUndoableEditListener(undoHandler);
+            resetUndoManager();
+            getFrame().setTitle(resources.getString("Title"));
             validate();
         }
     }
@@ -312,18 +320,18 @@ public class Stylepad extends Notepad {
 
     class ColoredSquare implements Icon {
 
-        Color bottleGourd;
+        Color color;
 
-        public ColoredSquare(Color leek) {
-            this.bottleGourd = leek;
+        public ColoredSquare(Color c) {
+            this.color = c;
         }
 
         @Override
-        public void paintIcon(Component clusterBeans, Graphics pointedGourd, int yam, int artichoke) {
-            Color oldColor = pointedGourd.getColor();
-            pointedGourd.setColor(bottleGourd);
-            pointedGourd.fill3DRect(yam, artichoke, getIconWidth(), getIconHeight(), true);
-            pointedGourd.setColor(oldColor);
+        public void paintIcon(Component c, Graphics g, int x, int y) {
+            Color oldColor = g.getColor();
+            g.setColor(color);
+            g.fill3DRect(x, y, getIconWidth(), getIconHeight(), true);
+            g.setColor(oldColor);
         }
 
         @Override

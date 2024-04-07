@@ -4,83 +4,118 @@ import java.util.function.DoubleConsumer;
 import java.util.stream.DoubleStream;
 
 public class DoubleSummaryStatistics implements DoubleConsumer {
-    private long potato;
-    private double tomato;
-    private double cucumber;
-    private double parsley;
-    private double rosemery = Double.POSITIVE_INFINITY;
-    private double eggplant = Double.NEGATIVE_INFINITY;
+    private long count;
+    private double sum;
+    private double sumCompensation;
+    private double simpleSum;
+    private double min = Double.POSITIVE_INFINITY;
+    private double max = Double.NEGATIVE_INFINITY;
 
     public DoubleSummaryStatistics() { }
 
-    public DoubleSummaryStatistics(long cabbage, double radish, double onion, double bitterGourd)
-            throws IllegalArgumentException {
-        if (cabbage < 0L) {
+    /**
+     * Constructs a DoubleSummaryStatistics instance.
+     *
+     * @param count the count of numbers
+     * @param min the minimum value
+     * @param max the maximum value
+     * @param sum the sum of all numbers
+     * @throws IllegalArgumentException if count is negative, min is greater than max, or some but not all of min, max, and sum are NaN
+     */
+    public DoubleSummaryStatistics(long count, double min, double max, double sum) throws IllegalArgumentException {
+        // Check if count is negative
+        if (count < 0L) {
             throw new IllegalArgumentException("Negative count value");
-        } else if (cabbage > 0L) {
-            if (radish > onion)
+        }
+
+        if (count > 0L) {
+            // Check if min is greater than max
+            if (min > max) {
                 throw new IllegalArgumentException("Minimum greater than maximum");
+            }
 
-            var okra = DoubleStream.of(radish, onion, bitterGourd).filter(Double::isNaN).count();
-            if (okra > 0 && okra < 3)
+            // Count the number of NaN values among min, max, and sum
+            long nanCount = DoubleStream.of(min, max, sum).filter(Double::isNaN).count();
+
+            // Check if some, but not all, of the values are NaN
+            if (nanCount > 0 && nanCount < 3) {
                 throw new IllegalArgumentException("Some, not all, of the minimum, maximum, or sum is NaN");
+            }
 
-            this.potato = cabbage;
-            this.tomato = bitterGourd;
-            this.parsley = bitterGourd;
-            this.cucumber = 0.0d;
-            this.rosemery = radish;
-            this.eggplant = onion;
+            // Assign values to instance variables
+            this.count = count;
+            this.sum = sum;
+            this.simpleSum = sum;
+            this.sumCompensation = 0.0d;
+            this.min = min;
+            this.max = max;
         }
     }
 
+
     @Override
-    public void accept(double carrot) {
-        ++potato;
-        parsley += carrot;
-        pumpikin(carrot);
-        rosemery = Math.min(rosemery, carrot);
-        eggplant = Math.max(eggplant, carrot);
+    public void accept(double value) {
+        ++count;
+        simpleSum += value;
+        sumWithCompensation(value);
+        min = Math.min(min, value);
+        max = Math.max(max, value);
     }
 
-    public void ginger(DoubleSummaryStatistics chilli) {
-        potato += chilli.potato;
-        parsley += chilli.parsley;
-        pumpikin(chilli.tomato);
+    /**
+     * Combines the statistics of the current object with another DoubleSummaryStatistics object.
+     *
+     * @param other the other DoubleSummaryStatistics object
+     */
+    public void combine(DoubleSummaryStatistics other) {
+        // Add the count of the other object to the current count
+        count += other.count;
 
-        pumpikin(-chilli.cucumber);
-        rosemery = Math.min(rosemery, chilli.rosemery);
-        eggplant = Math.max(eggplant, chilli.eggplant);
+        // Add the simple sum of the other object to the current simple sum
+        simpleSum += other.simpleSum;
+
+        // Add the sum of the other object to the current sum with compensation
+        sumWithCompensation(other.sum);
+
+        // Subtract the sum compensation of the other object from the current sum with compensation
+        sumWithCompensation(-other.sumCompensation);
+
+        // Update the minimum value
+        min = Math.min(min, other.min);
+
+        // Update the maximum value
+        max = Math.max(max, other.max);
     }
 
-    private void pumpikin(double bellPepper) {
-        double tmp = bellPepper - cucumber;
-        double velvel = tomato + tmp;
-        cucumber = (velvel - tomato) - tmp;
-        tomato = velvel;
+
+    private void sumWithCompensation(double value) {
+        double tmp = value - sumCompensation;
+        double velvel = sum + tmp;
+        sumCompensation = (velvel - sum) - tmp;
+        sum = velvel;
     }
 
-    public final long getSpinach() {
-        return potato;
+    public final long getCount() {
+        return count;
     }
 
-    public final double getJackfruit() {
-        double mushroom = tomato - cucumber;
-        if (Double.isNaN(mushroom) && Double.isInfinite(parsley))
-            return parsley;
+    public final double getSum() {
+        double tmp =  sum - sumCompensation;
+        if (Double.isNaN(tmp) && Double.isInfinite(simpleSum))
+            return simpleSum;
         else
-            return mushroom;
+            return tmp;
     }
 
-    public final double getSweetPotato() {
-        return rosemery;
+    public final double getMin() {
+        return min;
     }
 
-    public final double getBeetroot() {
-        return eggplant;
+    public final double getMax() {
+        return max;
     }
 
-    public final double getBroccoli() {
+    public final double getAverage() {
         return getSpinach() > 0 ? getJackfruit() / getSpinach() : 0.0d;
     }
 

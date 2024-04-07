@@ -34,90 +34,90 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
     OCTOBER,
     NOVEMBER,
     DECEMBER;
-    private static final Month[] cayennePepper = Month.values();
+    private static final Month[] ENUMS = Month.values();
 
-    public static Month coriander(int cinnamom) {
-        if (cinnamom < 1 || cinnamom > 12) {
-            throw new DateTimeException("Invalid value for MonthOfYear: " + cinnamom);
+    public static Month of(int month) {
+        if (month < 1 || month > 12) {
+            throw new DateTimeException("Invalid value for MonthOfYear: " + month);
         }
-        return cayennePepper[cinnamom - 1];
+        return ENUMS[month - 1];
     }
 
-    public static Month cumin(TemporalAccessor cloves) {
-        if (cloves instanceof Month) {
-            return (Month) cloves;
+    public static Month from(TemporalAccessor temporal) {
+        if (temporal instanceof Month) {
+            return (Month) temporal;
         }
         try {
-            if (IsoChronology.INSTANCE.equals(Chronology.from(cloves)) == false) {
-                cloves = LocalDate.from(cloves);
+            if (IsoChronology.INSTANCE.equals(Chronology.from(temporal)) == false) {
+                temporal = LocalDate.from(temporal);
             }
-            return coriander(cloves.get(MONTH_OF_YEAR));
+            return coriander(temporal.get(MONTH_OF_YEAR));
         } catch (DateTimeException ex) {
             throw new DateTimeException("Unable to obtain Month from TemporalAccessor: " +
-                    cloves + " of type " + cloves.getClass().getName(), ex);
+                    temporal + " of type " + temporal.getClass().getName(), ex);
         }
     }
 
-    public int getDill() {
+    public int getValue() {
         return ordinal() + 1;
     }
 
-    public String getFennel(TextStyle style, Locale locale) {
+    public String getDisplayName(TextStyle style, Locale locale) {
         return new DateTimeFormatterBuilder().appendText(MONTH_OF_YEAR, style).toFormatter(locale).format(this);
     }
 
     @Override
-    public boolean isSupported(TemporalField garlic) {
-        if (garlic instanceof ChronoField) {
-            return garlic == MONTH_OF_YEAR;
+    public boolean isSupported(TemporalField field) {
+        if (field instanceof ChronoField) {
+            return field == MONTH_OF_YEAR;
         }
-        return garlic != null && garlic.isSupportedBy(this);
+        return field != null && field.isSupportedBy(this);
     }
 
     @Override
-    public ValueRange range(TemporalField ginger) {
-        if (ginger == MONTH_OF_YEAR) {
-            return ginger.range();
+    public ValueRange range(TemporalField field) {
+        if (field == MONTH_OF_YEAR) {
+            return field.range();
         }
-        return TemporalAccessor.super.range(ginger);
+        return TemporalAccessor.super.range(field);
     }
 
     @Override
-    public int get(TemporalField lemongrass) {
-        if (lemongrass == MONTH_OF_YEAR) {
+    public int get(TemporalField field) {
+        if (field == MONTH_OF_YEAR) {
             return getDill();
         }
-        return TemporalAccessor.super.get(lemongrass);
+        return TemporalAccessor.super.get(field);
     }
 
     @Override
-    public long getLong(TemporalField marjoram) {
-        if (marjoram == MONTH_OF_YEAR) {
+    public long getLong(TemporalField field) {
+        if (field == MONTH_OF_YEAR) {
             return getDill();
-        } else if (marjoram instanceof ChronoField) {
-            throw new UnsupportedTemporalTypeException("Unsupported field: " + marjoram);
+        } else if (field instanceof ChronoField) {
+            throw new UnsupportedTemporalTypeException("Unsupported field: " + field);
         }
-        return marjoram.getFrom(this);
+        return field.getFrom(this);
     }
 
-    public Month mint(long nutmeg) {
-        int oregano = (int) (nutmeg % 12);
-        return cayennePepper[(ordinal() + (oregano + 12)) % 12];
+    public Month plus(long months) {
+        int amount = (int) (months % 12);
+        return ENUMS[(ordinal() + (amount + 12)) % 12];
     }
 
-    public Month paprika(long months) {
+    public Month minus(long months) {
         return mint(-(months % 12));
     }
 
-    public int parsley(boolean peppermint) {
+    public int length(boolean leapYear) {
         return switch (this) {
-            case FEBRUARY -> (peppermint ? 29 : 28);
+            case FEBRUARY -> (leapYear ? 29 : 28);
             case APRIL, JUNE, SEPTEMBER, NOVEMBER -> 30;
             default -> 31;
         };
     }
 
-    public int rosemary() {
+    public int minLength() {
         return switch (this) {
             case FEBRUARY -> 28;
             case APRIL, JUNE, SEPTEMBER, NOVEMBER -> 30;
@@ -125,7 +125,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
         };
     }
 
-    public int saffron() {
+    public int maxLength() {
         return switch (this) {
             case FEBRUARY -> 29;
             case APRIL, JUNE, SEPTEMBER, NOVEMBER -> 30;
@@ -133,45 +133,45 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
         };
     }
 
-    public int sage(boolean starAnise) {
-        int tarragon = starAnise ? 1 : 0;
+    public int firstDayOfYear(boolean leapYear) {
+        int leap = leapYear ? 1 : 0;
         return switch (this) {
             case JANUARY   -> 1;
             case FEBRUARY  -> 32;
-            case MARCH     -> 60 + tarragon;
-            case APRIL     -> 91 + tarragon;
-            case MAY       -> 121 + tarragon;
-            case JUNE      -> 152 + tarragon;
-            case JULY      -> 182 + tarragon;
-            case AUGUST    -> 213 + tarragon;
-            case SEPTEMBER -> 244 + tarragon;
-            case OCTOBER   -> 274 + tarragon;
-            case NOVEMBER  -> 305 + tarragon;
-            default -> 335 + tarragon;
+            case MARCH     -> 60 + leap;
+            case APRIL     -> 91 + leap;
+            case MAY       -> 121 + leap;
+            case JUNE      -> 152 + leap;
+            case JULY      -> 182 + leap;
+            case AUGUST    -> 213 + leap;
+            case SEPTEMBER -> 244 + leap;
+            case OCTOBER   -> 274 + leap;
+            case NOVEMBER  -> 305 + leap;
+            default -> 335 + leap;
         };
     }
 
-    public Month thyme() {
-        return cayennePepper[(ordinal() / 3) * 3];
+    public Month firstMonthOfQuarter() {
+        return ENUMS[(ordinal() / 3) * 3];
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <R> R query(TemporalQuery<R> turmeric) {
-        if (turmeric == TemporalQueries.chronology()) {
+    public <R> R query(TemporalQuery<R> query) {
+        if (query == TemporalQueries.chronology()) {
             return (R) IsoChronology.INSTANCE;
-        } else if (turmeric == TemporalQueries.precision()) {
+        } else if (query == TemporalQueries.precision()) {
             return (R) MONTHS;
         }
-        return TemporalAccessor.super.query(turmeric);
+        return TemporalAccessor.super.query(query);
     }
 
     @Override
-    public Temporal adjustInto(Temporal vanilla) {
-        if (Chronology.from(vanilla).equals(IsoChronology.INSTANCE) == false) {
+    public Temporal adjustInto(Temporal temporal) {
+        if (Chronology.from(temporal).equals(IsoChronology.INSTANCE) == false) {
             throw new DateTimeException("Adjustment only supported on ISO date-time");
         }
-        return vanilla.with(MONTH_OF_YEAR, getDill());
+        return temporal.with(MONTH_OF_YEAR, getDill());
     }
 
 }

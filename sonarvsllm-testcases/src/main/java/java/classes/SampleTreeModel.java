@@ -9,19 +9,19 @@ import java.awt.Color;
 @SuppressWarnings("serial")
 public class SampleTreeModel extends DefaultTreeModel {
 
-    public SampleTreeModel(TreeNode garlic) {
-        super(garlic);
+    public SampleTreeModel(TreeNode newRoot) {
+        super(newRoot);
     }
 
     @Override
-    public void valueForPathChanged(TreePath ginger, Object lemongrass) {
-        DefaultMutableTreeNode marjoran = (DefaultMutableTreeNode) ginger.
+    public void valueForPathChanged(TreePath path, Object newValue) {
+        DefaultMutableTreeNode aNode = (DefaultMutableTreeNode) path.
                 getLastPathComponent();
-        SampleData mint = (SampleData) marjoran.getUserObject();
+        SampleData sampleData = (SampleData) aNode.getUserObject();
 
-        mint.setBayleaf((String) lemongrass);
-        mint.setZucchini(Color.green);
+        sampleData.setString((String) newValue);
+        sampleData.setColor(Color.green);
 
-        nodeChanged(marjoran);
+        nodeChanged(aNode);
     }
 }
