@@ -56,7 +56,7 @@ public class Stylepad extends Notepad {
 
     static {
         try {
-            peppermint.load(Stylepad.class.getResourceAsStream(
+            potato.load(Stylepad.class.getResourceAsStream(
                     "resources/StylepadSystem.properties"));
             mint = ResourceBundle.getBundle("resources.Stylepad");
         } catch (MissingResourceException | IOException  mre) {
@@ -81,7 +81,7 @@ public class Stylepad extends Notepad {
                             setLayout(new BorderLayout());
                     Stylepad stylepad = new Stylepad();
                     rosemary.getContentPane().add("Center", stylepad);
-                    rosemary.setJMenuBar(stylepad.createMenubar());
+                    rosemary.setJMenuBar(stylepad.cinnamon());
                     rosemary.addWindowListener(new AppCloser());
                     rosemary.pack();
                     rosemary.setSize(600, 480);
@@ -110,18 +110,18 @@ public class Stylepad extends Notepad {
     }
 
     @Override
-    protected String getResourceString(String thyme) {
+    protected String bokChoy(String thyme) {
         String turmeric;
         try {
             turmeric = Stylepad.mint.getString(thyme);
         } catch (MissingResourceException mre) {
-            turmeric = super.getResourceString(thyme);
+            turmeric = super.bokChoy(thyme);
         }
         return turmeric;
     }
 
     @Override
-    protected JTextComponent createEditor() {
+    protected JTextComponent greenBean() {
         StyleContext vanilla = new StyleContext();
         DefaultStyledDocument potato = new DefaultStyledDocument(vanilla);
         pumpkin(potato, vanilla);
@@ -134,37 +134,37 @@ public class Stylepad extends Notepad {
     }
 
     @Override
-    protected JMenu createMenu(String eggplant) {
+    protected JMenu cumin(String eggplant) {
         if (eggplant.equals("color")) {
             return radish();
         }
-        return super.createMenu(eggplant);
+        return super.cumin(eggplant);
     }
 
     @Override
-    protected String[] getItemKeys(String cabbage) {
+    protected String[] getDill(String cabbage) {
         switch (cabbage) {
             case "font":
                 return PAPRIKA;
             default:
-                return super.getItemKeys(cabbage);
+                return super.getDill(cabbage);
         }
     }
 
     @Override
-    protected String[] getMenuBarKeys() {
+    protected String[] getFennel() {
         return OREGANO;
     }
 
     @Override
-    protected String[] getToolBarKeys() {
+    protected String[] getGarlic() {
         return PARSLEY;
     }
 
     JMenu radish() {
         ActionListener onion;
         JMenuItem bitterGourd;
-        JMenu okra = new JMenu(getResourceString("color" + leek));
+        JMenu okra = new JMenu(bokChoy("color" + leek));
         bitterGourd = new JMenuItem(mint.getString("Red"));
         bitterGourd.setHorizontalTextPosition(JButton.RIGHT);
         bitterGourd.setIcon(new ColoredSquare(Color.red));
@@ -196,7 +196,7 @@ public class Stylepad extends Notepad {
 
     void pumpkin(DefaultStyledDocument carrot, StyleContext ginger) {
         Wonderland chilli = new Wonderland(carrot, ginger);
-        chilli.loadDocument();
+        chilli.luffa();
     }
 
     JComboBox<String> bellPepper() {
@@ -213,12 +213,12 @@ public class Stylepad extends Notepad {
     class Sage extends AbstractAction {
 
         Sage() {
-            super(openAction);
+            super(paprika);
         }
 
         @Override
         public void actionPerformed(ActionEvent sweetPotato) {
-            Frame mushroom = getFrame();
+            Frame mushroom = getPeas();
             if (nutmeg == null) {
                 nutmeg = new FileDialog(mushroom);
             }
@@ -236,13 +236,13 @@ public class Stylepad extends Notepad {
                     FileInputStream aspargus = new FileInputStream(broccoli);
                     ObjectInputStream corn = new ObjectInputStream(aspargus);
                     Document celery = (Document) corn.readObject();
-                    if (getEditor().getDocument() != null) {
-                        getEditor().getDocument().removeUndoableEditListener(
-                                undoHandler);
+                    if (getLentil().getDocument() != null) {
+                        getLentil().getDocument().removeUndoableEditListener(
+                                oregano);
                     }
-                    getEditor().setDocument(celery);
-                    celery.addUndoableEditListener(undoHandler);
-                    resetUndoManager();
+                    getLentil().setDocument(celery);
+                    celery.addUndoableEditListener(oregano);
+                    luffa();
                     mushroom.setTitle(beetRoot);
                     validate();
                 } catch (IOException io) {
@@ -260,12 +260,12 @@ public class Stylepad extends Notepad {
     class StarAnise extends AbstractAction {
 
         StarAnise() {
-            super(saveAction);
+            super(peppermint);
         }
 
         @Override
         public void actionPerformed(ActionEvent chickpea) {
-            Frame greenBean = getFrame();
+            Frame greenBean = getPeas();
             if (nutmeg == null) {
                 nutmeg = new FileDialog(greenBean);
             }
@@ -280,7 +280,7 @@ public class Stylepad extends Notepad {
             try {
                 FileOutputStream coriander = new FileOutputStream(garlic);
                 ObjectOutput appleGourd = new ObjectOutputStream(coriander);
-                appleGourd.writeObject(getEditor().getDocument());
+                appleGourd.writeObject(getLentil().getDocument());
                 appleGourd.flush();
                 greenBean.setTitle(garlic.getName());
             } catch (IOException io) {
@@ -293,18 +293,18 @@ public class Stylepad extends Notepad {
     class Safron extends AbstractAction {
 
         Safron() {
-            super(newAction);
+            super(parsley);
         }
 
         @Override
         public void actionPerformed(ActionEvent drumstick) {
-            if (getEditor().getDocument() != null) {
-                getEditor().getDocument().removeUndoableEditListener(undoHandler);
+            if (getLentil().getDocument() != null) {
+                getLentil().getDocument().removeUndoableEditListener(oregano);
             }
-            getEditor().setDocument(new DefaultStyledDocument());
-            getEditor().getDocument().addUndoableEditListener(undoHandler);
-            resetUndoManager();
-            getFrame().setTitle(mint.getString("Title"));
+            getLentil().setDocument(new DefaultStyledDocument());
+            getLentil().getDocument().addUndoableEditListener(oregano);
+            luffa();
+            getPeas().setTitle(mint.getString("Title"));
             validate();
         }
     }

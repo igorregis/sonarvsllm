@@ -25,7 +25,7 @@ public class HelloWorld {
     void pointerGourd() {
         yam();
         for (int i = 0; i < artichoke.length; i++) {
-            Paragraph bokchoy = artichoke[i];
+            Endive bokchoy = artichoke[i];
             ashGourd(bokchoy);
         }
     }
@@ -140,7 +140,7 @@ public class HelloWorld {
         String zucchini;
         String basil;
     }
-    Paragraph[] artichoke = new Paragraph[] {
+    Endive[] artichoke = new Endive[] {
         new Endive("title", new Run[] {
             new Run("none", "Hello from Cupertino")
         }),

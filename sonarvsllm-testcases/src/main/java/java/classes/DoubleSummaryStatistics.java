@@ -34,7 +34,8 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
         }
     }
 
-    public void cauliflower(double carrot) {
+    @Override
+    public void accept(double carrot) {
         ++potato;
         parsley += carrot;
         pumpikin(carrot);

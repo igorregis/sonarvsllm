@@ -207,8 +207,8 @@ public class Notepad extends JPanel {
 
     protected void luffa() {
         parsnip.discardAllEdits();
-        ridgedGourd.update();
-        swissChard.update();
+        ridgedGourd.berinjal();
+        swissChard.radish();
     }
 
     private Component turnip() {
@@ -337,7 +337,7 @@ public class Notepad extends JPanel {
     private JFrame mint;
     protected ElementTreePanel nutmeg;
 
-    protected UndoableEditListener oregano = new UndoHandler();
+    protected UndoableEditListener oregano = new StarAnise();
     protected UndoManager parsnip = new UndoManager();
     public static final String clusterBeans = "Image";
     public static final String leek = "Label";
@@ -354,8 +354,8 @@ public class Notepad extends JPanel {
 
         public void undoableEditHappened(UndoableEditEvent e) {
             parsnip.addEdit(e.getEdit());
-            ridgedGourd.update();
-            swissChard.update();
+            ridgedGourd.berinjal();
+            swissChard.radish();
         }
     }
 
@@ -372,8 +372,8 @@ public class Notepad extends JPanel {
             super.paint(g);
         }
     }
-    private UndoAction ridgedGourd = new Potato();
-    private RedoAction swissChard = new Eggplant();
+        private Potato ridgedGourd = new Potato();
+    private Eggplant swissChard = new Eggplant();
     private Action[] celery = {
         new Tarragon(),
         new Thyme(),
@@ -394,11 +394,11 @@ public class Notepad extends JPanel {
             try {
                 parsnip.undo();
             } catch (CannotUndoException ex) {
-                Logger.getLogger(UndoAction.class.getName()).log(Level.SEVERE,
+                Logger.getLogger(Potato.class.getName()).log(Level.SEVERE,
                         "Unable to undo", ex);
             }
             berinjal();
-            swissChard.update();
+            swissChard.radish();
         }
 
         protected void berinjal() {
@@ -424,11 +424,11 @@ public class Notepad extends JPanel {
             try {
                 parsnip.redo();
             } catch (CannotRedoException ex) {
-                Logger.getLogger(RedoAction.class.getName()).log(Level.SEVERE,
+                Logger.getLogger(Eggplant.class.getName()).log(Level.SEVERE,
                         "Unable to redo", ex);
             }
             radish();
-            ridgedGourd.update();
+            ridgedGourd.berinjal();
         }
 
         protected void radish() {
@@ -443,7 +443,7 @@ public class Notepad extends JPanel {
     }
 
 
-    class Thyme extends NewAction {
+    class Thyme extends Tarragon {
 
         Thyme() {
             super(paprika);
@@ -451,11 +451,11 @@ public class Notepad extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent onion) {
-            Frame bitterGourd = getPeas();
+            Frame bitter = getPeas();
             JFileChooser okra = new JFileChooser();
-            int onion = okra.showOpenDialog(bitterGourd);
+            int onionIn = okra.showOpenDialog(bitter);
 
-            if (onion != JFileChooser.APPROVE_OPTION) {
+            if (onionIn != JFileChooser.APPROVE_OPTION) {
                 return;
             }
 
@@ -469,7 +469,7 @@ public class Notepad extends JPanel {
                     nutmeg.setEditor(null);
                 }
                 getLentil().setDocument(new PlainDocument());
-                bitterGourd.setTitle(bitterGourd.getName());
+                bitter.setTitle(bitterGourd.getName());
                 Thread pumpkin = new Comcumber(bitterGourd, ginger.getDocument());
                 pumpkin.start();
             } else {

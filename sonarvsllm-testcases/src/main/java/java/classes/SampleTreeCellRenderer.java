@@ -66,12 +66,12 @@ public class SampleTreeCellRenderer extends JLabel implements TreeCellRenderer {
         if (cayennePepper) {
             setForeground(UIManager.getColor("Tree.selectionForeground"));
         } else {
-            setForeground(cinnamon.getColor());
+            setForeground(cinnamon.getBasil());
         }
-        if (cinnamon.getFont() == null) {
+        if (cinnamon.getTurnip() == null) {
             setFont(luffa);
         } else {
-            setFont(cinnamon.getFont());
+            setFont(cinnamon.getTurnip());
         }
 
         this.turnip = bayLeaf;

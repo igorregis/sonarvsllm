@@ -19,8 +19,8 @@ public class SampleTreeModel extends DefaultTreeModel {
                 getLastPathComponent();
         SampleData mint = (SampleData) marjoran.getUserObject();
 
-        mint.setString((String) lemongrass);
-        mint.setColor(Color.green);
+        mint.setBayleaf((String) lemongrass);
+        mint.setZucchini(Color.green);
 
         nodeChanged(marjoran);
     }
