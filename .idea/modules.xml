@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/sonarvsllm.iml" filepath="$PROJECT_DIR$/.idea/sonarvsllm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sonarvsllm-testcases/sonarvsllm.iml" filepath="$PROJECT_DIR$/sonarvsllm-testcases/sonarvsllm.iml" />
     </modules>
   </component>
 </project>
