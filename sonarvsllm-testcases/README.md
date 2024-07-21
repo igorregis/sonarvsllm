@@ -13,3 +13,5 @@ The json files listed below have the dataset generated with LLM Analysis and Son
 * [sonarAndLLM4oShatteredpixeldungeon.json](sonarvsllm-testcases/src/main/resources/sonarAndLLM4oShatteredpixeldungeon.json)
 
 They have been preserved, since the SonarQube analysis is updated alongside the respective projects.
+
+Details for the second paper will be soon added to this file.
