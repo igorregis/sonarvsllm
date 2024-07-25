@@ -231,11 +231,11 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
 
         for (String scenario : scenarios) {
             for (int i=2; i<=10; i++) {
-                OUTPUT_JSON_SUFIX = "GPT4o-mini-" + i + ".json";
+                OUTPUT_JSON_SUFIX = "GPT4o-" + i + ".json";
 
                 CONTROLLED_SCENARIO = "controlled" + scenario;
                 arquivoOriginal35 = "controlled/GPT35/" + CONTROLLED_SCENARIO + "GPT35.json";
-                LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/GPT4o-mini/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
+                LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/GPT4o/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
                 assertCreated();
                 CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator + scenario;
                 loadJsonGPT35();
@@ -344,8 +344,8 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
         body.put(MESSAGES, messagens.getMessages());
         body.put(MAX_TOKENS, 120);//Max length request + response: 8193
         body.put(TEMPERATURE, 0);
-//        body.put("model", "gpt-4o");
-        body.put("model", "gpt-4o-mini");
+        body.put("model", "gpt-4o");
+//        body.put("model", "gpt-4o-mini");
 //        body.put("model", "gpt-3.5-turbo-1106");
         body.put(FREQUENCY_PENALTY, 0);
         body.put(PRESENCE_PENALTY, 0);
