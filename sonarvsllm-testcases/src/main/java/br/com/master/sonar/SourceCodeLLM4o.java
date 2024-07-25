@@ -109,21 +109,28 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
 //        public static final String SCENARIO = "Original";
 //    public static final String SCENARIO = "NoComments";
 //    public static final String SCENARIO = "BadNames";
-    public static final String SCENARIO = "AfterRefactor";
+//    public static final String SCENARIO = "AfterRefactor";
+    public static final String SCENARIO_ORIGINAL = "Original";
+    public static final String SCENARIO_NO_COMMENTS = "NoComments";
+    public static final String SCENARIO_BAD_NAMES = "BadNames";
+    public static final String SCENARIO_AFTER_REFACTOR = "AfterRefactor";
 
 //    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "shattered-pixel-dungeon";
 //    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "quarkus";
-    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator + SCENARIO;
+//    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator + SCENARIO;
+    public static String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator;
 
     //GPT35 = gpt-3.5-turbo-0125
     //GPT4o = gpt-4o-2024-05-13
     //GPT4o-mini = gpt-4o-mini-2024-07-18
 
-    public static final String CONTROLLED_SCENARIO = "controlled" + SCENARIO;
+    //    public static final String CONTROLLED_SCENARIO = "controlled" + SCENARIO;
+    public static String CONTROLLED_SCENARIO = "controlled";
 
-    private static final String arquivoOriginal35 = "controlled/GPT35/" + CONTROLLED_SCENARIO + "GPT35.json";
-
-    public static final String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/GPT4o/" + CONTROLLED_SCENARIO + "GPT4o.json";
+    private static String arquivoOriginal35 = "controlled/GPT35/" + CONTROLLED_SCENARIO + "GPT35.json";
+    public static String OUTPUT_JSON_SUFIX = "GPT4o-mini.json";
+//    public static final String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/GPT4o/" + CONTROLLED_SCENARIO + "GPT4o.json";
+    public static String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/Gemini15pro/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
 
     //    public static final String component = "ismvru_shattered-pixel-dungeon";
     //    public static final String component = "quarkusio_quarkus";
@@ -219,6 +226,28 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
     @ActivateRequestContext
     public void run() {
         setupHttpClient();
+        String[] scenarios = {SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_AFTER_REFACTOR};
+        //        correcao();
+
+        for (String scenario : scenarios) {
+            for (int i=2; i<=10; i++) {
+                OUTPUT_JSON_SUFIX = "GPT4o-mini-" + i + ".json";
+
+                CONTROLLED_SCENARIO = "controlled" + scenario;
+                arquivoOriginal35 = "controlled/GPT35/" + CONTROLLED_SCENARIO + "GPT35.json";
+                LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/GPT4o-mini/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
+                assertCreated();
+                CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator + scenario;
+                loadJsonGPT35();
+                loadJsonGPT4o();
+                evaluateFiles();
+            }
+
+        }
+//        httpClient.close();
+    }
+
+    private static void assertCreated() {
         File outputFile = new File(LLM_JSON);
         if (!outputFile.exists()) {
             try {
@@ -227,11 +256,6 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
                 throw new RuntimeException(e);
             }
         }
-//        correcao();
-        loadJsonGPT35();
-        loadJsonGPT4o();
-        evaluateFiles();
-//        httpClient.close();
     }
 
     /**
@@ -265,6 +289,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
                     } catch (IOException e) {
                         logger.log(Level.SEVERE, e.getMessage(), e);
                     }
+
                     if (!sonarDataGPT4o.containsKey("\"" + classPackage + "\"") && sonarDataGPT35.containsKey("\"" + classPackage + "\"")) {
                         logger.warning("Analisando " + classPackage);
                         analyseClassFile(classPackage, javaClassFile);
@@ -319,8 +344,8 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
         body.put(MESSAGES, messagens.getMessages());
         body.put(MAX_TOKENS, 120);//Max length request + response: 8193
         body.put(TEMPERATURE, 0);
-        body.put("model", "gpt-4o");
-//        body.put("model", "gpt-4o-mini");
+//        body.put("model", "gpt-4o");
+        body.put("model", "gpt-4o-mini");
 //        body.put("model", "gpt-3.5-turbo-1106");
         body.put(FREQUENCY_PENALTY, 0);
         body.put(PRESENCE_PENALTY, 0);

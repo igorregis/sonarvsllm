@@ -42,3 +42,23 @@ nb-configuration.xml
 # Plugin directory
 /.quarkus/cli/plugins/
 src/main/resources/application.properties
+/quarkus.log.1
+/quarkus.log.2
+/quarkus.log.3
+/quarkus.log.4
+/quarkus.log.5
+/quarkus.log.6
+/quarkus.log.7
+/quarkus.log.8
+/quarkus.log.9
+/quarkus.log.10
+/quarkus.log.11
+/quarkus.log.12
+/quarkus.log.13
+/quarkus.log.14
+/quarkus.log.15
+/quarkus.log.16
+/quarkus.log.17
+/quarkus.log.18
+/quarkus.log.19
+/quarkus.log.20

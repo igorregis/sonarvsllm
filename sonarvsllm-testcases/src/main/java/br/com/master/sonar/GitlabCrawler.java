@@ -39,7 +39,8 @@ public class GitlabCrawler implements QuarkusApplication {
 
     @Override
     public int run(String... args) throws Exception {
-        sourceCodeLLMGoogleGemini.run();
+//        sourceCodeLLMGoogleGemini.run();
+        sourceCodeLLM4o.run();
         return 0;
     }
 }
