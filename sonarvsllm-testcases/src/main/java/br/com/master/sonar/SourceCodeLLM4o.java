@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,7 +23,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -44,7 +42,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -109,13 +106,30 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
      */
     public static final int THREADS_GPT = 10;
 
-    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "shattered-pixel-dungeon";
-//    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "quarkus";
-//    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled";
+//        public static final String SCENARIO = "Original";
+//    public static final String SCENARIO = "NoComments";
+//    public static final String SCENARIO = "BadNames";
+    public static final String SCENARIO = "AfterRefactor";
 
-    public static final String component = "ismvru_shattered-pixel-dungeon";
-//    public static final String component = "quarkusio_quarkus";
-//        public static final String component = "igorregis_sonarvsllm";
+//    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "shattered-pixel-dungeon";
+//    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "quarkus";
+    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator + SCENARIO;
+
+    //GPT35 = gpt-3.5-turbo-0125
+    //GPT4o = gpt-4o-2024-05-13
+    //GPT4o-mini = gpt-4o-mini-2024-07-18
+
+    public static final String CONTROLLED_SCENARIO = "controlled" + SCENARIO;
+
+    private static final String arquivoOriginal35 = "controlled/GPT35/" + CONTROLLED_SCENARIO + "GPT35.json";
+
+    public static final String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/GPT4o/" + CONTROLLED_SCENARIO + "GPT4o.json";
+
+    //    public static final String component = "ismvru_shattered-pixel-dungeon";
+    //    public static final String component = "quarkusio_quarkus";
+
+        public static final String component = "igorregis_sonarvsllm";
+
     /**
      * System prompt enviado ao LLM
      */
@@ -205,6 +219,14 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
     @ActivateRequestContext
     public void run() {
         setupHttpClient();
+        File outputFile = new File(LLM_JSON);
+        if (!outputFile.exists()) {
+            try {
+                outputFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 //        correcao();
         loadJsonGPT35();
         loadJsonGPT4o();
@@ -298,6 +320,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
         body.put(MAX_TOKENS, 120);//Max length request + response: 8193
         body.put(TEMPERATURE, 0);
         body.put("model", "gpt-4o");
+//        body.put("model", "gpt-4o-mini");
 //        body.put("model", "gpt-3.5-turbo-1106");
         body.put(FREQUENCY_PENALTY, 0);
         body.put(PRESENCE_PENALTY, 0);
@@ -443,7 +466,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
         try {
             if (evaluation != null) {
                 logger.warning("Evaluation result for " + fileName+ ": \n" + evaluation);
-                Files.write(Paths.get("/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/sonarAndLLM.json"),
+                Files.write(Paths.get(LLM_JSON),
                         (evaluation + System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
             }
         } catch (IOException e) {
@@ -454,7 +477,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
     public void loadJsonGPT4o() {
         sonarDataGPT4o = new HashMap<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/sonarAndLLM.json"));
+            BufferedReader reader = new BufferedReader(new FileReader(LLM_JSON));
             String line;
             ObjectMapper mapper = new ObjectMapper();
             while ((line = reader.readLine()) != null) {
@@ -472,7 +495,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
     public void loadJsonGPT35() {
         sonarDataGPT35 = new HashMap<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/sonarAndLLMShatteredpixeldungeon.json"));
+            BufferedReader reader = new BufferedReader(new FileReader("/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/" + arquivoOriginal35));
             String line;
             ObjectMapper mapper = new ObjectMapper();
             while ((line = reader.readLine()) != null) {
@@ -489,7 +512,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
 
     public void correcao() {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/sonarAndLLM.json"));
+            BufferedReader reader = new BufferedReader(new FileReader(LLM_JSON));
             String line;
             ObjectMapper mapper = new ObjectMapper();
             while ((line = reader.readLine()) != null) {

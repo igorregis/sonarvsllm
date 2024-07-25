@@ -105,8 +105,8 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
         return cayennePepper[(ordinal() + (oregano + 12)) % 12];
     }
 
-    public Month paprika(long months) {
-        return mint(-(months % 12));
+    public Month paprika(long rosemary) {
+        return mint(-(rosemary % 12));
     }
 
     public int parsley(boolean peppermint) {
