@@ -1,7 +1,5 @@
 package br.com.master.sonar;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -10,10 +8,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.Gson;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.ChatMessageType;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.control.ActivateRequestContext;
@@ -36,7 +32,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -73,9 +68,11 @@ public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
      * meta-llama-3-8b-instruct
      *
      */
-    public static final String URL_LLM = "https://api.replicate.com/v1/models/meta/meta-llama-3-8b-instruct/predictions";
+//    public static final String URL_LLM = "https://api.replicate.com/v1/models/meta/meta-llama-3-8b-instruct/predictions";
+    public static final String URL_LLM = "https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions";
 
-    public static String OUTPUT_JSON_SUFIX = "Llama3-8b-instruct.json";
+//    public static String OUTPUT_JSON_SUFIX = "Llama3-8b-instruct.json";
+    public static String OUTPUT_JSON_SUFIX = "Llama31-405b-instruct.json";
 
     /**
      * Número máximo de Threads a serem disparadas para realizar chamadas simultâneas ao Chat GPT
@@ -97,7 +94,7 @@ public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
 
     private static String arquivoOriginal35 = "controlled/GPT35/" + CONTROLLED_SCENARIO + "GPT35.json";
 
-    public static String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/Llama3-8B/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
+    public static String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/Llama31-405B/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
 
     //    public static final String component = "ismvru_shattered-pixel-dungeon";
     //    public static final String component = "quarkusio_quarkus";
@@ -198,11 +195,11 @@ public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
 
         for (String scenario : scenarios) {
             for (int i=1; i<=10; i++) {
-                OUTPUT_JSON_SUFIX = "Llama3-8B-" + i + ".json";
+                OUTPUT_JSON_SUFIX = "Llama31-405B-" + i + ".json";
 
                 CONTROLLED_SCENARIO = "controlled" + scenario;
                 arquivoOriginal35 = "controlled/GPT35/" + CONTROLLED_SCENARIO + "GPT35.json";
-                LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/Llama3-8B/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
+                LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/Llama31-405B/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
                 assertCreated();
                 CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator + scenario;
                 loadJsonGPT35();
@@ -260,7 +257,7 @@ public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
                     }
 
                     if (!sonarDataGPT4o.containsKey("\"" + classPackage + "\"") && sonarDataGPT35.containsKey("\"" + classPackage + "\"")) {
-                        logger.warning("Analisando " + classPackage);
+                        logger.warning("Analisando " + classPackage +" para " + OUTPUT_JSON_SUFIX);
                         analyseClassFile(classPackage, javaClassFile);
                     }
                     //                    if (true) System.exit(-1);
@@ -291,7 +288,7 @@ public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
     }
 
     private void analyseClassFile(String classPackage, StringBuilder javaClass) {
-        requestGemini(classPackage, SYSTEM_PROMPT.toString(), USER_PROMPT_START, javaClass, USER_PROMPT_END);
+        requestLLM(classPackage, SYSTEM_PROMPT.toString(), USER_PROMPT_START, javaClass, USER_PROMPT_END);
     }
 
 
@@ -316,7 +313,7 @@ public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
      * @param javaClass       The Class sourcecode to be analysed by GPT.
      * @param commandEnd      O final do command a ser enviado ao serviço GPT.
      */
-    private void requestGemini(String classAndPackage, String systemPrompt, String userPromptStart, StringBuilder javaClass, String commandEnd) {
+    private void requestLLM(String classAndPackage, String systemPrompt, String userPromptStart, StringBuilder javaClass, String commandEnd) {
         Map<String, Object> body = new HashMap<>();
 
         Map<String, Object> input = new HashMap<>();
@@ -326,11 +323,11 @@ public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
         input.put("prompt_template", "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n{system_prompt}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n");
         input.put("max_new_tokens", 120);
         input.put("temperature", 0);
-        input.put("topP", 0.95);
-        input.put("topK", 64);
+        input.put("stream", false);
+//        input.put("topP", 0.95);
+//        input.put("topK", 64);
         input.put("log_performance_metrics", false);
 
-        body.put("stream", false);
         body.put("input", input);
 
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(URL_LLM)).header("Content-Type", "application/json").header("Authorization", "Bearer " + apiKeyLLM)
@@ -372,12 +369,13 @@ public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
                 //                Thread.sleep(60000);
                 //Precisamos liberar um slot do controle de Threads aqui, pois o método abaixo irá tentar fazer acquire.
                 controleThreads.release();
-                requestGemini(classAndPackage, systemPrompt, userPromptStart, javaClass, commandEnd);
+                requestLLM(classAndPackage, systemPrompt, userPromptStart, javaClass, commandEnd);
                 return null;
             } catch (InterruptedException e) {
                 logger.log(Level.SEVERE, "Erro ao Sleep", e);
             }
-        } else if (response.statusCode() == 201) {
+            //O Llama-3-8B responde com 201 quando está processando, já o 405B sempre responde com 200 quando está processando
+        } else if (response.statusCode() == 201 || (response.statusCode() == 200 && OUTPUT_JSON_SUFIX.startsWith("Llama31-405B"))) {
             JsonObject json = new JsonObject(response.body());
             String getURL = json.getJsonObject("urls").getString("get");
             HttpRequest request = HttpRequest.newBuilder().uri(URI.create(getURL))
@@ -389,7 +387,7 @@ public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
                     Thread.sleep(5000);
                     response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
                     jsonResponse = new JsonObject(response.body());
-                    logger.warning(jsonResponse.getString("status"));
+                    logger.warning("Status da predicion: "+jsonResponse.getString("status"));
                 } while (!jsonResponse.getString("status").equals("succeeded"));
                 return response;
             } catch (IOException | InterruptedException e) {
@@ -456,19 +454,25 @@ public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
             JsonObject json = new JsonObject(response);
             String textGPTResponse = json.getString("output");
             if (textGPTResponse.contains("[")) {
-                logger.warning(textGPTResponse);
-                textGPTResponse = textGPTResponse.replace(", ", "");
-                if (!textGPTResponse.endsWith("\"}")) {
-                    textGPTResponse = textGPTResponse.replace("]", "");
-                    if (!textGPTResponse.endsWith("\""))
-                        textGPTResponse += "\"";
-                    textGPTResponse += "}]";
+                if (textGPTResponse.length() < 10)
+                {
+                    textGPTResponse = "{\"score\":\"0%\", \"reasoning\":\"LLM EMPTY RETURN\"}";
                 }
-                String jsonStart = "{";
-                String jsonEnd = "}";
-                int startIndex = textGPTResponse.indexOf(jsonStart);
-                int endIndex = textGPTResponse.lastIndexOf(jsonEnd) + jsonEnd.length();
-                textGPTResponse = textGPTResponse.substring(startIndex, endIndex);
+                else {
+                    logger.warning(textGPTResponse);
+                    textGPTResponse = textGPTResponse.replace(", ", "");
+                    if (!textGPTResponse.endsWith("\"}")) {
+                        textGPTResponse = textGPTResponse.replace("]", "");
+                        if (!textGPTResponse.endsWith("\""))
+                            textGPTResponse += "\"";
+                        textGPTResponse += "}]";
+                    }
+                    String jsonStart = "{";
+                    String jsonEnd = "}";
+                    int startIndex = textGPTResponse.indexOf(jsonStart);
+                    int endIndex = textGPTResponse.lastIndexOf(jsonEnd) + jsonEnd.length();
+                    textGPTResponse = textGPTResponse.substring(startIndex, endIndex);
+                }
             }
             logger.warning(textGPTResponse);
 

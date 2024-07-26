@@ -314,19 +314,6 @@ public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
     }
 
     /**
-     VertexAiGeminiChatModel chat = VertexAiGeminiChatModel.builder().project(googleProject).modelName("gemini-1.5-flash").temperature(0F).topP(0.95F).topK(64).build();
-     chat.generate(new SystemMessage(), new ChatMessage() {
-    @Override public ChatMessageType type() {
-    return null;
-    }
-
-    @Override public String text() {
-    return userPromptStart + javaClass + commandEnd;
-    }
-    });
-
-     */
-    /**
      * Este método é responsável por enviar uma solicitação ao serviço de LLM com um command específico e um javaClass.
      * A resposta é então avaliada, processada e registrada.
      *
