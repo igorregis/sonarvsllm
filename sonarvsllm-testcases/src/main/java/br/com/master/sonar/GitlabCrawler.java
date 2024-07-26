@@ -27,6 +27,8 @@ public class GitlabCrawler implements QuarkusApplication {
     private SourceCodeLLMGoogleGemini sourceCodeLLMGoogleGemini;
     @Inject
     private SourceCodeLLMMetaLlama sourceCodeLLMMetaLlama;
+    @Inject
+    private SourceCodeLLMAnthropicClaude sourceCodeLLMAnthropicClaude;
 
     private Logger logger;
 
@@ -43,7 +45,8 @@ public class GitlabCrawler implements QuarkusApplication {
     public int run(String... args) throws Exception {
 //        sourceCodeLLMGoogleGemini.run();
 //        sourceCodeLLM4o.run();
-        sourceCodeLLMMetaLlama.run();
+//        sourceCodeLLMMetaLlama.run();
+        sourceCodeLLMAnthropicClaude.run();
         return 0;
     }
 }
