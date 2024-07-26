@@ -374,6 +374,8 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
     private HttpResponse<String> avaliaOcorrenciaDeErro(String classAndPackage, String systemPrompt, String userPromptStart, StringBuilder javaClass, String commandEnd, HttpResponse<String> response) {
         if (response.statusCode() == 429 || response.statusCode() == 500 || response.statusCode() == 529) {//Este erro ocorre quando atingimos o limite de chamadas por minuto da API da OpenAI
             try {
+                logger.log(Level.SEVERE, "StatusCode: " + response.statusCode());
+                logger.log(Level.SEVERE, response.body());
                 logger.warning("Erro de excesso de requisições, realizando sleep para tentar novamente");
 //                Thread.sleep(100000);
                 Thread.sleep(60000);
