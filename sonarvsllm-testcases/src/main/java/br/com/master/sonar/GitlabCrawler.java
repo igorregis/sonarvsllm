@@ -45,8 +45,8 @@ public class GitlabCrawler implements QuarkusApplication {
     public int run(String... args) throws Exception {
 //        sourceCodeLLMGoogleGemini.run();
 //        sourceCodeLLM4o.run();
-        sourceCodeLLMMetaLlama.run();
-//        sourceCodeLLMAnthropicClaude.run();
+//        sourceCodeLLMMetaLlama.run();
+        sourceCodeLLMAnthropicClaude.run();
         return 0;
     }
 }
