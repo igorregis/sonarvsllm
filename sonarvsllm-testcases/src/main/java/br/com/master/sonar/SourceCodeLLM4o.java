@@ -230,7 +230,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
         //        correcao();
 
         for (String scenario : scenarios) {
-            for (int i=2; i<=10; i++) {
+            for (int i=1; i<=10; i++) {
                 OUTPUT_JSON_SUFIX = "GPT4o-" + i + ".json";
 
                 CONTROLLED_SCENARIO = "controlled" + scenario;

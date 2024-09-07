@@ -67,7 +67,7 @@ public class SourceCodeLLM extends ThreadedETLExecutor {
     /**
      * URL da API do LLM usada para chamadas
      */
-    public static final String URL_LLM = "https://gecap10-gptdev.openai.azure.com/openai/deployments/bbgecap10gpt35turbo/completions?api-version=2022-12-01";
+    public static final String URL_LLM = "https://api.openai.com/v1/chat/completions";
 
     /**
      * Parâmetro indicando o prompt de comando enviado ao LLM
@@ -460,28 +460,5 @@ public class SourceCodeLLM extends ThreadedETLExecutor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-}
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-class GPTResponse {
-
-    @JsonProperty("score")
-    String score;
-
-    @JsonProperty("reasoning")
-    String reasoning;
-
-    @JsonProperty("tokens")
-    Integer tokens;
-    @JsonProperty("lineCount")
-    Integer lineCount;
-
-    SonarResponse sonarData;
-
-    @Override
-    public String toString() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
     }
 }

@@ -30,6 +30,17 @@ public class GitlabCrawler implements QuarkusApplication {
     @Inject
     private SourceCodeLLMAnthropicClaude sourceCodeLLMAnthropicClaude;
 
+    @Inject
+    private br.com.master.sonar.llmvshuman.SourceCodeLLM4o sourceCodeLLMvsHuman;
+    @Inject
+    private br.com.master.sonar.llmvshuman.SourceCodeLLM4o sourceCodeLLM4ovsHuman;
+    @Inject
+    private br.com.master.sonar.llmvshuman.SourceCodeLLMGoogleGemini sourceCodeLLMGoogleGeminivsHuman;
+    @Inject
+    private br.com.master.sonar.llmvshuman.SourceCodeLLMMetaLlama sourceCodeLLMMetaLlamavsHuman;
+    @Inject
+    private br.com.master.sonar.llmvshuman.SourceCodeLLMAnthropicClaude sourceCodeLLMAnthropicClaudevsHuman;
+
     private Logger logger;
 
     public GitlabCrawler() {
@@ -43,10 +54,10 @@ public class GitlabCrawler implements QuarkusApplication {
 
     @Override
     public int run(String... args) throws Exception {
-//        sourceCodeLLMGoogleGemini.run();
+        sourceCodeLLMGoogleGeminivsHuman.run();
 //        sourceCodeLLM4o.run();
 //        sourceCodeLLMMetaLlama.run();
-        sourceCodeLLMAnthropicClaude.run();
+//        sourceCodeLLMAnthropicClaude.run();
         return 0;
     }
 }
