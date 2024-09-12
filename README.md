@@ -1,6 +1,14 @@
 # sonarvsllm
 
-This project has the classes analysed in the paper (DOI [10.48550/arXiv.2408.07082](https://doi.org/10.48550/arXiv.2408.07082)) and paper (DOI [XXX](https://doi.org/XXXXXXX.XXXXXXX)).
+This project has the classes analysed in the paper 1 (DOI [10.48550/arXiv.2408.07082](https://doi.org/10.48550/arXiv.2408.07082)) and paper 2 (DOI [XXX](https://doi.org/XXXXXXX.XXXXXXX)).
+
+---
+***Paper 1*** 
+
+***Scope***
+This paper performed a comparative study of code quality analysis using LLM, focusing on readability, comparing the results with a reference tool (SonarQube)
+
+***Details***
 
 The classes analysed in the first mentioned paper are under [Quarkus folder](sonarvsllm-testcases/src/main/resources/classFilesToBeAnalysed/quarkus) and [Shattered Pixel Dungeon folder](sonarvsllm-testcases/src/main/resources/classFilesToBeAnalysed/shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon). They have been preserved.
 
@@ -14,8 +22,33 @@ The json files listed below have the dataset generated with LLM Analysis and Son
 
 They have been preserved, since the SonarQube analysis is updated alongside the respective projects.
 
-Details for the second paper will be soon added to this file.
+---
+***Paper 2*** 
+
+***Scope***
+This paper performed a controlled quasi-experiment to evaluate the responses given by 8 LLMs and SonarQube to 3 scenarios of interventions in source code snippets.
+***Details***
+
+The classes analysed in the second mentioned paper are under [controlled](sonarvsllm-testcases/src/main/resources/classFilesToBeAnalysed/controlled) folder
+
+The classes below are responsible for LLM analysis using the respective LLMs, both the robust and the fast versions.
+[SourceCodeLLM4o](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLM4o.java) 
+[SourceCodeLLMAnthropicClaude](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMAnthropicClaude.java) 
+[SourceCodeLLMGoogleGemini](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMGoogleGemini.java) 
+[SourceCodeLLMMetaLlama](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMMetaLlama.java) 
+
+The json files containing the dataset generated with LLM analysis for the respective sourcecode obtained by the time of execution of this research, can be found in the respective folders:
+
 
 To execute the Sonar analysis for the second paper is necessary to run the command below (Note: Replace the project key to your own project at Sonarcloud):
+[Claude3-haiku](sonarvsllm-testcases/src/main/resources/controlled/Claude3-haiku)
+[Claude35-sonnet](sonarvsllm-testcases/src/main/resources/controlled/Claude35-sonnet)
+[GPT4o-mini](sonarvsllm-testcases/src/main/resources/controlled/GPT4o-mini)
+[GPT4o](sonarvsllm-testcases/src/main/resources/controlled/GPT4o)
+[Gemini15flash](sonarvsllm-testcases/src/main/resources/controlled/Gemini15flash)
+[Gemini15pro](sonarvsllm-testcases/src/main/resources/controlled/Gemini15pro)
+[Llama3-8B](sonarvsllm-testcases/src/main/resources/controlled/Llama3-8B)
+[Llama31-405B](sonarvsllm-testcases/src/main/resources/controlled/Llama31-405B)
+
 
 `./mvnw verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=igorregis_sonarvsllm`
