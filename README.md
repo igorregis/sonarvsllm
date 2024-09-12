@@ -6,6 +6,7 @@ This project has the classes analysed in the paper 1 (DOI [10.48550/arXiv.2408.0
 ***Paper 1*** 
 
 ***Scope***
+
 This paper performed a comparative study of code quality analysis using LLM, focusing on readability, comparing the results with a reference tool (SonarQube)
 
 ***Details***
@@ -26,7 +27,9 @@ They have been preserved, since the SonarQube analysis is updated alongside the 
 ***Paper 2*** 
 
 ***Scope***
+
 This paper performed a controlled quasi-experiment to evaluate the responses given by 8 LLMs and SonarQube to 3 scenarios of interventions in source code snippets.
+
 ***Details***
 
 The classes analysed in the second mentioned paper are under [controlled](sonarvsllm-testcases/src/main/resources/classFilesToBeAnalysed/controlled) folder. There is one subfolder for each scenario.
