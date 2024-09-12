@@ -29,26 +29,26 @@ They have been preserved, since the SonarQube analysis is updated alongside the 
 This paper performed a controlled quasi-experiment to evaluate the responses given by 8 LLMs and SonarQube to 3 scenarios of interventions in source code snippets.
 ***Details***
 
-The classes analysed in the second mentioned paper are under [controlled](sonarvsllm-testcases/src/main/resources/classFilesToBeAnalysed/controlled) folder
+The classes analysed in the second mentioned paper are under [controlled](sonarvsllm-testcases/src/main/resources/classFilesToBeAnalysed/controlled) folder. There is one subfolder for each scenario.
 
 The classes below are responsible for LLM analysis using the respective LLMs, both the robust and the fast versions.
-[SourceCodeLLM4o](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLM4o.java) 
-[SourceCodeLLMAnthropicClaude](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMAnthropicClaude.java) 
-[SourceCodeLLMGoogleGemini](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMGoogleGemini.java) 
-[SourceCodeLLMMetaLlama](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMMetaLlama.java) 
+* [SourceCodeLLM4o](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLM4o.java) 
+* [SourceCodeLLMAnthropicClaude](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMAnthropicClaude.java) 
+* [SourceCodeLLMGoogleGemini](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMGoogleGemini.java) 
+* [SourceCodeLLMMetaLlama](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMMetaLlama.java) 
 
 The json files containing the dataset generated with LLM analysis for the respective sourcecode obtained by the time of execution of this research, can be found in the respective folders:
 
 
 To execute the Sonar analysis for the second paper is necessary to run the command below (Note: Replace the project key to your own project at Sonarcloud):
-[Claude3-haiku](sonarvsllm-testcases/src/main/resources/controlled/Claude3-haiku)
-[Claude35-sonnet](sonarvsllm-testcases/src/main/resources/controlled/Claude35-sonnet)
-[GPT4o-mini](sonarvsllm-testcases/src/main/resources/controlled/GPT4o-mini)
-[GPT4o](sonarvsllm-testcases/src/main/resources/controlled/GPT4o)
-[Gemini15flash](sonarvsllm-testcases/src/main/resources/controlled/Gemini15flash)
-[Gemini15pro](sonarvsllm-testcases/src/main/resources/controlled/Gemini15pro)
-[Llama3-8B](sonarvsllm-testcases/src/main/resources/controlled/Llama3-8B)
-[Llama31-405B](sonarvsllm-testcases/src/main/resources/controlled/Llama31-405B)
+* [Claude3-haiku](sonarvsllm-testcases/src/main/resources/controlled/Claude3-haiku)
+* [Claude35-sonnet](sonarvsllm-testcases/src/main/resources/controlled/Claude35-sonnet)
+* [GPT4o-mini](sonarvsllm-testcases/src/main/resources/controlled/GPT4o-mini)
+* [GPT4o](sonarvsllm-testcases/src/main/resources/controlled/GPT4o)
+* [Gemini15flash](sonarvsllm-testcases/src/main/resources/controlled/Gemini15flash)
+* [Gemini15pro](sonarvsllm-testcases/src/main/resources/controlled/Gemini15pro)
+* [Llama3-8B](sonarvsllm-testcases/src/main/resources/controlled/Llama3-8B)
+* [Llama31-405B](sonarvsllm-testcases/src/main/resources/controlled/Llama31-405B)
 
 
 `./mvnw verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=igorregis_sonarvsllm`
