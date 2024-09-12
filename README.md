@@ -39,8 +39,6 @@ The classes below are responsible for LLM analysis using the respective LLMs, bo
 
 The json files containing the dataset generated with LLM analysis for the respective sourcecode obtained by the time of execution of this research, can be found in the respective folders:
 
-
-To execute the Sonar analysis for the second paper is necessary to run the command below (Note: Replace the project key to your own project at Sonarcloud):
 * [Claude3-haiku](sonarvsllm-testcases/src/main/resources/controlled/Claude3-haiku)
 * [Claude35-sonnet](sonarvsllm-testcases/src/main/resources/controlled/Claude35-sonnet)
 * [GPT4o-mini](sonarvsllm-testcases/src/main/resources/controlled/GPT4o-mini)
@@ -50,5 +48,5 @@ To execute the Sonar analysis for the second paper is necessary to run the comma
 * [Llama3-8B](sonarvsllm-testcases/src/main/resources/controlled/Llama3-8B)
 * [Llama31-405B](sonarvsllm-testcases/src/main/resources/controlled/Llama31-405B)
 
-
+To execute the Sonar analysis for the second paper is necessary to run the command below (Note: Replace the project key to your own project at Sonarcloud):
 `./mvnw verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=igorregis_sonarvsllm`
