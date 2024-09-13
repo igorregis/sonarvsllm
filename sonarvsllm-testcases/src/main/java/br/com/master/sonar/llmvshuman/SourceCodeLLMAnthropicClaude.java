@@ -153,7 +153,7 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
         SYSTEM_PROMPT.append("- The \"explanation\" attribute must not surpass 450 characters and MUST NOT contain especial characters or new lines\n");
 
         USER_PROMPT_START = "Evaluate the following Java source code: ";
-        USER_PROMPT_END = "This is the end of the classh file, the assistant should present your json answer:";
+        USER_PROMPT_END = "This is the end of the Code Snipet, the assistant should present your json answer:";
 
         JsonFactory factory = new JsonFactory();
         factory.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
