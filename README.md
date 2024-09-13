@@ -35,10 +35,10 @@ This paper performed a controlled quasi-experiment to evaluate the responses giv
 The classes analysed in the second mentioned paper are under [controlled](sonarvsllm-testcases/src/main/resources/classFilesToBeAnalysed/controlled) folder. There is one subfolder for each scenario.
 
 The classes below are responsible for LLM analysis using the respective LLMs, both the robust and the fast versions.
-* [SourceCodeLLM4o](sonarvsllm-testcases/src/main/java/br/com/master/sonar/llmvshuman/SourceCodeLLM4o.java) 
-* [SourceCodeLLMAnthropicClaude](sonarvsllm-testcases/src/main/java/br/com/master/sonar/llmvshuman/SourceCodeLLMAnthropicClaude.java) 
-* [SourceCodeLLMGoogleGemini](sonarvsllm-testcases/src/main/java/br/com/master/sonar/llmvshuman/SourceCodeLLMGoogleGemini.java) 
-* [SourceCodeLLMMetaLlama](sonarvsllm-testcases/src/main/java/br/com/master/sonar/llmvshuman/SourceCodeLLMMetaLlama.java) 
+* [SourceCodeLLM4o](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLM4o.java) 
+* [SourceCodeLLMAnthropicClaude](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMAnthropicClaude.java) 
+* [SourceCodeLLMGoogleGemini](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMGoogleGemini.java) 
+* [SourceCodeLLMMetaLlama](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMMetaLlama.java) 
 
 The json files containing the dataset generated with LLM analysis for the respective sourcecode obtained by the time of execution of this research, can be found in the respective folders:
 
