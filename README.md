@@ -11,13 +11,15 @@ This paper performed a controlled quasi-experiment to evaluate the responses giv
 
 ***Details***
 
+**Note to Revisors:** The https://anonymous.4open.science/ website has a glitch. When you click on any link below that takes you to a folder, it will hang on loading screen. You need to refresh the page and aldo at the folder tree (left side) you will need to click outside the folder and back to it again, so the content get loaded.
+
 The classes analysed in the second mentioned paper are under [controlled](sonarvsllm-testcases/src/main/resources/classFilesToBeAnalysed/controlled) folder. There is one subfolder for each scenario.
 
 The classes below are responsible for LLM analysis using the respective LLMs, both the robust and the fast versions.
-* [SourceCodeLLM4o](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLM4o.java) 
-* [SourceCodeLLMAnthropicClaude](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMAnthropicClaude.java) 
-* [SourceCodeLLMGoogleGemini](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMGoogleGemini.java) 
-* [SourceCodeLLMMetaLlama](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLMMetaLlama.java) 
+* [SourceCodeLLM4o](sonarvsllm-testcases/src/main/java/science/com/master/sonar/SourceCodeLLM4o.java) 
+* [SourceCodeLLMAnthropicClaude](sonarvsllm-testcases/src/main/java/science/com/master/sonar/SourceCodeLLMAnthropicClaude.java) 
+* [SourceCodeLLMGoogleGemini](sonarvsllm-testcases/src/main/java/science/com/master/sonar/SourceCodeLLMGoogleGemini.java) 
+* [SourceCodeLLMMetaLlama](sonarvsllm-testcases/src/main/java/science/com/master/sonar/SourceCodeLLMMetaLlama.java) 
 
 The json files containing the dataset generated with LLM analysis for the respective sourcecode obtained by the time of execution of this research, can be found in the respective folders:
 
@@ -44,7 +46,7 @@ This paper performed a comparative study of code quality analysis using LLM, foc
 
 The classes analysed in the first mentioned paper are under [Quarkus folder](sonarvsllm-testcases/src/main/resources/classFilesToBeAnalysed/quarkus) and [Shattered Pixel Dungeon folder](sonarvsllm-testcases/src/main/resources/classFilesToBeAnalysed/shattered-pixel-dungeon/core/src/main/java/com/shatteredpixel/shatteredpixeldungeon). They have been preserved.
 
-The classes [SourceCodeLLM](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLM.java) and [SourceCodeLLM4o](sonarvsllm-testcases/src/main/java/br/com/master/sonar/SourceCodeLLM4o.java) are responsible for LLM analysis using the respective GPT 3.5-turbo and GPT4o versions.
+The classes [SourceCodeLLM](sonarvsllm-testcases/src/main/java/science/com/master/sonar/SourceCodeLLM.java) and [SourceCodeLLM4o](sonarvsllm-testcases/src/main/java/science/com/master/sonar/SourceCodeLLM4o.java) are responsible for LLM analysis using the respective GPT 3.5-turbo and GPT4o versions.
 
 The json files listed below have the dataset generated with LLM Analysis and SonarQube metrics for the respective classes obtained by the time of execution of this research:
 * [sonarAndLLM35Quarkus.json](sonarvsllm-testcases/src/main/resources/sonarAndLLM35Quarkus.json)
