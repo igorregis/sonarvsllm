@@ -1,4 +1,4 @@
-package br.com.master.sonar;
+package science.com.master.sonar;
 
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
@@ -31,15 +31,15 @@ public class GitlabCrawler implements QuarkusApplication {
     private SourceCodeLLMAnthropicClaude sourceCodeLLMAnthropicClaude;
 
     @Inject
-    private br.com.master.sonar.llmvshuman.SourceCodeLLM4o sourceCodeLLMvsHuman;
+    private science.com.master.sonar.llmvshuman.SourceCodeLLM4o sourceCodeLLMvsHuman;
     @Inject
-    private br.com.master.sonar.llmvshuman.SourceCodeLLM4o sourceCodeLLM4ovsHuman;
+    private science.com.master.sonar.llmvshuman.SourceCodeLLM4o sourceCodeLLM4ovsHuman;
     @Inject
-    private br.com.master.sonar.llmvshuman.SourceCodeLLMGoogleGemini sourceCodeLLMGoogleGeminivsHuman;
+    private science.com.master.sonar.llmvshuman.SourceCodeLLMGoogleGemini sourceCodeLLMGoogleGeminivsHuman;
     @Inject
-    private br.com.master.sonar.llmvshuman.SourceCodeLLMMetaLlama sourceCodeLLMMetaLlamavsHuman;
+    private science.com.master.sonar.llmvshuman.SourceCodeLLMMetaLlama sourceCodeLLMMetaLlamavsHuman;
     @Inject
-    private br.com.master.sonar.llmvshuman.SourceCodeLLMAnthropicClaude sourceCodeLLMAnthropicClaudevsHuman;
+    private science.com.master.sonar.llmvshuman.SourceCodeLLMAnthropicClaude sourceCodeLLMAnthropicClaudevsHuman;
 
     private Logger logger;
 

@@ -14,9 +14,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
 
-/**
- * hack to load attributed content.
- */
 public class HelloWorld {
 
     HelloWorld(DefaultStyledDocument doc, StyleContext styles) {
@@ -42,7 +39,6 @@ public class HelloWorld {
                 doc.insertString(doc.getLength(), run.content, s);
             }
 
-            // set logical style
             Style ls = styles.getStyle(p.logical);
             doc.setLogicalStyle(doc.getLength() - 1, ls);
             doc.insertString(doc.getLength(), "\n", null);
@@ -52,18 +48,17 @@ public class HelloWorld {
     }
 
     void createStyles() {
-        // no attributes defined
         Style s = styles.addStyle(null, null);
         runAttr.put("none", s);
         s = styles.addStyle(null, null);
         StyleConstants.setItalic(s, true);
         StyleConstants.setForeground(s, new Color(153, 153, 102));
-        runAttr.put("cquote", s); // catepillar quote
+        runAttr.put("cquote", s);
 
         s = styles.addStyle(null, null);
         StyleConstants.setItalic(s, true);
         StyleConstants.setForeground(s, new Color(51, 102, 153));
-        runAttr.put("aquote", s); // alice quote
+        runAttr.put("aquote", s);
 
         try {
             ResourceBundle resources = ResourceBundle.getBundle(
@@ -72,22 +67,21 @@ public class HelloWorld {
             s = styles.addStyle(null, null);
             Icon alice = new ImageIcon(resources.getString("aliceGif"));
             StyleConstants.setIcon(s, alice);
-            runAttr.put("alice", s); // alice
+            runAttr.put("alice", s);
 
             s = styles.addStyle(null, null);
             Icon caterpillar = new ImageIcon(resources.getString(
                     "caterpillarGif"));
             StyleConstants.setIcon(s, caterpillar);
-            runAttr.put("caterpillar", s); // caterpillar
+            runAttr.put("caterpillar", s);
 
             s = styles.addStyle(null, null);
             Icon hatter = new ImageIcon(resources.getString("hatterGif"));
             StyleConstants.setIcon(s, hatter);
-            runAttr.put("hatter", s); // hatter
+            runAttr.put("hatter", s);
 
 
         } catch (MissingResourceException mre) {
-            // can't display image
         }
 
         Style def = styles.getStyle(StyleContext.DEFAULT_STYLE);
@@ -100,24 +94,19 @@ public class HelloWorld {
         StyleConstants.setSpaceBelow(heading, 10);
         StyleConstants.setFontSize(heading, 18);
 
-        // Title
         Style sty = styles.addStyle("title", heading);
         StyleConstants.setFontSize(sty, 32);
 
-        // edition
         sty = styles.addStyle("edition", heading);
         StyleConstants.setFontSize(sty, 16);
 
-        // author
         sty = styles.addStyle("author", heading);
         StyleConstants.setItalic(sty, true);
         StyleConstants.setSpaceBelow(sty, 25);
 
-        // subtitle
         sty = styles.addStyle("subtitle", heading);
         StyleConstants.setSpaceBelow(sty, 35);
 
-        // normal
         sty = styles.addStyle("normal", def);
         StyleConstants.setLeftIndent(sty, 10);
         StyleConstants.setRightIndent(sty, 10);

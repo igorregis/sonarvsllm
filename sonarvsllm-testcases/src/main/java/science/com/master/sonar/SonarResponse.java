@@ -1,4 +1,4 @@
-package br.com.master.sonar;
+package science.com.master.sonar;
 
 public class SonarResponse {
     private Component component;

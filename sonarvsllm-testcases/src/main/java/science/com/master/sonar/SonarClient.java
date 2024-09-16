@@ -1,4 +1,4 @@
-package br.com.master.sonar;
+package science.com.master.sonar;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;

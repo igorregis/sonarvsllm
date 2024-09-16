@@ -1,6 +1,6 @@
-package br.com.master.sonar.llmvshuman;
+package science.com.master.sonar.llmvshuman;
 
-import br.com.master.sonar.ThreadedETLExecutor;
+import science.com.master.sonar.ThreadedETLExecutor;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;

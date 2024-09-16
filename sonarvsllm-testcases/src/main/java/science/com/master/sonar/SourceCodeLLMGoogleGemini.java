@@ -1,9 +1,7 @@
-package br.com.master.sonar.llmvshuman;
+package science.com.master.sonar;
 
-import br.com.master.sonar.Measure;
-import br.com.master.sonar.SonarClient;
-import br.com.master.sonar.SonarResponse;
-import br.com.master.sonar.ThreadedETLExecutor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -12,8 +10,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.gson.Gson;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.ChatMessageType;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.control.ActivateRequestContext;
@@ -35,7 +35,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,18 +65,19 @@ import java.util.stream.Stream;
  * find . -name "*.java" -type f -exec awk 'END{if(NR<800){print FILENAME}}' {} \; | grep -v -e "Test" -e "test"| grep "\./client/" | while read file; do rsync -R "$file" \\{PROJECT_PATH\\}/src/main/resources/classFilesToBeAnalysed/syncope/; done
  */
 @ApplicationScoped
-public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
+public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
 
 
     /**
      * URL da API do LLM usada para chamadas
-     * meta-llama-3-8b-instruct
+     * gemini-1.5-flash-001
+     * gemini-1.5-pro-001
      *
      */
-    public static final String URL_LLM = "https://api.anthropic.com/v1/messages";
+    public static final String URL_LLM = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-001:generateContent";
+//    public static final String URL_LLM = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
-    public static String OUTPUT_JSON_SUFIX = "Claude35-sonnet.json";
-//    public static String OUTPUT_JSON_SUFIX = "Claude3-haiku.json";
+    public static String OUTPUT_JSON_SUFIX = "Gemini15flash.json";
 
     /**
      * Número máximo de Threads a serem disparadas para realizar chamadas simultâneas ao Chat GPT
@@ -86,16 +86,23 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
     public static final String SCENARIO_ORIGINAL = "Original";
     public static final String SCENARIO_NO_COMMENTS = "NoComments";
     public static final String SCENARIO_BAD_NAMES = "BadNames";
+    public static final String SCENARIO_AFTER_REFACTOR = "AfterRefactor";
+    //    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "shattered-pixel-dungeon";
+    //    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "quarkus";
 
-    public static String CLASS_FILES_TO_BE_ANALYSED = "llmvshuman" + File.separator + "classes" + File.separator;
+    public static String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator;
     //GPT35 = gpt-3.5-turbo-0125
     //GPT4o = gpt-4o-2024-05-13
     //GPT4o-mini = gpt-4o-mini-2024-07-18
 
-    public static String CONTROLLED_SCENARIO = "llmvshuman";
+    public static String CONTROLLED_SCENARIO = "controlled";
 
-    public static String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/llmvshuman/Claude35-sonnet/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
-//    public static String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/llmvshuman/Claude3-haiku/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
+    private static String arquivoOriginal35 = "controlled/GPT35/" + CONTROLLED_SCENARIO + "GPT35.json";
+
+    public static String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/Gemini15pro/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
+
+    //    public static final String component = "ismvru_shattered-pixel-dungeon";
+    //    public static final String component = "quarkusio_quarkus";
 
     public static final String component = "igorregis_sonarvsllm";
 
@@ -116,8 +123,11 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
 
     private HttpClient httpClient = null;
 
-    @ConfigProperty(name = "api.key.anthropic")
+    @ConfigProperty(name = "api.key.llmGemini")
     private String apiKeyLLM;
+
+    @ConfigProperty(name = "google.project")
+    private String googleProject;
 
     /**
      * Contador de requests, usamos ele para registrar no log a quantidade de análises realizadas
@@ -141,19 +151,24 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
     private final ObjectMapper OBJECT_MAPPER;
 
     /**
+     * Arquivo com os dados da analise feita com o GPT 3.5 Turbo
+     */
+    private HashMap<String, JsonNode> sonarDataGPT35;
+
+    /**
      * Arquivo com os dados da analise feita com o GPT 4o
      */
     private HashMap<String, JsonNode> sonarDataGPT4o;
 
-    public SourceCodeLLMAnthropicClaude() {
-        SYSTEM_PROMPT.append("The assistant is a seasoned senior software engineer, with deep Java Language expertise and a native Portuguese speaker, ");
-        SYSTEM_PROMPT.append("doing source code evaluation as part of a due diligence process, these source code are presented in the form of a Java Code Snipet. ");
-        SYSTEM_PROMPT.append("Your task is to emit a score from 0 to 10 based on the readability level and overall how easy is to comprehend it.\n");
-        SYSTEM_PROMPT.append("Your answers MUST be presented ONLY in the following json format: {\"score\":\"N\", \"reasoning\":\"your explanation about the score\" } ");
+    public SourceCodeLLMGoogleGemini() {
+        SYSTEM_PROMPT.append("The assistant is a seasoned senior software engineer, with deep Java Language expertise, ");
+        SYSTEM_PROMPT.append("doing source code evaluation as part of a due diligence process, these source code are presented in the form of a Java Class File. ");
+        SYSTEM_PROMPT.append("Your task is to emit a score from 0 to 100 based on the readability level and overall quality of the source code presented.\n");
+        SYSTEM_PROMPT.append("Your answers MUST be presented ONLY in the following json format: {\"score\":\"NN%\", \"reasoning\":\"your explanation about the score\" } ");
         SYSTEM_PROMPT.append("- The \"explanation\" attribute must not surpass 450 characters and MUST NOT contain especial characters or new lines\n");
 
         USER_PROMPT_START = "Evaluate the following Java source code: ";
-        USER_PROMPT_END = "This is the end of the Code Snipet, the assistant should present your json answer:";
+        USER_PROMPT_END = "This is the end of the class file, the assistant should present your json answer:";
 
         JsonFactory factory = new JsonFactory();
         factory.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
@@ -184,18 +199,18 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
 
         //        correcao();
 
-        String[] scenarios = {SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES};
+        String[] scenarios = {SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_AFTER_REFACTOR};
 
         for (String scenario : scenarios) {
-            for (int i=1; i<=10; i++) {
-                OUTPUT_JSON_SUFIX = "Claude35-sonnet-" + i + ".json";
-//                OUTPUT_JSON_SUFIX = "Claude3-haiku-" + i + ".json";
+            for (int i=2; i<=10; i++) {
+                OUTPUT_JSON_SUFIX = "Gemini15pro-" + i + ".json";
 
-                CONTROLLED_SCENARIO = "llmvshuman" + scenario;
-                LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/llmvshuman/Claude35-sonnet/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
-//                LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/llmvshuman/Claude3-haiku/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
+                CONTROLLED_SCENARIO = "controlled" + scenario;
+                arquivoOriginal35 = "controlled/GPT35/" + CONTROLLED_SCENARIO + "GPT35.json";
+                LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/Gemini15pro/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
                 assertCreated();
-                CLASS_FILES_TO_BE_ANALYSED = "llmvshuman" + File.separator + "classes" + File.separator + scenario;
+                CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator + scenario;
+                loadJsonGPT35();
                 loadJsonGPT4o();
                 evaluateFiles();
             }
@@ -249,8 +264,8 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
                         logger.log(Level.SEVERE, e.getMessage(), e);
                     }
 
-                    if (!sonarDataGPT4o.containsKey("\"" + classPackage + "\"")) {
-                        logger.warning("Analisando " + classPackage +" para " + OUTPUT_JSON_SUFIX);
+                    if (!sonarDataGPT4o.containsKey("\"" + classPackage + "\"") && sonarDataGPT35.containsKey("\"" + classPackage + "\"")) {
+                        logger.warning("Analisando " + classPackage);
                         analyseClassFile(classPackage, javaClassFile);
                     }
                     //                    if (true) System.exit(-1);
@@ -265,8 +280,23 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
         logger.warning("Encerrado análise qualitativa dos diffs");
     }
 
+    /**
+     * Verifica se o componente existe no Sonarcloud, pois estamos trabalhando com versões antigas dos fontes
+     *
+     * @param classAndPackage
+     * @return
+     */
+    private boolean doesComponentExists(String classAndPackage) {
+        try {
+            SonarClient.getComponentMeasures(component + "%3A" + classAndPackage);
+            return true;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     private void analyseClassFile(String classPackage, StringBuilder javaClass) {
-        requestLLM(classPackage, SYSTEM_PROMPT.toString(), USER_PROMPT_START, javaClass, USER_PROMPT_END);
+        requestGemini(classPackage, SYSTEM_PROMPT.toString(), USER_PROMPT_START, javaClass, USER_PROMPT_END);
     }
 
 
@@ -291,29 +321,49 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
      * @param javaClass       The Class sourcecode to be analysed by GPT.
      * @param commandEnd      O final do command a ser enviado ao serviço GPT.
      */
-    private void requestLLM(String classAndPackage, String systemPrompt, String userPromptStart, StringBuilder javaClass, String commandEnd) {
+    private void requestGemini(String classAndPackage, String systemPrompt, String userPromptStart, StringBuilder javaClass, String commandEnd) {
         Map<String, Object> body = new HashMap<>();
+//        ArrayList<Map<String, String>> messages = new ArrayList<>();
+//        messages.add(Map.of("role", "user", "content", userPromptStart + javaClass + commandEnd));
 
-        body.put("system", systemPrompt);
-        body.put("max_tokens", 120);
-//        body.put("model", "claude-3-haiku-20240307");
-        body.put("model", "claude-3-5-sonnet-20240620");
-        body.put("temperature", 0);
-        body.put("stream", false);
+            JsonArray messages = new JsonArray();
+            JsonObject content = new JsonObject();
+            content.put("role", "user");
+            JsonArray parts = new JsonArray();
+            JsonObject part = new JsonObject();
+            part.put("text", userPromptStart + javaClass + commandEnd);
+            parts.add(part);
+            content.put("parts", parts);
+            messages.add(content);
 
-        List<Map<String, String>> messages = new ArrayList<>();
-        Map<String, String> message = new HashMap<>();
-        message.put("role", "user");
-        message.put("content", userPromptStart + javaClass + commandEnd);
-        messages.add(message);
+        body.put("contents", messages);
+        JsonObject systemInstruction = new JsonObject();
+        systemInstruction.put("role", "");
+        parts = new JsonArray();
+        part = new JsonObject();
+        part.put("text", systemPrompt);
+        parts.add(part);
+        systemInstruction.put("parts", parts);
 
-        // Add the messages list to the body map
-        body.put("messages", messages);
+        //        messages.clear();
+//        messages.add(Map.of("role", "system", "content", systemPrompt));
+        body.put("systemInstruction", systemInstruction);
 
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(URL_LLM))
-                .header("Content-Type", "application/json")
-                .header("x-api-key", apiKeyLLM)
-                .header("anthropic-version", "2023-06-01")
+        JsonObject generationConfig = new JsonObject();
+        generationConfig.put("temperature", 0);
+        generationConfig.put("topP", 0.95);
+        generationConfig.put("topK", 64);
+//        generationConfig.put("candidateCount", your_candidateCount_here);
+        generationConfig.put("maxOutputTokens", 120);
+//        JsonArray stopSequences = new JsonArray();
+//        stopSequences.add(your_stopSequence_here); // Adicione mais sequências de parada conforme necessário
+//        generationConfig.put("stopSequences", stopSequences);
+//        generationConfig.put("responseMimeType", "your_responseMimeType_here");
+
+        body.put("generationConfig", generationConfig);
+
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(URL_LLM + "?key=" + apiKeyLLM)).header("Content-Type", "application/json")
+                //                .header("Authorization", "Bearer " + apiKeyLLM)
                 .POST(HttpRequest.BodyPublishers.ofString(new JsonObject(body).toString())).build();
 
         try {
@@ -345,38 +395,17 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
      * @return
      */
     private HttpResponse<String> avaliaOcorrenciaDeErro(String classAndPackage, String systemPrompt, String userPromptStart, StringBuilder javaClass, String commandEnd, HttpResponse<String> response) {
-        if (response.statusCode() == 429 || response.statusCode() == 500 || response.statusCode() == 529) {//Este erro ocorre quando atingimos o limite de chamadas por minuto da API da OpenAI
+        if (response.statusCode() == 429 || response.statusCode() == 500) {//Este erro ocorre quando atingimos o limite de chamadas por minuto da API da OpenAI
             try {
-                logger.log(Level.SEVERE, "StatusCode: " + response.statusCode());
-                logger.log(Level.SEVERE, response.body());
                 logger.warning("Erro de excesso de requisições, realizando sleep para tentar novamente");
-//                Thread.sleep(100000);
-                Thread.sleep(60000);
+                Thread.sleep(100000);
+//                Thread.sleep(60000);
                 //Precisamos liberar um slot do controle de Threads aqui, pois o método abaixo irá tentar fazer acquire.
                 controleThreads.release();
-                requestLLM(classAndPackage, systemPrompt, userPromptStart, javaClass, commandEnd);
+                requestGemini(classAndPackage, systemPrompt, userPromptStart, javaClass, commandEnd);
                 return null;
             } catch (InterruptedException e) {
                 logger.log(Level.SEVERE, "Erro ao Sleep", e);
-            }
-            //O Llama-3-8B responde com 201 quando está processando, já o 405B sempre responde com 200 quando está processando
-        } else if (response.statusCode() == 201 || (response.statusCode() == 200 && OUTPUT_JSON_SUFIX.startsWith("Llama31-405B"))) {
-            JsonObject json = new JsonObject(response.body());
-            String getURL = json.getJsonObject("urls").getString("get");
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(getURL))
-                    .header("Content-Type", "application/json").header("Authorization", "Bearer " + apiKeyLLM)
-                    .GET().build();
-            try {
-                JsonObject jsonResponse = null;
-                do {
-                    Thread.sleep(5000);
-                    response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-                    jsonResponse = new JsonObject(response.body());
-                    logger.warning("Status da predicion: "+jsonResponse.getString("status"));
-                } while (!jsonResponse.getString("status").equals("succeeded"));
-                return response;
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
             }
         } else if (response.statusCode() != 200) {//Para qualquer outro erro imprevisto nós vamos registrar os detalhes em log e encerrar a execução
             String command = systemPrompt + userPromptStart + javaClass.toString() + commandEnd;
@@ -411,7 +440,9 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
             if (evaluation.score.endsWith("%")) {//Remove the % sign
                 evaluation.score = evaluation.score.substring(0, evaluation.score.length() - 1);
             }
-            evaluation.name = classAndPackage;
+            if (sonarDataGPT35.containsKey("\"" + classAndPackage + "\"")) {
+                evaluation.sonarData = OBJECT_MAPPER.readValue(sonarDataGPT35.get("\"" + classAndPackage + "\"").toString(), SonarResponse.class);
+            }
             return evaluation;
         } catch (Throwable e) {
             logger.log(Level.SEVERE, "Error building DiffGPTResponse " + response, e);
@@ -435,20 +466,18 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
         logger.warning("parseResponse " + response);
         try {
             JsonObject json = new JsonObject(response);
-            String textGPTResponse = json.getJsonArray("content").getJsonObject(0).getString("text");
-            logger.warning("content.text = " + textGPTResponse);
-
+            String textGPTResponse = json.getJsonArray("candidates").getJsonObject(0).getJsonObject("content").getJsonArray("parts").getJsonObject(0).getString("text");
             if (textGPTResponse.contains("```json")) {
                 textGPTResponse = textGPTResponse.replaceAll("```json", "").replaceAll("```", "");
             }
-            logger.warning(json.getJsonObject("usage").toString());
-            Integer tokensUsed = json.getJsonObject("usage").getInteger("input_tokens") + json.getJsonObject("usage").getInteger("output_tokens");
+            logger.warning(json.getJsonObject("usageMetadata").toString());
+            Integer tokensUsed = json.getJsonObject("usageMetadata").getInteger("totalTokenCount");
 
             totalTokensUsed += tokensUsed;
             logger.log(Level.WARNING, "Total tokens used so far: " + totalTokensUsed + " (R$ " + (totalTokensUsed * 0.005 / 1000) + ")");
-//            Inserts the call cost attribute into tokens to be printed, as the first attribute of the JSON (Do not use ReplaceAll)
+            //Inserts the call cost attribute into tokens to be printed, as the first attribute of the JSON (Do not use ReplaceAll)
             textGPTResponse = textGPTResponse.replaceFirst("\\{", "\\{\"tokens\":\" " + tokensUsed + "\",");
-//            This treatment is necessary because the API response can be abruptly truncated, so we have to force the json to close
+            //This treatment is necessary because the API response can be abruptly truncated, so we have to force the json to close
             if (textGPTResponse.endsWith("\"}")) {
                 return textGPTResponse;
             } else if (textGPTResponse.endsWith("\"")) {
@@ -501,6 +530,24 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
         }
     }
 
+    public void loadJsonGPT35() {
+        sonarDataGPT35 = new HashMap<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/" + arquivoOriginal35));
+            String line;
+            ObjectMapper mapper = new ObjectMapper();
+            while ((line = reader.readLine()) != null) {
+                JsonNode sonarData = mapper.readTree(line).get("sonarData");
+                if (sonarData != null) {
+                    sonarDataGPT35.put(sonarData.get("component").get("path").toString(), sonarData);
+                }
+            }
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void correcao() {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(LLM_JSON));
@@ -540,5 +587,59 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+}
+
+@JsonRootName(value = "messages")
+class GeminiMessageWrapper {
+
+    @JsonProperty("messages")
+    private List<Message> messages;
+
+    // Getters e Setters
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    // Classe interna Message
+    static class Message {
+
+        Message(String role, String content) {
+            this.role = role;
+            this.content = content;
+        }
+
+        @JsonProperty("role")
+        private String role;
+
+        @JsonProperty("content")
+        private String content;
+
+        // Getters e Setters
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+    }
+
+    @Override
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(messages);
     }
 }

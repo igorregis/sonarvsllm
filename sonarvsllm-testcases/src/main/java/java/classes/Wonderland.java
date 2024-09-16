@@ -14,9 +14,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
 
-/**
- * hack to load attributed content
- */
 public class Wonderland {
 
     Wonderland(DefaultStyledDocument doc, StyleContext styles) {
@@ -42,7 +39,6 @@ public class Wonderland {
                 doc.insertString(doc.getLength(), run.content, s);
             }
 
-            // set logical style
             Style ls = styles.getStyle(p.logical);
             doc.setLogicalStyle(doc.getLength() - 1, ls);
             doc.insertString(doc.getLength(), "\n", null);
@@ -52,7 +48,6 @@ public class Wonderland {
     }
 
     void createStyles() {
-        // no attributes defined
         Style s = styles.addStyle(null, null);
         runAttr.put("none", s);
         s = styles.addStyle(null, null);
@@ -92,7 +87,6 @@ public class Wonderland {
 
 
         } catch (MissingResourceException mre) {
-            // can't display image
         }
 
         Style def = styles.getStyle(StyleContext.DEFAULT_STYLE);
@@ -105,24 +99,19 @@ public class Wonderland {
         StyleConstants.setSpaceBelow(heading, 10);
         StyleConstants.setFontSize(heading, 18);
 
-        // Title
         Style sty = styles.addStyle("title", heading);
         StyleConstants.setFontSize(sty, 32);
 
-        // edition
         sty = styles.addStyle("edition", heading);
         StyleConstants.setFontSize(sty, 16);
 
-        // author
         sty = styles.addStyle("author", heading);
         StyleConstants.setItalic(sty, true);
         StyleConstants.setSpaceBelow(sty, 25);
 
-        // subtitle
         sty = styles.addStyle("subtitle", heading);
         StyleConstants.setSpaceBelow(sty, 35);
 
-        // normal
         sty = styles.addStyle("normal", def);
         StyleConstants.setLeftIndent(sty, 10);
         StyleConstants.setRightIndent(sty, 10);

@@ -1,4 +1,4 @@
-package br.com.master.sonar;
+package science.com.master.sonar;
 
 import jakarta.annotation.PostConstruct;
 import org.eclipse.microprofile.config.inject.ConfigProperty;

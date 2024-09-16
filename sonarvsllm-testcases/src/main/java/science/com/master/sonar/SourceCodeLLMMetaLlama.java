@@ -1,7 +1,5 @@
-package br.com.master.sonar;
+package science.com.master.sonar;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -10,7 +8,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.gson.Gson;
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.ChatMessageType;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.control.ActivateRequestContext;
@@ -32,9 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -49,8 +46,8 @@ import java.util.stream.Stream;
  * As avaliações são solicitadas ao LLM em um formato JSON com 2 atributos:<br></>
  * Score - Que indica uma nota de 1 a 100 para o código
  * Analise - Que deve conter um texto de até 500 caracteres explicando o racional da análisez, no prompt pedimos para o LLM ater-se a 450 caracteres, mas ele sempre estoura.
- *
- *
+ * <p>
+ * <p>
  * Selected Files from Quarkus Project with less tham 800 lines of code:
  * Como mostrar este comando em um documento latex?
  * Executar de dentro da pasta core do projeto:
@@ -63,79 +60,46 @@ import java.util.stream.Stream;
  * find . -name "*.java" -type f -exec awk 'END{if(NR<800){print FILENAME}}' {} \; | grep -v -e "Test" -e "test"| grep "\./client/" | while read file; do rsync -R "$file" \\{PROJECT_PATH\\}/src/main/resources/classFilesToBeAnalysed/syncope/; done
  */
 @ApplicationScoped
-public class SourceCodeLLM4o extends ThreadedETLExecutor {
+public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
 
 
     /**
      * URL da API do LLM usada para chamadas
+     * meta-llama-3-8b-instruct
+     *
      */
-    public static final String URL_LLM = "https://api.openai.com/v1/chat/completions";
+//    public static final String URL_LLM = "https://api.replicate.com/v1/models/meta/meta-llama-3-8b-instruct/predictions";
+    public static final String URL_LLM = "https://api.replicate.com/v1/models/meta/meta-llama-3.1-405b-instruct/predictions";
 
-    /**
-     * Parâmetro indicando o prompt de comando enviado ao LLM
-     */
-    public static final String MESSAGES = "messages";
-
-    /**
-     * Parâmetro que indica o número máximo de tokens que o LLM deve usar para produzir sua resposta
-     */
-    public static final String MAX_TOKENS = "max_tokens";
-
-    /**
-     * Parâmetro de temperatura, usado para determinar o quanto criativo ou determinístico será o LLM, quanto menor mais determinístico
-     */
-    public static final String TEMPERATURE = "temperature";
-
-    public static final String FREQUENCY_PENALTY = "frequency_penalty";
-
-    public static final String PRESENCE_PENALTY = "presence_penalty";
-
-    public static final String TOP_P = "top_p";
-
-    public static final String N_PARAM = "n";
-
-    public static final String STOP_SIGN = "stop";
-
-    /**
-     * Marcador de final de comando para o LLM, usado no header por exemplo para que o LLM saiba que a própria mensagem chegou ao fim
-     */
-    public static final String IM_END = "<|im_end|>";
+//    public static String OUTPUT_JSON_SUFIX = "Llama3-8b-instruct.json";
+    public static String OUTPUT_JSON_SUFIX = "Llama31-405b-instruct.json";
 
     /**
      * Número máximo de Threads a serem disparadas para realizar chamadas simultâneas ao Chat GPT
      */
     public static final int THREADS_GPT = 10;
-
-//        public static final String SCENARIO = "Original";
-//    public static final String SCENARIO = "NoComments";
-//    public static final String SCENARIO = "BadNames";
-//    public static final String SCENARIO = "AfterRefactor";
     public static final String SCENARIO_ORIGINAL = "Original";
     public static final String SCENARIO_NO_COMMENTS = "NoComments";
     public static final String SCENARIO_BAD_NAMES = "BadNames";
     public static final String SCENARIO_AFTER_REFACTOR = "AfterRefactor";
+    //    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "shattered-pixel-dungeon";
+    //    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "quarkus";
 
-//    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "shattered-pixel-dungeon";
-//    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "quarkus";
-//    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator + SCENARIO;
     public static String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator;
-
     //GPT35 = gpt-3.5-turbo-0125
     //GPT4o = gpt-4o-2024-05-13
     //GPT4o-mini = gpt-4o-mini-2024-07-18
 
-    //    public static final String CONTROLLED_SCENARIO = "controlled" + SCENARIO;
     public static String CONTROLLED_SCENARIO = "controlled";
 
     private static String arquivoOriginal35 = "controlled/GPT35/" + CONTROLLED_SCENARIO + "GPT35.json";
-    public static String OUTPUT_JSON_SUFIX = "GPT4o-mini.json";
-//    public static final String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/GPT4o/" + CONTROLLED_SCENARIO + "GPT4o.json";
-    public static String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/Gemini15pro/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
+
+    public static String LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/Llama31-405B/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
 
     //    public static final String component = "ismvru_shattered-pixel-dungeon";
     //    public static final String component = "quarkusio_quarkus";
 
-        public static final String component = "igorregis_sonarvsllm";
+    public static final String component = "igorregis_sonarvsllm";
 
     /**
      * System prompt enviado ao LLM
@@ -154,10 +118,8 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
 
     private HttpClient httpClient = null;
 
-    @ConfigProperty(name = "api.key.llm4o")
+    @ConfigProperty(name = "api.key.replicate")
     private String apiKeyLLM;
-    @ConfigProperty(name = "org.id")
-    private String organization;
 
     /**
      * Contador de requests, usamos ele para registrar no log a quantidade de análises realizadas
@@ -190,7 +152,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
      */
     private HashMap<String, JsonNode> sonarDataGPT4o;
 
-    public SourceCodeLLM4o() {
+    public SourceCodeLLMMetaLlama() {
         SYSTEM_PROMPT.append("The assistant is a seasoned senior software engineer, with deep Java Language expertise, ");
         SYSTEM_PROMPT.append("doing source code evaluation as part of a due diligence process, these source code are presented in the form of a Java Class File. ");
         SYSTEM_PROMPT.append("Your task is to emit a score from 0 to 100 based on the readability level and overall quality of the source code presented.\n");
@@ -198,7 +160,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
         SYSTEM_PROMPT.append("- The \"explanation\" attribute must not surpass 450 characters and MUST NOT contain especial characters or new lines\n");
 
         USER_PROMPT_START = "Evaluate the following Java source code: ";
-        USER_PROMPT_END = "This is the end of the class file, the assistant should present your json answer:";
+        USER_PROMPT_END = "This is the end of the classh file, the assistant should present your json answer:";
 
         JsonFactory factory = new JsonFactory();
         factory.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
@@ -226,16 +188,18 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
     @ActivateRequestContext
     public void run() {
         setupHttpClient();
-        String[] scenarios = {SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_AFTER_REFACTOR};
+
         //        correcao();
+
+        String[] scenarios = {SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_AFTER_REFACTOR};
 
         for (String scenario : scenarios) {
             for (int i=1; i<=10; i++) {
-                OUTPUT_JSON_SUFIX = "GPT4o-" + i + ".json";
+                OUTPUT_JSON_SUFIX = "Llama31-405B-" + i + ".json";
 
                 CONTROLLED_SCENARIO = "controlled" + scenario;
                 arquivoOriginal35 = "controlled/GPT35/" + CONTROLLED_SCENARIO + "GPT35.json";
-                LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/GPT4o/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
+                LLM_JSON = "/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/controlled/Llama31-405B/" + CONTROLLED_SCENARIO + OUTPUT_JSON_SUFIX;
                 assertCreated();
                 CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "controlled" + File.separator + scenario;
                 loadJsonGPT35();
@@ -244,7 +208,8 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
             }
 
         }
-//        httpClient.close();
+
+        //        httpClient.close();
     }
 
     private static void assertCreated() {
@@ -259,7 +224,8 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
     }
 
     /**
-     *  Carrega as classes para serem avaliadas do diretorio resources indicado como parâmetro
+     * Carrega as classes para serem avaliadas do diretorio resources indicado como parâmetro
+     *
      * @ActivateRequestContext Esta anotação é usada para indicar que podem ocorrer acesso base, mas sem transações com commit.
      */
     @ActivateRequestContext
@@ -272,7 +238,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
                     if (!path.toFile().isFile()) {
                         return;
                     }
-//                    logger.warning("Loading " + path.toString() + " file");
+                    //                    logger.warning("Loading " + path.toString() + " file");
                     StringBuilder javaClassFile = new StringBuilder();
                     // Opening the InputStream to the file
                     int lineCount = 0;
@@ -291,10 +257,10 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
                     }
 
                     if (!sonarDataGPT4o.containsKey("\"" + classPackage + "\"") && sonarDataGPT35.containsKey("\"" + classPackage + "\"")) {
-                        logger.warning("Analisando " + classPackage);
+                        logger.warning("Analisando " + classPackage +" para " + OUTPUT_JSON_SUFIX);
                         analyseClassFile(classPackage, javaClassFile);
                     }
-//                    if (true) System.exit(-1);
+                    //                    if (true) System.exit(-1);
                 });
             } catch (IOException e) {
                 logger.log(Level.SEVERE, e.getMessage(), e);
@@ -302,12 +268,13 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
         } catch (URISyntaxException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
-//        sonarDataGPT35.keySet().stream().forEach(s -> logger.warning(s));
+        //        sonarDataGPT35.keySet().stream().forEach(s -> logger.warning(s));
         logger.warning("Encerrado análise qualitativa dos diffs");
     }
 
     /**
      * Verifica se o componente existe no Sonarcloud, pois estamos trabalhando com versões antigas dos fontes
+     *
      * @param classAndPackage
      * @return
      */
@@ -321,37 +288,47 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
     }
 
     private void analyseClassFile(String classPackage, StringBuilder javaClass) {
-        requestChatGPT(classPackage , SYSTEM_PROMPT.toString(), USER_PROMPT_START, javaClass, USER_PROMPT_END);
+        requestLLM(classPackage, SYSTEM_PROMPT.toString(), USER_PROMPT_START, javaClass, USER_PROMPT_END);
     }
 
+
+    private class SystemMessage implements ChatMessage {
+
+        @Override
+        public ChatMessageType type() {
+            return ChatMessageType.SYSTEM;
+        }
+
+        @Override
+        public String text() {
+            return SYSTEM_PROMPT.toString();
+        }
+    }
 
     /**
      * Este método é responsável por enviar uma solicitação ao serviço de LLM com um command específico e um javaClass.
      * A resposta é então avaliada, processada e registrada.
      *
-     * @param classAndPackage     Java Class File Name
-     * @param javaClass    The Class sourcecode to be analysed by GPT.
-     * @param commandEnd   O final do command a ser enviado ao serviço GPT.
+     * @param classAndPackage Java Class File Name
+     * @param javaClass       The Class sourcecode to be analysed by GPT.
+     * @param commandEnd      O final do command a ser enviado ao serviço GPT.
      */
-    private void requestChatGPT(String classAndPackage, String systemPrompt, String userPromptStart, StringBuilder javaClass, String commandEnd) {
-
+    private void requestLLM(String classAndPackage, String systemPrompt, String userPromptStart, StringBuilder javaClass, String commandEnd) {
         Map<String, Object> body = new HashMap<>();
-        MessageWrapper messagens = new MessageWrapper();
-        messagens.setMessages(new ArrayList<>(2));
-        messagens.getMessages().add(new MessageWrapper.Message("system", systemPrompt));
-        messagens.getMessages().add(new MessageWrapper.Message("user", userPromptStart + javaClass + commandEnd));
-        String command = messagens.toString();
-        body.put(MESSAGES, messagens.getMessages());
-        body.put(MAX_TOKENS, 120);//Max length request + response: 8193
-        body.put(TEMPERATURE, 0);
-        body.put("model", "gpt-4o");
-//        body.put("model", "gpt-4o-mini");
-//        body.put("model", "gpt-3.5-turbo-1106");
-        body.put(FREQUENCY_PENALTY, 0);
-        body.put(PRESENCE_PENALTY, 0);
-        body.put(TOP_P, 0.5);
-        body.put(N_PARAM, 1);
-        body.put(STOP_SIGN, IM_END);
+
+        Map<String, Object> input = new HashMap<>();
+        input.put("prompt", userPromptStart + javaClass + commandEnd);
+        input.put("system_prompt", systemPrompt);
+        input.put("stop_sequences", "<|end_of_text|>,<|eot_id|>");
+        input.put("prompt_template", "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n{system_prompt}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n{prompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n");
+        input.put("max_new_tokens", 120);
+        input.put("temperature", 0);
+        input.put("stream", false);
+//        input.put("topP", 0.95);
+//        input.put("topK", 64);
+        input.put("log_performance_metrics", false);
+
+        body.put("input", input);
 
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(URL_LLM)).header("Content-Type", "application/json").header("Authorization", "Bearer " + apiKeyLLM)
                 .POST(HttpRequest.BodyPublishers.ofString(new JsonObject(body).toString())).build();
@@ -361,8 +338,9 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
         CompletableFuture<Void> responseEval = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(resp -> avaliaOcorrenciaDeErro(classAndPackage,systemPrompt, userPromptStart, javaClass, commandEnd,resp))
+                .thenApply(resp -> avaliaOcorrenciaDeErro(classAndPackage, systemPrompt, userPromptStart, javaClass, commandEnd, resp))
                 .thenApply(stringHttpResponse -> parseGPTResponse(stringHttpResponse == null ? null : stringHttpResponse.body())).thenApply(response -> buildGTPResponse(classAndPackage, response))
                 .thenAccept(diffGPTResponse -> registraAvaliacao(classAndPackage, diffGPTResponse));
 
@@ -380,20 +358,40 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
      * @param classAndPackage
      * @param javaClass
      * @param commandEnd
-     * @param response          Retorno da API do LLM a ser avaliado na busca por erros
+     * @param response        Retorno da API do LLM a ser avaliado na busca por erros
      * @return
      */
     private HttpResponse<String> avaliaOcorrenciaDeErro(String classAndPackage, String systemPrompt, String userPromptStart, StringBuilder javaClass, String commandEnd, HttpResponse<String> response) {
-        if (response.statusCode() == 429) {//Este erro ocorre quando atingimos o limite de chamadas por minuto da API da OpenAI
+        if (response.statusCode() == 429 || response.statusCode() == 500) {//Este erro ocorre quando atingimos o limite de chamadas por minuto da API da OpenAI
             try {
                 logger.warning("Erro de excesso de requisições, realizando sleep para tentar novamente");
-                Thread.sleep(5000);
+                Thread.sleep(100000);
+                //                Thread.sleep(60000);
                 //Precisamos liberar um slot do controle de Threads aqui, pois o método abaixo irá tentar fazer acquire.
                 controleThreads.release();
-                requestChatGPT(classAndPackage, systemPrompt, userPromptStart, javaClass, commandEnd);
+                requestLLM(classAndPackage, systemPrompt, userPromptStart, javaClass, commandEnd);
                 return null;
             } catch (InterruptedException e) {
                 logger.log(Level.SEVERE, "Erro ao Sleep", e);
+            }
+            //O Llama-3-8B responde com 201 quando está processando, já o 405B sempre responde com 200 quando está processando
+        } else if (response.statusCode() == 201 || (response.statusCode() == 200 && OUTPUT_JSON_SUFIX.startsWith("Llama31-405B"))) {
+            JsonObject json = new JsonObject(response.body());
+            String getURL = json.getJsonObject("urls").getString("get");
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(getURL))
+                    .header("Content-Type", "application/json").header("Authorization", "Bearer " + apiKeyLLM)
+                    .GET().build();
+            try {
+                JsonObject jsonResponse = null;
+                do {
+                    Thread.sleep(5000);
+                    response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                    jsonResponse = new JsonObject(response.body());
+                    logger.warning("Status da predicion: "+jsonResponse.getString("status"));
+                } while (!jsonResponse.getString("status").equals("succeeded"));
+                return response;
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
             }
         } else if (response.statusCode() != 200) {//Para qualquer outro erro imprevisto nós vamos registrar os detalhes em log e encerrar a execução
             String command = systemPrompt + userPromptStart + javaClass.toString() + commandEnd;
@@ -416,7 +414,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
      * esse tratamento é necessário pois o LLM costuma não respeitar estes limites no prompt.
      *
      * @param classAndPackage
-     * @param response     A response do GPT em formato de string (esperamos um json).
+     * @param response        A response do GPT em formato de string (esperamos um json).
      * @return O objeto DiffGPTResponse montado a partir da response. Retorna null se ocorrer um erro ao fazer o parse da response do GPT.
      */
     private GPTResponse buildGTPResponse(String classAndPackage, String response) {
@@ -454,16 +452,40 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
         logger.warning("parseResponse " + response);
         try {
             JsonObject json = new JsonObject(response);
-            String textGPTResponse = json.getJsonArray("choices").getJsonObject(0).getJsonObject("message").getString("content");
-            if (textGPTResponse.contains("```json")) {
-                textGPTResponse = textGPTResponse.replaceAll("```json", "").replaceAll("```","");
+            String textGPTResponse = json.getString("output");
+            if (textGPTResponse.contains("[")) {
+                if (textGPTResponse.length() < 10)
+                {
+                    textGPTResponse = "{\"score\":\"0%\", \"reasoning\":\"LLM EMPTY RETURN\"}";
+                }
+                else {
+                    logger.warning(textGPTResponse);
+                    textGPTResponse = textGPTResponse.replace(", ", "");
+                    if (!textGPTResponse.endsWith("\"}")) {
+                        textGPTResponse = textGPTResponse.replace("]", "");
+                        if (!textGPTResponse.endsWith("\""))
+                            textGPTResponse += "\"";
+                        textGPTResponse += "}]";
+                    }
+                    String jsonStart = "{";
+                    String jsonEnd = "}";
+                    int startIndex = textGPTResponse.indexOf(jsonStart);
+                    int endIndex = textGPTResponse.lastIndexOf(jsonEnd) + jsonEnd.length();
+                    textGPTResponse = textGPTResponse.substring(startIndex, endIndex);
+                }
             }
-            logger.warning(json.getJsonObject("usage").toString());
-            Integer tokensUsed = json.getJsonObject("usage").getInteger("total_tokens");
-            totalTokensUsed += tokensUsed;
-            logger.log(Level.WARNING, "Total tokens used so far: " + totalTokensUsed + " (R$ " + (totalTokensUsed * 0.005 / 1000) + ")");
+            logger.warning(textGPTResponse);
+
+            if (textGPTResponse.contains("```json")) {
+                textGPTResponse = textGPTResponse.replaceAll("```json", "").replaceAll("```", "");
+            }
+//            logger.warning(json.getJsonObject("usageMetadata").toString());
+//            Integer tokensUsed = json.getJsonObject("usageMetadata").getInteger("totalTokenCount");
+
+//            totalTokensUsed += tokensUsed;
+//            logger.log(Level.WARNING, "Total tokens used so far: " + totalTokensUsed + " (R$ " + (totalTokensUsed * 0.005 / 1000) + ")");
             //Inserts the call cost attribute into tokens to be printed, as the first attribute of the JSON (Do not use ReplaceAll)
-            textGPTResponse = textGPTResponse.replaceFirst("\\{", "\\{\"tokens\":\" " + tokensUsed + "\",");
+//            textGPTResponse = textGPTResponse.replaceFirst("\\{", "\\{\"tokens\":\" " + tokensUsed + "\",");
             //This treatment is necessary because the API response can be abruptly truncated, so we have to force the json to close
             if (textGPTResponse.endsWith("\"}")) {
                 return textGPTResponse;
@@ -478,24 +500,24 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
         }
     }
 
-    /**%
+    /**
+     * %
      * Este método registra a avaliação do GPT no banco de dados
      * Ele inicia uma transação, encontra o CommitDiff correspondente no banco de dados e atualiza seus campos com os valores da avaliação.
      * Em seguida, persiste as alterações e faz o commit da transação.
      * Se ocorrer um erro durante esse processo, ele é registrado e a thread é liberada.
      *
-     * @param fileName  Java Class File Name
+     * @param fileName   Java Class File Name
      * @param evaluation A avaliação do GPT para o CommitDiff.
      */
     private synchronized void registraAvaliacao(String fileName, GPTResponse evaluation) {
         try {
             if (evaluation != null) {
-                logger.warning("Evaluation result for " + fileName+ ": \n" + evaluation);
-                Files.write(Paths.get(LLM_JSON),
-                        (evaluation + System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
+                logger.warning("Evaluation result for " + fileName + ": \n" + evaluation);
+                Files.write(Paths.get(LLM_JSON), (evaluation + System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, fileName+ ": " + evaluation, e);
+            logger.log(Level.SEVERE, fileName + ": " + evaluation, e);
         }
     }
 
@@ -574,59 +596,5 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-}
-
-@JsonRootName(value = "messages")
-class MessageWrapper {
-
-    @JsonProperty("messages")
-    private List<Message> messages;
-
-    // Getters e Setters
-    public List<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
-
-    // Classe interna Message
-    static class Message {
-
-        Message(String role, String content) {
-            this.role = role;
-            this.content = content;
-        }
-
-        @JsonProperty("role")
-        private String role;
-
-        @JsonProperty("content")
-        private String content;
-
-        // Getters e Setters
-        public String getRole() {
-            return role;
-        }
-
-        public void setRole(String role) {
-            this.role = role;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public void setContent(String content) {
-            this.content = content;
-        }
-    }
-
-    @Override
-    public String toString() {
-        Gson gson = new Gson();
-        return gson.toJson(messages);
     }
 }

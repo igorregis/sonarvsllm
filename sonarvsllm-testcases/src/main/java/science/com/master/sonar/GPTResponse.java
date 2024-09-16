@@ -1,4 +1,4 @@
-package br.com.master.sonar;
+package science.com.master.sonar;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

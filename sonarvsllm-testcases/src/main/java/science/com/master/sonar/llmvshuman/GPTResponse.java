@@ -1,4 +1,4 @@
-package br.com.master.sonar.llmvshuman;
+package science.com.master.sonar.llmvshuman;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
