@@ -1,6 +1,7 @@
 # sonarvsllm
 
-This project has the classes analysed in the paper 1 (DOI [10.48550/arXiv.2408.07082](https://doi.org/10.48550/arXiv.2408.07082)) and paper 2 (DOI [XXX](https://doi.org/XXXXXXX.XXXXXXX)).
+This project has the classes analysed in the paper 1 (DOI [10.48550/arXiv.2408.07082](https://doi.org/10.48550/arXiv.2408.07082)) (Zeonodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13890179.svg)](https://doi.org/10.5281/zenodo.13890179)
+) and paper 2 (DOI [XXX](https://doi.org/XXXXXXX.XXXXXXX)).
 
 ---
 ***Paper 2*** 
