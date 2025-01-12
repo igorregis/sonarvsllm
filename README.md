@@ -35,7 +35,7 @@ The json files containing the dataset generated with LLM analysis for the respec
 
 To execute the Sonar analysis for the second paper is necessary to run the command below (Note: Replace the project key to your own project at Sonarcloud):
 `./mvnw verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=igorregis_sonarvsllm`
-
+`./mvnw quarkus:dev -Dquarkus.package.main-class=science.com.master.sonar.LLMAnalyser`
 ---
 ***Paper 1*** 
 
