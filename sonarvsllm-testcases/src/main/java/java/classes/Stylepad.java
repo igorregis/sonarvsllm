@@ -39,11 +39,6 @@ import javax.swing.text.StyledEditorKit;
 import javax.swing.text.TextAction;
 
 
-/**
- * Sample application using JTextPane.
- *
- * @author Timothy Prinzing
- */
 @SuppressWarnings("serial")
 public class Stylepad extends Notepad {
 
@@ -103,12 +98,6 @@ public class Stylepad extends Notepad {
         }
     }
 
-    /**
-     * Fetch the list of actions supported by this
-     * editor.  It is implemented to return the list
-     * of actions supported by the superclass
-     * augmented with the actions defined locally.
-     */
     @Override
     public Action[] getActions() {
         Action[] defaultActions = {
@@ -121,11 +110,6 @@ public class Stylepad extends Notepad {
         return a;
     }
 
-    /**
-     * Try and resolve the resource name in the local
-     * resource file, and if not found fall back to
-     * the superclass resource file.
-     */
     @Override
     protected String getResourceString(String nm) {
         String str;
@@ -137,9 +121,6 @@ public class Stylepad extends Notepad {
         return str;
     }
 
-    /**
-     * Create an editor to represent the given document.
-     */
     @Override
     protected JTextComponent createEditor() {
         StyleContext sc = new StyleContext();
@@ -153,10 +134,6 @@ public class Stylepad extends Notepad {
         return p;
     }
 
-    /**
-     * Create a menu for the app.  This is redefined to trap
-     * a couple of special entries for now.
-     */
     @Override
     protected JMenu createMenu(String key) {
         if (key.equals("color")) {
@@ -185,7 +162,6 @@ public class Stylepad extends Notepad {
         return TOOLBAR_KEYS;
     }
 
-    // this will soon be replaced
     JMenu createColorMenu() {
         ActionListener a;
         JMenuItem mi;
@@ -235,10 +211,6 @@ public class Stylepad extends Notepad {
     }
 
 
-    /**
-     * Trys to read a file which is assumed to be a
-     * serialization of a document.
-     */
     class OpenAction extends AbstractAction {
 
         OpenAction() {
@@ -275,23 +247,17 @@ public class Stylepad extends Notepad {
                     frame.setTitle(file);
                     validate();
                 } catch (IOException io) {
-                    // should put in status panel
                     System.err.println("IOException: " + io.getMessage());
                 } catch (ClassNotFoundException cnf) {
-                    // should put in status panel
                     System.err.println("Class not found: " + cnf.getMessage());
                 }
             } else {
-                // should put in status panel
                 System.err.println("No such file: " + f);
             }
         }
     }
 
 
-    /**
-     * Trys to write the document as a serialization.
-     */
     class SaveAction extends AbstractAction {
 
         SaveAction() {
@@ -319,16 +285,11 @@ public class Stylepad extends Notepad {
                 ostrm.flush();
                 frame.setTitle(f.getName());
             } catch (IOException io) {
-                // should put in status panel
                 System.err.println("IOException: " + io.getMessage());
             }
         }
     }
 
-
-    /**
-     * Creates an empty document.
-     */
     class NewAction extends AbstractAction {
 
         NewAction() {
