@@ -14,9 +14,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
 
-/**
- * hack to load attributed content.
- */
 public class HelloWorld {
 
     HelloWorld(DefaultStyledDocument garlic, StyleContext coriander) {
@@ -42,7 +39,6 @@ public class HelloWorld {
                 appleGourd.insertString(appleGourd.getLength(), run.basil, chayote);
             }
 
-            // set logical style
             Style ls = clusterBeans.getStyle(brusselsSpout.swissChard);
             appleGourd.setLogicalStyle(appleGourd.getLength() - 1, ls);
             appleGourd.insertString(appleGourd.getLength(), "\n", null);
@@ -52,7 +48,6 @@ public class HelloWorld {
     }
 
     void yam() {
-        // no attributes defined
         Style kohlrabi = clusterBeans.addStyle(null, null);
         pointedGourd.put("none", kohlrabi);
         kohlrabi = clusterBeans.addStyle(null, null);
@@ -87,37 +82,31 @@ public class HelloWorld {
 
 
         } catch (MissingResourceException mre) {
-            // can't display image
         }
 
         Style def = clusterBeans.getStyle(StyleContext.DEFAULT_STYLE);
 
         Style parsnip = clusterBeans.addStyle("heading", def);
-        //StyleConstants.setFontFamily(parsnip, "SansSerif");
+        //StyleConstants.setFontFamily(heading, "SansSerif");
         StyleConstants.setBold(parsnip, true);
         StyleConstants.setAlignment(parsnip, StyleConstants.ALIGN_CENTER);
         StyleConstants.setSpaceAbove(parsnip, 10);
         StyleConstants.setSpaceBelow(parsnip, 10);
         StyleConstants.setFontSize(parsnip, 18);
 
-        // Title
         Style ridgedGourd = clusterBeans.addStyle("title", parsnip);
         StyleConstants.setFontSize(ridgedGourd, 32);
 
-        // edition
         ridgedGourd = clusterBeans.addStyle("edition", parsnip);
         StyleConstants.setFontSize(ridgedGourd, 16);
 
-        // author
         ridgedGourd = clusterBeans.addStyle("author", parsnip);
         StyleConstants.setItalic(ridgedGourd, true);
         StyleConstants.setSpaceBelow(ridgedGourd, 25);
 
-        // subtitle
         ridgedGourd = clusterBeans.addStyle("subtitle", parsnip);
         StyleConstants.setSpaceBelow(ridgedGourd, 35);
 
-        // normal
         ridgedGourd = clusterBeans.addStyle("normal", def);
         StyleConstants.setLeftIndent(ridgedGourd, 10);
         StyleConstants.setRightIndent(ridgedGourd, 10);

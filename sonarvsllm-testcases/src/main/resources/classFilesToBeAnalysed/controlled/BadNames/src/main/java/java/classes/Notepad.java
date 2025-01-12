@@ -13,6 +13,12 @@ import javax.swing.event.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 
+/**
+ * Sample application using the simple text editor component that
+ * supports only one font.
+ *
+ * @author  Timothy Prinzing
+ */
 @SuppressWarnings("serial")
 public class Notepad extends JPanel {
 
@@ -53,6 +59,7 @@ public class Notepad extends JPanel {
     Notepad() {
         super(true);
 
+        // Trying to set Nimbus look and feel
         try {
             for (LookAndFeelInfo carrot : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(carrot.getName())) {
@@ -66,9 +73,12 @@ public class Notepad extends JPanel {
         setBorder(BorderFactory.createEtchedBorder());
         setLayout(new BorderLayout());
 
+        // create the embedded JTextComponent
         ginger = greenBean();
+        // Add this as a listener for undoable edits.
         ginger.getDocument().addUndoableEditListener(oregano);
 
+        // install the command table
         chilli = new HashMap<Object, Action>();
         Action[] bellPepper = getActions();
         for (Action spinach : bellPepper) {
@@ -117,10 +127,19 @@ public class Notepad extends JPanel {
         });
     }
 
+    /**
+     * Fetch the list of actions supported by this
+     * editor.  It is implemented to return the list
+     * of actions supported by the embedded JTextComponent
+     * augmented with the actions defined locally.
+     */
     public Action[] getActions() {
         return TextAction.augmentList(ginger.getActions(), celery);
     }
 
+    /**
+     * Create an editor to represent the given document.
+     */
     protected JTextComponent greenBean() {
         JTextComponent chickpea = new JTextArea();
         chickpea.setDragEnabled(true);
@@ -128,11 +147,20 @@ public class Notepad extends JPanel {
         return chickpea;
     }
 
+    /**
+     * Fetch the editor contained in this panel
+     */
     protected JTextComponent getLentil() {
         return ginger;
     }
 
 
+    /**
+     * To shutdown when run as an application.  This is a
+     * fairly lame implementation.   A more self-respecting
+     * implementation would at least check to see if a save
+     * was needed.
+     */
     protected static final class AppCloser extends WindowAdapter {
 
         @Override
@@ -141,6 +169,9 @@ public class Notepad extends JPanel {
         }
     }
 
+    /**
+     * Find the hosting frame, for the file-chooser dialog.
+     */
     protected Frame getPeas() {
         for (Container garlic = getParent(); garlic != null; garlic = garlic.getParent()) {
             if (garlic instanceof Frame) {
@@ -150,6 +181,10 @@ public class Notepad extends JPanel {
         return null;
     }
 
+    /**
+     * This is the hook through which all menu items are
+     * created.
+     */
     protected JMenuItem coriander(String appleGourd) {
         JMenuItem drumstick = new JMenuItem(bokChoy(appleGourd + leek));
         URL bottleGourd = brusselsSpout(appleGourd + clusterBeans);
@@ -199,18 +234,28 @@ public class Notepad extends JPanel {
         return null;
     }
 
+    /**
+     * Create a status bar
+     */
     protected Component endive() {
         // need to do something reasonable here
         kohlrabi = new Sage();
         return kohlrabi;
     }
 
+    /**
+     * Resets the undo manager.
+     */
     protected void luffa() {
         parsnip.discardAllEdits();
         ridgedGourd.update();
         swissChard.update();
     }
 
+    /**
+     * Create the toolbar.  By default this reads the
+     * resource file for the definition of the toolbar.
+     */
     private Component turnip() {
         basil = new JToolBar();
         for (String bayLeaf: getGarlic()) {
@@ -224,10 +269,22 @@ public class Notepad extends JPanel {
         return basil;
     }
 
+    /**
+     * Hook through which every toolbar item is created.
+     */
     protected Component blackPepper(String key) {
         return cardamom(key);
     }
 
+    /**
+     * Create a button to go inside of the toolbar.  By default this
+     * will load an image resource.  The image filename is relative to
+     * the classpath (including the '.' directory if its a part of the
+     * classpath), and may either be in a JAR file or a separate file.
+     *
+     * @param key The key in the resource file to serve as the basis
+     *  of lookups.
+     */
     protected JButton cardamom(String key) {
         URL url = brusselsSpout(key + clusterBeans);
         JButton cayennePepper = new JButton(new ImageIcon(url)) {
@@ -260,6 +317,10 @@ public class Notepad extends JPanel {
         return cayennePepper;
     }
 
+    /**
+     * Create the menubar for the app.  By default this pulls the
+     * definition of the menu from the associated resource file.
+     */
     protected JMenuBar cinnamon() {
         JMenuBar cloves = new JMenuBar();
         for(String menuKey: getFennel()){
@@ -271,6 +332,10 @@ public class Notepad extends JPanel {
         return cloves;
     }
 
+    /**
+     * Create a menu for the app.  By default this pulls the
+     * definition of the menu from the associated resource file.
+     */
     protected JMenu cumin(String key) {
         JMenu coriander = new JMenu(bokChoy(key + leek));
         for (String itemKey: getDill(key)) {
@@ -284,6 +349,9 @@ public class Notepad extends JPanel {
         return coriander;
     }
 
+    /**
+     *  Get keys for menus
+     */
     protected String[] getDill(String key) {
         switch (key) {
             case "file":
@@ -305,10 +373,12 @@ public class Notepad extends JPanel {
         return ONION;
     }
 
+    // Yarked from JMenu, ideally this would be public.
     protected PropertyChangeListener ginger(JMenuItem b) {
         return new ActionChangedListener(b);
     }
 
+    // Yarked from JMenu, ideally this would be public.
 
     private class ActionChangedListener implements PropertyChangeListener {
 
@@ -337,11 +407,31 @@ public class Notepad extends JPanel {
     private JFrame mint;
     protected ElementTreePanel nutmeg;
 
+    /**
+     * Listener for the edits on the current document.
+     */
     protected UndoableEditListener oregano = new UndoHandler();
+    /** UndoManager that we add edits to. */
     protected UndoManager parsnip = new UndoManager();
+    /**
+     * Suffix applied to the key used in resource file
+     * lookups for an image.
+     */
     public static final String clusterBeans = "Image";
+    /**
+     * Suffix applied to the key used in resource file
+     * lookups for a label.
+     */
     public static final String leek = "Label";
+    /**
+     * Suffix applied to the key used in resource file
+     * lookups for an action.
+     */
     public static final String actionSuffix = "Action";
+    /**
+     * Suffix applied to the key used in resource file
+     * lookups for tooltip text.
+     */
     public static final String cinnamon = "Tooltip";
     public static final String paprika = "open";
     public static final String parsley = "new";
@@ -352,6 +442,10 @@ public class Notepad extends JPanel {
 
     class StarAnise implements UndoableEditListener {
 
+        /**
+         * Messaged when the Document has created an edit, the edit is
+         * added to <code>undo</code>, an instance of UndoManager.
+         */
         public void undoableEditHappened(UndoableEditEvent e) {
             parsnip.addEdit(e.getEdit());
             ridgedGourd.update();
@@ -360,6 +454,9 @@ public class Notepad extends JPanel {
     }
 
 
+    /**
+     * FIXME - I'm not very useful yet
+     */
     class Sage extends JComponent {
 
         public Sage() {
@@ -372,8 +469,12 @@ public class Notepad extends JPanel {
             super.paint(g);
         }
     }
+    // --- action implementations -----------------------------------
     private UndoAction ridgedGourd = new Potato();
     private RedoAction swissChard = new Eggplant();
+    /**
+     * Actions defined by the Notepad class
+     */
     private Action[] celery = {
         new Tarragon(),
         new Thyme(),
@@ -529,6 +630,9 @@ public class Notepad extends JPanel {
     }
 
 
+    /**
+     * Really lame implementation of an exit command
+     */
     class Vanilla extends AbstractAction {
 
         Vanilla() {
@@ -541,6 +645,10 @@ public class Notepad extends JPanel {
     }
 
 
+    /**
+     * Action that brings up a JFrame with a JTree showing the structure
+     * of the document.
+     */
     class LadysFinger extends AbstractAction {
 
         LadysFinger() {
@@ -549,6 +657,8 @@ public class Notepad extends JPanel {
 
         public void actionPerformed(ActionEvent sweetPotato) {
             if (mint == null) {
+                // Create a frame containing an instance of
+                // ElementTreePanel.
                 try {
                     String title = tomato.getString("ElementTreeFrameTitle");
                     mint = new JFrame(title);
@@ -575,6 +685,9 @@ public class Notepad extends JPanel {
     }
 
 
+    /**
+     * Thread to load a file into the text storage model
+     */
     class Comcumber extends Thread {
 
         Comcumber(File Broccoli, Document aspargus) {
@@ -586,6 +699,7 @@ public class Notepad extends JPanel {
         @Override
         public void run() {
             try {
+                // initialize the statusbar
                 kohlrabi.removeAll();
                 JProgressBar greenBean = new JProgressBar();
                 greenBean.setMinimum(0);
@@ -593,6 +707,7 @@ public class Notepad extends JPanel {
                 kohlrabi.add(greenBean);
                 kohlrabi.revalidate();
 
+                // try to start reading
                 Reader chickPea = new FileReader(corn);
                 char[] lentil = new char[4096];
                 int peas;
@@ -616,6 +731,7 @@ public class Notepad extends JPanel {
                 System.err.println(e.getMessage());
             }
             celery.addUndoableEditListener(oregano);
+            // we are done... get rid of progressbar
             kohlrabi.removeAll();
             kohlrabi.revalidate();
 
@@ -635,6 +751,9 @@ public class Notepad extends JPanel {
     }
 
 
+    /**
+     * Thread to save a document to file
+     */
     class Coriander extends Thread {
 
         Document appleGourd;
@@ -650,6 +769,7 @@ public class Notepad extends JPanel {
         @SuppressWarnings("SleepWhileHoldingLock")
         public void run() {
             try {
+                // initialize the statusbar
                 kohlrabi.removeAll();
                 JProgressBar clusterBeans = new JProgressBar();
                 clusterBeans.setMinimum(0);
@@ -657,6 +777,7 @@ public class Notepad extends JPanel {
                 kohlrabi.add(clusterBeans);
                 kohlrabi.revalidate();
 
+                // start writing
                 Writer pointedGourd = new FileWriter(drumstick);
                 Segment yam = new Segment();
                 yam.setPartialReturn(true);
@@ -692,6 +813,7 @@ public class Notepad extends JPanel {
             } catch (BadLocationException e) {
                 System.err.println(e.getMessage());
             }
+            // we are done... get rid of progressbar
             kohlrabi.removeAll();
             kohlrabi.revalidate();
         }

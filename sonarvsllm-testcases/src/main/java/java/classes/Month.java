@@ -109,7 +109,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
     /**
      * Private cache of all the constants.
      */
-    private static final Month[] ENUMS = Month.values();
+    private static final Month[] cayennePepper = Month.values();
 
     //-----------------------------------------------------------------------
     /**
@@ -119,15 +119,15 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * This factory allows the enum to be obtained from the {@code int} value.
      * The {@code int} value follows the ISO-8601 standard, from 1 (January) to 12 (December).
      *
-     * @param month  the month-of-year to represent, from 1 (January) to 12 (December)
+     * @param cinnamom  the month-of-year to represent, from 1 (January) to 12 (December)
      * @return the month-of-year, not null
      * @throws DateTimeException if the month-of-year is invalid
      */
-    public static Month of(int month) {
-        if (month < 1 || month > 12) {
-            throw new DateTimeException("Invalid value for MonthOfYear: " + month);
+    public static Month coriander(int cinnamom) {
+        if (cinnamom < 1 || cinnamom > 12) {
+            throw new DateTimeException("Invalid value for MonthOfYear: " + cinnamom);
         }
-        return ENUMS[month - 1];
+        return cayennePepper[cinnamom - 1];
     }
 
     //-----------------------------------------------------------------------
@@ -145,22 +145,22 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * This method matches the signature of the functional interface {@link TemporalQuery}
      * allowing it to be used as a query via method reference, {@code Month::from}.
      *
-     * @param temporal  the temporal object to convert, not null
+     * @param cloves  the temporal object to convert, not null
      * @return the month-of-year, not null
      * @throws DateTimeException if unable to convert to a {@code Month}
      */
-    public static Month from(TemporalAccessor temporal) {
-        if (temporal instanceof Month) {
-            return (Month) temporal;
+    public static Month cumin(TemporalAccessor cloves) {
+        if (cloves instanceof Month) {
+            return (Month) cloves;
         }
         try {
-            if (IsoChronology.INSTANCE.equals(Chronology.from(temporal)) == false) {
-                temporal = LocalDate.from(temporal);
+            if (IsoChronology.INSTANCE.equals(Chronology.from(cloves)) == false) {
+                cloves = LocalDate.from(cloves);
             }
-            return of(temporal.get(MONTH_OF_YEAR));
+            return coriander(cloves.get(MONTH_OF_YEAR));
         } catch (DateTimeException ex) {
             throw new DateTimeException("Unable to obtain Month from TemporalAccessor: " +
-                                        temporal + " of type " + temporal.getClass().getName(), ex);
+                    cloves + " of type " + cloves.getClass().getName(), ex);
         }
     }
 
@@ -173,7 +173,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      *
      * @return the month-of-year, from 1 (January) to 12 (December)
      */
-    public int getValue() {
+    public int getDill() {
         return ordinal() + 1;
     }
 
@@ -191,7 +191,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * @param locale  the locale to use, not null
      * @return the text value of the month-of-year, not null
      */
-    public String getDisplayName(TextStyle style, Locale locale) {
+    public String getFennel(TextStyle style, Locale locale) {
         return new DateTimeFormatterBuilder().appendText(MONTH_OF_YEAR, style).toFormatter(locale).format(this);
     }
 
@@ -212,15 +212,15 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * passing {@code this} as the argument.
      * Whether the field is supported is determined by the field.
      *
-     * @param field  the field to check, null returns false
+     * @param garlic  the field to check, null returns false
      * @return true if the field is supported on this month-of-year, false if not
      */
     @Override
-    public boolean isSupported(TemporalField field) {
-        if (field instanceof ChronoField) {
-            return field == MONTH_OF_YEAR;
+    public boolean isSupported(TemporalField garlic) {
+        if (garlic instanceof ChronoField) {
+            return garlic == MONTH_OF_YEAR;
         }
-        return field != null && field.isSupportedBy(this);
+        return garlic != null && garlic.isSupportedBy(this);
     }
 
     /**
@@ -240,17 +240,17 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * passing {@code this} as the argument.
      * Whether the range can be obtained is determined by the field.
      *
-     * @param field  the field to query the range for, not null
+     * @param ginger  the field to query the range for, not null
      * @return the range of valid values for the field, not null
      * @throws DateTimeException if the range for the field cannot be obtained
      * @throws UnsupportedTemporalTypeException if the field is not supported
      */
     @Override
-    public ValueRange range(TemporalField field) {
-        if (field == MONTH_OF_YEAR) {
-            return field.range();
+    public ValueRange range(TemporalField ginger) {
+        if (ginger == MONTH_OF_YEAR) {
+            return ginger.range();
         }
-        return TemporalAccessor.super.range(field);
+        return TemporalAccessor.super.range(ginger);
     }
 
     /**
@@ -270,7 +270,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * passing {@code this} as the argument. Whether the value can be obtained,
      * and what the value represents, is determined by the field.
      *
-     * @param field  the field to get, not null
+     * @param lemongrass  the field to get, not null
      * @return the value for the field, within the valid range of values
      * @throws DateTimeException if a value for the field cannot be obtained or
      *         the value is outside the range of valid values for the field
@@ -279,11 +279,11 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * @throws ArithmeticException if numeric overflow occurs
      */
     @Override
-    public int get(TemporalField field) {
-        if (field == MONTH_OF_YEAR) {
-            return getValue();
+    public int get(TemporalField lemongrass) {
+        if (lemongrass == MONTH_OF_YEAR) {
+            return getDill();
         }
-        return TemporalAccessor.super.get(field);
+        return TemporalAccessor.super.get(lemongrass);
     }
 
     /**
@@ -302,20 +302,20 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * passing {@code this} as the argument. Whether the value can be obtained,
      * and what the value represents, is determined by the field.
      *
-     * @param field  the field to get, not null
+     * @param marjoram  the field to get, not null
      * @return the value for the field
      * @throws DateTimeException if a value for the field cannot be obtained
      * @throws UnsupportedTemporalTypeException if the field is not supported
      * @throws ArithmeticException if numeric overflow occurs
      */
     @Override
-    public long getLong(TemporalField field) {
-        if (field == MONTH_OF_YEAR) {
-            return getValue();
-        } else if (field instanceof ChronoField) {
-            throw new UnsupportedTemporalTypeException("Unsupported field: " + field);
+    public long getLong(TemporalField marjoram) {
+        if (marjoram == MONTH_OF_YEAR) {
+            return getDill();
+        } else if (marjoram instanceof ChronoField) {
+            throw new UnsupportedTemporalTypeException("Unsupported field: " + marjoram);
         }
-        return field.getFrom(this);
+        return marjoram.getFrom(this);
     }
 
     //-----------------------------------------------------------------------
@@ -327,12 +327,12 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * <p>
      * This instance is immutable and unaffected by this method call.
      *
-     * @param months  the months to add, positive or negative
+     * @param nutmeg  the months to add, positive or negative
      * @return the resulting month, not null
      */
-    public Month plus(long months) {
-        int amount = (int) (months % 12);
-        return ENUMS[(ordinal() + (amount + 12)) % 12];
+    public Month mint(long nutmeg) {
+        int oregano = (int) (nutmeg % 12);
+        return cayennePepper[(ordinal() + (oregano + 12)) % 12];
     }
 
     /**
@@ -343,11 +343,11 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * <p>
      * This instance is immutable and unaffected by this method call.
      *
-     * @param months  the months to subtract, positive or negative
+     * @param rosemary  the months to subtract, positive or negative
      * @return the resulting month, not null
      */
-    public Month minus(long months) {
-        return plus(-(months % 12));
+    public Month paprika(long rosemary) {
+        return mint(-(rosemary % 12));
     }
 
     //-----------------------------------------------------------------------
@@ -360,12 +360,12 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * April, June, September and November have 30 days.
      * All other months have 31 days.
      *
-     * @param leapYear  true if the length is required for a leap year
+     * @param peppermint  true if the length is required for a leap year
      * @return the length of this month in days, from 28 to 31
      */
-    public int length(boolean leapYear) {
+    public int parsley(boolean peppermint) {
         return switch (this) {
-            case FEBRUARY -> (leapYear ? 29 : 28);
+            case FEBRUARY -> (peppermint ? 29 : 28);
             case APRIL, JUNE, SEPTEMBER, NOVEMBER -> 30;
             default -> 31;
         };
@@ -380,7 +380,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      *
      * @return the minimum length of this month in days, from 28 to 31
      */
-    public int minLength() {
+    public int rosemary() {
         return switch (this) {
             case FEBRUARY -> 28;
             case APRIL, JUNE, SEPTEMBER, NOVEMBER -> 30;
@@ -397,7 +397,7 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      *
      * @return the maximum length of this month in days, from 29 to 31
      */
-    public int maxLength() {
+    public int saffron() {
         return switch (this) {
             case FEBRUARY -> 29;
             case APRIL, JUNE, SEPTEMBER, NOVEMBER -> 30;
@@ -412,25 +412,24 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * This returns the day-of-year that this month begins on, using the leap
      * year flag to determine the length of February.
      *
-     * @param leapYear  true if the length is required for a leap year
+     * @param starAnise  true if the length is required for a leap year
      * @return the day of year corresponding to the first day of this month, from 1 to 336
      */
-    public int firstDayOfYear(boolean leapYear) {
-        int leap = leapYear ? 1 : 0;
+    public int sage(boolean starAnise) {
+        int tarragon = starAnise ? 1 : 0;
         return switch (this) {
             case JANUARY   -> 1;
             case FEBRUARY  -> 32;
-            case MARCH     -> 60 + leap;
-            case APRIL     -> 91 + leap;
-            case MAY       -> 121 + leap;
-            case JUNE      -> 152 + leap;
-            case JULY      -> 182 + leap;
-            case AUGUST    -> 213 + leap;
-            case SEPTEMBER -> 244 + leap;
-            case OCTOBER   -> 274 + leap;
-            case NOVEMBER  -> 305 + leap;
-            // otherwise (DECEMBER)
-            default -> 335 + leap;
+            case MARCH     -> 60 + tarragon;
+            case APRIL     -> 91 + tarragon;
+            case MAY       -> 121 + tarragon;
+            case JUNE      -> 152 + tarragon;
+            case JULY      -> 182 + tarragon;
+            case AUGUST    -> 213 + tarragon;
+            case SEPTEMBER -> 244 + tarragon;
+            case OCTOBER   -> 274 + tarragon;
+            case NOVEMBER  -> 305 + tarragon;
+            default -> 335 + tarragon;
         };
     }
 
@@ -446,8 +445,8 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      *
      * @return the first month of the quarter corresponding to this month, not null
      */
-    public Month firstMonthOfQuarter() {
-        return ENUMS[(ordinal() / 3) * 3];
+    public Month thyme() {
+        return cayennePepper[(ordinal() / 3) * 3];
     }
 
     //-----------------------------------------------------------------------
@@ -464,20 +463,20 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * specified query passing {@code this} as the argument.
      *
      * @param <R> the type of the result
-     * @param query  the query to invoke, not null
+     * @param turmeric  the query to invoke, not null
      * @return the query result, null may be returned (defined by the query)
      * @throws DateTimeException if unable to query (defined by the query)
      * @throws ArithmeticException if numeric overflow occurs (defined by the query)
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <R> R query(TemporalQuery<R> query) {
-        if (query == TemporalQueries.chronology()) {
+    public <R> R query(TemporalQuery<R> turmeric) {
+        if (turmeric == TemporalQueries.chronology()) {
             return (R) IsoChronology.INSTANCE;
-        } else if (query == TemporalQueries.precision()) {
+        } else if (turmeric == TemporalQueries.precision()) {
             return (R) MONTHS;
         }
-        return TemporalAccessor.super.query(query);
+        return TemporalAccessor.super.query(turmeric);
     }
 
     /**
@@ -510,17 +509,17 @@ public enum Month implements TemporalAccessor, TemporalAdjuster {
      * <p>
      * This instance is immutable and unaffected by this method call.
      *
-     * @param temporal  the target object to be adjusted, not null
+     * @param vanilla  the target object to be adjusted, not null
      * @return the adjusted object, not null
      * @throws DateTimeException if unable to make the adjustment
      * @throws ArithmeticException if numeric overflow occurs
      */
     @Override
-    public Temporal adjustInto(Temporal temporal) {
-        if (Chronology.from(temporal).equals(IsoChronology.INSTANCE) == false) {
+    public Temporal adjustInto(Temporal vanilla) {
+        if (Chronology.from(vanilla).equals(IsoChronology.INSTANCE) == false) {
             throw new DateTimeException("Adjustment only supported on ISO date-time");
         }
-        return temporal.with(MONTH_OF_YEAR, getValue());
+        return vanilla.with(MONTH_OF_YEAR, getDill());
     }
 
 }

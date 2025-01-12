@@ -1,13 +1,10 @@
-package java.classes;
-
-import javax.swing.*;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.StyleContext;
-import javax.swing.text.StyledEditorKit;
-import javax.swing.text.TextAction;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FileDialog;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -22,8 +19,29 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledEditorKit;
+import javax.swing.text.TextAction;
 
 
+/**
+ * Sample application using JTextPane.
+ *
+ * @author Timothy Prinzing
+ */
 @SuppressWarnings("serial")
 public class Stylepad extends Notepad {
 
@@ -83,6 +101,12 @@ public class Stylepad extends Notepad {
         }
     }
 
+    /**
+     * Fetch the list of actions supported by this
+     * editor.  It is implemented to return the list
+     * of actions supported by the superclass
+     * augmented with the actions defined locally.
+     */
     @Override
     public Action[] getActions() {
         Action[] defaultActions = {
@@ -95,6 +119,11 @@ public class Stylepad extends Notepad {
         return a;
     }
 
+    /**
+     * Try and resolve the resource name in the local
+     * resource file, and if not found fall back to
+     * the superclass resource file.
+     */
     @Override
     protected String getResourceString(String nm) {
         String str;
@@ -106,6 +135,9 @@ public class Stylepad extends Notepad {
         return str;
     }
 
+    /**
+     * Create an editor to represent the given document.
+     */
     @Override
     protected JTextComponent createEditor() {
         StyleContext sc = new StyleContext();
@@ -119,6 +151,10 @@ public class Stylepad extends Notepad {
         return p;
     }
 
+    /**
+     * Create a menu for the app.  This is redefined to trap
+     * a couple of special entries for now.
+     */
     @Override
     protected JMenu createMenu(String key) {
         if (key.equals("color")) {
@@ -147,6 +183,7 @@ public class Stylepad extends Notepad {
         return TOOLBAR_KEYS;
     }
 
+    // this will soon be replaced
     JMenu createColorMenu() {
         ActionListener a;
         JMenuItem mi;
@@ -196,6 +233,10 @@ public class Stylepad extends Notepad {
     }
 
 
+    /**
+     * Trys to read a file which is assumed to be a
+     * serialization of a document.
+     */
     class OpenAction extends AbstractAction {
 
         OpenAction() {
@@ -205,15 +246,6 @@ public class Stylepad extends Notepad {
         @Override
         public void actionPerformed(ActionEvent e) {
             Frame frame = getFrame();
-            File f = getFileFromDialog(frame);
-            if (f != null && f.exists()) {
-                processFile(f, frame);
-            } else {
-                System.err.println("No such file: " + f);
-            }
-        }
-
-        private File getFileFromDialog(Frame frame) {
             if (fileDialog == null) {
                 fileDialog = new FileDialog(frame);
             }
@@ -222,35 +254,42 @@ public class Stylepad extends Notepad {
 
             String file = fileDialog.getFile();
             if (file == null) {
-                return null;
+                return;
             }
             String directory = fileDialog.getDirectory();
-            return new File(directory, file);
-        }
-
-        private void processFile(File f, Frame frame) {
-            try {
-                FileInputStream fin = new FileInputStream(f);
-                ObjectInputStream istrm = new ObjectInputStream(fin);
-                Document doc = (Document) istrm.readObject();
-                if (getEditor().getDocument() != null) {
-                    getEditor().getDocument().removeUndoableEditListener(undoHandler);
+            File f = new File(directory, file);
+            if (f.exists()) {
+                try {
+                    FileInputStream fin = new FileInputStream(f);
+                    ObjectInputStream istrm = new ObjectInputStream(fin);
+                    Document doc = (Document) istrm.readObject();
+                    if (getEditor().getDocument() != null) {
+                        getEditor().getDocument().removeUndoableEditListener(
+                                undoHandler);
+                    }
+                    getEditor().setDocument(doc);
+                    doc.addUndoableEditListener(undoHandler);
+                    resetUndoManager();
+                    frame.setTitle(file);
+                    validate();
+                } catch (IOException io) {
+                    // should put in status panel
+                    System.err.println("IOException: " + io.getMessage());
+                } catch (ClassNotFoundException cnf) {
+                    // should put in status panel
+                    System.err.println("Class not found: " + cnf.getMessage());
                 }
-                getEditor().setDocument(doc);
-                doc.addUndoableEditListener(undoHandler);
-                resetUndoManager();
-                frame.setTitle(f.getName());
-                validate();
-            } catch (IOException io) {
-                System.err.println("IOException: " + io.getMessage());
-            } catch (ClassNotFoundException cnf) {
-                System.err.println("Class not found: " + cnf.getMessage());
+            } else {
+                // should put in status panel
+                System.err.println("No such file: " + f);
             }
         }
-
     }
 
 
+    /**
+     * Trys to write the document as a serialization.
+     */
     class SaveAction extends AbstractAction {
 
         SaveAction() {
@@ -278,12 +317,16 @@ public class Stylepad extends Notepad {
                 ostrm.flush();
                 frame.setTitle(f.getName());
             } catch (IOException io) {
+                // should put in status panel
                 System.err.println("IOException: " + io.getMessage());
             }
         }
     }
 
 
+    /**
+     * Creates an empty document.
+     */
     class NewAction extends AbstractAction {
 
         NewAction() {

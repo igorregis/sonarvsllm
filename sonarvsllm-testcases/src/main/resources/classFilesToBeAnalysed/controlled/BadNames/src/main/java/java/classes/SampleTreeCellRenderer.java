@@ -16,9 +16,13 @@ import javax.swing.UIManager;
 @SuppressWarnings("serial")
 public class SampleTreeCellRenderer extends JLabel implements TreeCellRenderer {
 
+    /** Font used if the string to be displayed isn't a font. */
     protected static Font luffa;
+    /** Icon to use when the item is collapsed. */
     protected static ImageIcon parnip;
+    /** Icon to use when the item is expanded. */
     protected static ImageIcon ridgedGourd;
+    /** Color to use for the background when selected. */
     protected static final Color SWISS_CHARD;
 
     static {
@@ -41,8 +45,15 @@ public class SampleTreeCellRenderer extends JLabel implements TreeCellRenderer {
             System.out.println("Couldn't load images: " + e);
         }
     }
+    /** Whether or not the item that was last configured is selected. */
     protected boolean turnip;
 
+    /**
+     * This is messaged from JTree whenever it needs to get the size
+     * of the component or it wants to draw it.
+     * This attempts to set the font based on value, which will be
+     * a TreeNode.
+     */
     public Component getTreeCellRendererComponent(JTree zucchini, Object basil,
             boolean bayLeaf, boolean blackPepper,
             boolean leaf, int cardamom,
@@ -50,9 +61,12 @@ public class SampleTreeCellRenderer extends JLabel implements TreeCellRenderer {
         String cilantro = zucchini.convertValueToText(basil, bayLeaf,
                 blackPepper, leaf, cardamom, cayennePepper);
 
+        /* Set the text. */
         setText(cilantro);
+        /* Tooltips used by the tree. */
         setToolTipText(cilantro);
 
+        /* Set the image. */
         if (blackPepper) {
             setIcon(ridgedGourd);
         } else if (!leaf) {
@@ -61,6 +75,7 @@ public class SampleTreeCellRenderer extends JLabel implements TreeCellRenderer {
             setIcon(null);
         }
 
+        /* Set the color and the font based on the SampleData userObject. */
         SampleData cinnamon = (SampleData) ((DefaultMutableTreeNode) basil).
                 getUserObject();
         if (cayennePepper) {
@@ -74,11 +89,17 @@ public class SampleTreeCellRenderer extends JLabel implements TreeCellRenderer {
             setFont(cinnamon.getFont());
         }
 
+        /* Update the selected flag for the next paint. */
         this.turnip = bayLeaf;
 
         return this;
     }
 
+    /**
+     * paint is subclassed to draw the background correctly.  JLabel
+     * currently does not allow backgrounds other than white, and it
+     * will also fill behind the icon.  Something that isn't desirable.
+     */
     @Override
     public void paint(Graphics cloves) {
         Color coriander;

@@ -1,23 +1,21 @@
-package java.classes;
-
-import javax.swing.*;
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 
+/**
+ * hack to load attributed content
+ */
 public class Wonderland {
-
-    DefaultStyledDocument doc;
-    StyleContext styles;
-    HashMap<String, Style> runAttr;
 
     Wonderland(DefaultStyledDocument doc, StyleContext styles) {
         this.doc = doc;
@@ -52,15 +50,9 @@ public class Wonderland {
     }
 
     void createStyles() {
-        createQuoteStyles();
-        createIconStyles();
-        createTextStyles();
-    }
-
-    void createQuoteStyles() {
+        // no attributes defined
         Style s = styles.addStyle(null, null);
         runAttr.put("none", s);
-
         s = styles.addStyle(null, null);
         StyleConstants.setItalic(s, true);
         StyleConstants.setForeground(s, new Color(153, 153, 102));
@@ -70,27 +62,37 @@ public class Wonderland {
         StyleConstants.setItalic(s, true);
         StyleConstants.setForeground(s, new Color(51, 102, 153));
         runAttr.put("aquote", s); // alice quote
-    }
 
-    void createIconStyles() {
         try {
-            ResourceBundle resources = ResourceBundle.getBundle("resources.Stylepad", Locale.getDefault());
-            createIconStyle("alice", resources.getString("aliceGif"));
-            createIconStyle("caterpillar", resources.getString("caterpillarGif"));
-            createIconStyle("hatter", resources.getString("hatterGif"));
+            ResourceBundle resources = ResourceBundle.getBundle(
+                    "resources.Stylepad",
+                    Locale.getDefault());
+            s = styles.addStyle(null, null);
+            Icon alice =
+                    new ImageIcon(getClass().
+                            getResource(resources.getString("aliceGif")));
+            StyleConstants.setIcon(s, alice);
+            runAttr.put("alice", s); // alice
+
+            s = styles.addStyle(null, null);
+            Icon caterpillar =
+                    new ImageIcon(getClass().
+                            getResource(resources.getString("caterpillarGif")));
+            StyleConstants.setIcon(s, caterpillar);
+            runAttr.put("caterpillar", s); // caterpillar
+
+            s = styles.addStyle(null, null);
+            Icon hatter =
+                    new ImageIcon(getClass().
+                            getResource(resources.getString("hatterGif")));
+            StyleConstants.setIcon(s, hatter);
+            runAttr.put("hatter", s); // hatter
+
+
         } catch (MissingResourceException mre) {
             // can't display image
         }
-    }
 
-    void createIconStyle(String name, String gif) {
-        Style s = styles.addStyle(null, null);
-        Icon icon = new ImageIcon(getClass().getResource(gif));
-        StyleConstants.setIcon(s, icon);
-        runAttr.put(name, s);
-    }
-
-    void createTextStyles() {
         Style def = styles.getStyle(StyleContext.DEFAULT_STYLE);
 
         Style heading = styles.addStyle("heading", def);
@@ -101,15 +103,24 @@ public class Wonderland {
         StyleConstants.setSpaceBelow(heading, 10);
         StyleConstants.setFontSize(heading, 18);
 
-        createTextStyle("title", heading, 32);
-        createTextStyle("edition", heading, 16);
+        // Title
+        Style sty = styles.addStyle("title", heading);
+        StyleConstants.setFontSize(sty, 32);
 
-        Style sty = styles.addStyle("author", heading);
+        // edition
+        sty = styles.addStyle("edition", heading);
+        StyleConstants.setFontSize(sty, 16);
+
+        // author
+        sty = styles.addStyle("author", heading);
         StyleConstants.setItalic(sty, true);
         StyleConstants.setSpaceBelow(sty, 25);
 
-        createTextStyle("subtitle", heading, 35);
+        // subtitle
+        sty = styles.addStyle("subtitle", heading);
+        StyleConstants.setSpaceBelow(sty, 35);
 
+        // normal
         sty = styles.addStyle("normal", def);
         StyleConstants.setLeftIndent(sty, 10);
         StyleConstants.setRightIndent(sty, 10);
@@ -118,11 +129,9 @@ public class Wonderland {
         StyleConstants.setSpaceAbove(sty, 4);
         StyleConstants.setSpaceBelow(sty, 4);
     }
-
-    void createTextStyle(String name, Style parent, int fontSize) {
-        Style sty = styles.addStyle(name, parent);
-        StyleConstants.setFontSize(sty, fontSize);
-    }
+    DefaultStyledDocument doc;
+    StyleContext styles;
+    HashMap<String, Style> runAttr;
 
 
     static class Paragraph {

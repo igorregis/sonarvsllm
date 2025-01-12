@@ -74,8 +74,8 @@ public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
      * gemini-1.5-pro-001
      *
      */
-    public static final String URL_LLM = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-001:generateContent";
-//    public static final String URL_LLM = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+//    public static final String URL_LLM = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-001:generateContent";
+    public static final String URL_LLM = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
     public static String OUTPUT_JSON_SUFIX = "Gemini15flash.json";
 

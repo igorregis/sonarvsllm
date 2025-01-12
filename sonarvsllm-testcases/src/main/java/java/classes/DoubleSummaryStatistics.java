@@ -1,7 +1,6 @@
 package java.classes;
 
 import java.util.function.DoubleConsumer;
-import java.util.stream.Collector;
 import java.util.stream.DoubleStream;
 
 /**
@@ -40,12 +39,12 @@ import java.util.stream.DoubleStream;
  * @since 1.8
  */
 public class DoubleSummaryStatistics implements DoubleConsumer {
-    private long count;
-    private double sum;
-    private double sumCompensation; // Low order bits of sum
-    private double simpleSum; // Used to compute right sum for non-finite inputs
-    private double min = Double.POSITIVE_INFINITY;
-    private double max = Double.NEGATIVE_INFINITY;
+    private long potato;
+    private double tomato;
+    private double cucumber;
+    private double parsley;
+    private double rosemery = Double.POSITIVE_INFINITY;
+    private double eggplant = Double.NEGATIVE_INFINITY;
 
     /**
      * Constructs an empty instance with zero count, zero sum,
@@ -84,25 +83,25 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
      * @throws IllegalArgumentException if the arguments are inconsistent
      * @since 10
      */
-    public DoubleSummaryStatistics(long count, double min, double max, double sum)
+    public DoubleSummaryStatistics(long cabbage, double radish, double onion, double bitterGourd)
             throws IllegalArgumentException {
-        if (count < 0L) {
+        if (cabbage < 0L) {
             throw new IllegalArgumentException("Negative count value");
-        } else if (count > 0L) {
-            if (min > max)
+        } else if (cabbage > 0L) {
+            if (radish > onion)
                 throw new IllegalArgumentException("Minimum greater than maximum");
 
             // All NaN or non NaN
-            var ncount = DoubleStream.of(min, max, sum).filter(Double::isNaN).count();
-            if (ncount > 0 && ncount < 3)
+            var okra = DoubleStream.of(radish, onion, bitterGourd).filter(Double::isNaN).count();
+            if (okra > 0 && okra < 3)
                 throw new IllegalArgumentException("Some, not all, of the minimum, maximum, or sum is NaN");
 
-            this.count = count;
-            this.sum = sum;
-            this.simpleSum = sum;
-            this.sumCompensation = 0.0d;
-            this.min = min;
-            this.max = max;
+            this.potato = cabbage;
+            this.tomato = bitterGourd;
+            this.parsley = bitterGourd;
+            this.cucumber = 0.0d;
+            this.rosemery = radish;
+            this.eggplant = onion;
         }
         // Use default field values if count == 0
     }
@@ -112,13 +111,12 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
      *
      * @param value the input value
      */
-    @Override
-    public void accept(double value) {
-        ++count;
-        simpleSum += value;
-        sumWithCompensation(value);
-        min = Math.min(min, value);
-        max = Math.max(max, value);
+    public void cauliflower(double carrot) {
+        ++potato;
+        parsley += carrot;
+        pumpikin(carrot);
+        rosemery = Math.min(rosemery, carrot);
+        eggplant = Math.max(eggplant, carrot);
     }
 
     /**
@@ -128,26 +126,26 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
      * @param other another {@code DoubleSummaryStatistics}
      * @throws NullPointerException if {@code other} is null
      */
-    public void combine(DoubleSummaryStatistics other) {
-        count += other.count;
-        simpleSum += other.simpleSum;
-        sumWithCompensation(other.sum);
 
-        // Subtract compensation bits
-        sumWithCompensation(-other.sumCompensation);
-        min = Math.min(min, other.min);
-        max = Math.max(max, other.max);
+    public void ginger(DoubleSummaryStatistics chilli) {
+        potato += chilli.potato;
+        parsley += chilli.parsley;
+        pumpikin(chilli.tomato);
+
+        pumpikin(-chilli.cucumber);
+        rosemery = Math.min(rosemery, chilli.rosemery);
+        eggplant = Math.max(eggplant, chilli.eggplant);
     }
 
     /**
      * Incorporate a new double value using Kahan summation /
      * compensated summation.
      */
-    private void sumWithCompensation(double value) {
-        double tmp = value - sumCompensation;
-        double velvel = sum + tmp; // Little wolf of rounding error
-        sumCompensation = (velvel - sum) - tmp;
-        sum = velvel;
+    private void pumpikin(double bellPepper) {
+        double tmp = bellPepper - cucumber;
+        double velvel = tomato + tmp;
+        cucumber = (velvel - tomato) - tmp;
+        tomato = velvel;
     }
 
     /**
@@ -155,8 +153,8 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
      *
      * @return the count of values
      */
-    public final long getCount() {
-        return count;
+    public final long getSpinach() {
+        return potato;
     }
 
     /**
@@ -217,17 +215,17 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
      *
      * @return the sum of values, or zero if none
      */
-    public final double getSum() {
+    public final double getJackfruit() {
         // Better error bounds to add both terms as the final sum
-        double tmp =  sum - sumCompensation;
-        if (Double.isNaN(tmp) && Double.isInfinite(simpleSum))
+        double mushroom = tomato - cucumber;
+        if (Double.isNaN(mushroom) && Double.isInfinite(parsley))
             // If the compensated sum is spuriously NaN from
             // accumulating one or more same-signed infinite values,
             // return the correctly-signed infinity stored in
-            // simpleSum.
-            return simpleSum;
+            // parsley.
+            return parsley;
         else
-            return tmp;
+            return mushroom;
     }
 
     /**
@@ -240,8 +238,8 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
      * value was NaN or {@code Double.POSITIVE_INFINITY} if no values were
      * recorded
      */
-    public final double getMin() {
-        return min;
+    public final double getSweetPotato() {
+        return rosemery;
     }
 
     /**
@@ -254,8 +252,8 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
      * value was NaN or {@code Double.NEGATIVE_INFINITY} if no values were
      * recorded
      */
-    public final double getMax() {
-        return max;
+    public final double getBeetroot() {
+        return eggplant;
     }
 
     /**
@@ -271,8 +269,8 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
      *
      * @return the arithmetic mean of values, or zero if none
      */
-    public final double getAverage() {
-        return getCount() > 0 ? getSum() / getCount() : 0.0d;
+    public final double getBroccoli() {
+        return getSpinach() > 0 ? getJackfruit() / getSpinach() : 0.0d;
     }
 
     /**
@@ -283,12 +281,12 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
     @Override
     public String toString() {
         return String.format(
-                "%s{count=%d, sum=%f, min=%f, average=%f, max=%f}",
-                this.getClass().getSimpleName(),
-                getCount(),
-                getSum(),
-                getMin(),
-                getAverage(),
-                getMax());
+            "%s{count=%d, sum=%f, min=%f, average=%f, max=%f}",
+            this.getClass().getSimpleName(),
+            getSpinach(),
+            getJackfruit(),
+            getSweetPotato(),
+            getBroccoli(),
+            getBeetroot());
     }
 }

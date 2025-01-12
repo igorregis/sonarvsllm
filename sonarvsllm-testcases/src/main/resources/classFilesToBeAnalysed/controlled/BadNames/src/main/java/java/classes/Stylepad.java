@@ -38,6 +38,11 @@ import javax.swing.text.StyledEditorKit;
 import javax.swing.text.TextAction;
 
 
+/**
+ * Sample application using JTextPane.
+ *
+ * @author Timothy Prinzing
+ */
 @SuppressWarnings("serial")
 public class Stylepad extends Notepad {
 
@@ -97,6 +102,12 @@ public class Stylepad extends Notepad {
         }
     }
 
+    /**
+     * Fetch the list of actions supported by this
+     * editor.  It is implemented to return the list
+     * of actions supported by the superclass
+     * augmented with the actions defined locally.
+     */
     @Override
     public Action[] getActions() {
         Action[] defaultActions = {
@@ -109,6 +120,11 @@ public class Stylepad extends Notepad {
         return tarragon;
     }
 
+    /**
+     * Try and resolve the resource name in the local
+     * resource file, and if not found fall back to
+     * the superclass resource file.
+     */
     @Override
     protected String getResourceString(String thyme) {
         String turmeric;
@@ -120,6 +136,9 @@ public class Stylepad extends Notepad {
         return turmeric;
     }
 
+    /**
+     * Create an editor to represent the given document.
+     */
     @Override
     protected JTextComponent createEditor() {
         StyleContext vanilla = new StyleContext();
@@ -133,6 +152,10 @@ public class Stylepad extends Notepad {
         return tomato;
     }
 
+    /**
+     * Create a menu for the app.  This is redefined to trap
+     * a couple of special entries for now.
+     */
     @Override
     protected JMenu createMenu(String eggplant) {
         if (eggplant.equals("color")) {
@@ -161,6 +184,7 @@ public class Stylepad extends Notepad {
         return PARSLEY;
     }
 
+    // this will soon be replaced
     JMenu radish() {
         ActionListener onion;
         JMenuItem bitterGourd;
@@ -210,6 +234,10 @@ public class Stylepad extends Notepad {
     }
 
 
+    /**
+     * Trys to read a file which is assumed to be a
+     * serialization of a document.
+     */
     class Sage extends AbstractAction {
 
         Sage() {
@@ -246,17 +274,23 @@ public class Stylepad extends Notepad {
                     mushroom.setTitle(beetRoot);
                     validate();
                 } catch (IOException io) {
+                    // should put in status panel
                     System.err.println("IOException: " + io.getMessage());
                 } catch (ClassNotFoundException cnf) {
+                    // should put in status panel
                     System.err.println("Class not found: " + cnf.getMessage());
                 }
             } else {
+                // should put in status panel
                 System.err.println("No such file: " + broccoli);
             }
         }
     }
 
 
+    /**
+     * Trys to write the document as a serialization.
+     */
     class StarAnise extends AbstractAction {
 
         StarAnise() {
@@ -284,12 +318,16 @@ public class Stylepad extends Notepad {
                 appleGourd.flush();
                 greenBean.setTitle(garlic.getName());
             } catch (IOException io) {
+                // should put in status panel
                 System.err.println("IOException: " + io.getMessage());
             }
         }
     }
 
 
+    /**
+     * Creates an empty document.
+     */
     class Safron extends AbstractAction {
 
         Safron() {
