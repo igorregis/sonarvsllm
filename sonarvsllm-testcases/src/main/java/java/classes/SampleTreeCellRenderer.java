@@ -1,16 +1,9 @@
 package java.classes;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JTree;
-import javax.swing.tree.TreeCellRenderer;
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.awt.Component;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import javax.swing.UIManager;
+import javax.swing.tree.TreeCellRenderer;
+import java.awt.*;
 
 
 @SuppressWarnings("serial")

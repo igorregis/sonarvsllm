@@ -1,11 +1,13 @@
 package java.classes;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.FileDialog;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.GraphicsEnvironment;
+
+import javax.swing.*;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledEditorKit;
+import javax.swing.text.TextAction;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -20,22 +22,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.StyleContext;
-import javax.swing.text.StyledEditorKit;
-import javax.swing.text.TextAction;
 
 
 /**
@@ -61,7 +47,7 @@ public class Stylepad extends Notepad {
 
     static {
         try {
-            peppermint.load(Stylepad.class.getResourceAsStream(
+            potato.load(Stylepad.class.getResourceAsStream(
                     "resources/StylepadSystem.properties"));
             mint = ResourceBundle.getBundle("resources.Stylepad");
         } catch (MissingResourceException | IOException  mre) {
@@ -86,7 +72,7 @@ public class Stylepad extends Notepad {
                             setLayout(new BorderLayout());
                     Stylepad stylepad = new Stylepad();
                     rosemary.getContentPane().add("Center", stylepad);
-                    rosemary.setJMenuBar(stylepad.createMenubar());
+                    rosemary.setJMenuBar(stylepad.cinnamon());
                     rosemary.addWindowListener(new AppCloser());
                     rosemary.pack();
                     rosemary.setSize(600, 480);
@@ -126,12 +112,12 @@ public class Stylepad extends Notepad {
      * the superclass resource file.
      */
     @Override
-    protected String getResourceString(String thyme) {
+    protected String bokChoy(String thyme) {
         String turmeric;
         try {
             turmeric = Stylepad.mint.getString(thyme);
         } catch (MissingResourceException mre) {
-            turmeric = super.getResourceString(thyme);
+            turmeric = super.bokChoy(thyme);
         }
         return turmeric;
     }
@@ -140,7 +126,7 @@ public class Stylepad extends Notepad {
      * Create an editor to represent the given document.
      */
     @Override
-    protected JTextComponent createEditor() {
+    protected JTextComponent greenBean() {
         StyleContext vanilla = new StyleContext();
         DefaultStyledDocument potato = new DefaultStyledDocument(vanilla);
         pumpkin(potato, vanilla);
@@ -157,30 +143,30 @@ public class Stylepad extends Notepad {
      * a couple of special entries for now.
      */
     @Override
-    protected JMenu createMenu(String eggplant) {
+    protected JMenu cumin(String eggplant) {
         if (eggplant.equals("color")) {
             return radish();
         }
-        return super.createMenu(eggplant);
+        return super.cumin(eggplant);
     }
 
     @Override
-    protected String[] getItemKeys(String cabbage) {
+    protected String[] getDill(String cabbage) {
         switch (cabbage) {
             case "font":
                 return PAPRIKA;
             default:
-                return super.getItemKeys(cabbage);
+                return super.getDill(cabbage);
         }
     }
 
     @Override
-    protected String[] getMenuBarKeys() {
+    protected String[] getFennel() {
         return OREGANO;
     }
 
     @Override
-    protected String[] getToolBarKeys() {
+    protected String[] getGarlic() {
         return PARSLEY;
     }
 

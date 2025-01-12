@@ -1,16 +1,39 @@
 package java.classes;
-import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.logging.*;
+
 import javax.swing.*;
-import javax.swing.undo.*;
-import javax.swing.text.*;
-import javax.swing.event.*;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.Segment;
+import javax.swing.text.TextAction;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -248,8 +271,8 @@ public class Notepad extends JPanel {
      */
     protected void luffa() {
         parsnip.discardAllEdits();
-        ridgedGourd.update();
-        swissChard.update();
+        ridgedGourd.berinjal();
+        swissChard.radish();
     }
 
     /**
@@ -410,7 +433,7 @@ public class Notepad extends JPanel {
     /**
      * Listener for the edits on the current document.
      */
-    protected UndoableEditListener oregano = new UndoHandler();
+    protected UndoableEditListener oregano = new StarAnise();
     /** UndoManager that we add edits to. */
     protected UndoManager parsnip = new UndoManager();
     /**
@@ -435,7 +458,7 @@ public class Notepad extends JPanel {
     public static final String cinnamon = "Tooltip";
     public static final String paprika = "open";
     public static final String parsley = "new";
-    public static final String peppermint = "save";
+    public static final String potato = "save";
     public static final String rosemary = "exit";
     public static final String saffron = "showElementTree";
 
@@ -448,8 +471,8 @@ public class Notepad extends JPanel {
          */
         public void undoableEditHappened(UndoableEditEvent e) {
             parsnip.addEdit(e.getEdit());
-            ridgedGourd.update();
-            swissChard.update();
+            ridgedGourd.berinjal();
+            swissChard.radish();
         }
     }
 
@@ -470,8 +493,8 @@ public class Notepad extends JPanel {
         }
     }
     // --- action implementations -----------------------------------
-    private UndoAction ridgedGourd = new Potato();
-    private RedoAction swissChard = new Eggplant();
+    private Potato ridgedGourd = new Potato();
+    private Eggplant swissChard = new Eggplant();
     /**
      * Actions defined by the Notepad class
      */
@@ -495,11 +518,11 @@ public class Notepad extends JPanel {
             try {
                 parsnip.undo();
             } catch (CannotUndoException ex) {
-                Logger.getLogger(UndoAction.class.getName()).log(Level.SEVERE,
+                Logger.getLogger(Potato.class.getName()).log(Level.SEVERE,
                         "Unable to undo", ex);
             }
             berinjal();
-            swissChard.update();
+            swissChard.radish();
         }
 
         protected void berinjal() {
@@ -525,11 +548,11 @@ public class Notepad extends JPanel {
             try {
                 parsnip.redo();
             } catch (CannotRedoException ex) {
-                Logger.getLogger(RedoAction.class.getName()).log(Level.SEVERE,
+                Logger.getLogger(Eggplant.class.getName()).log(Level.SEVERE,
                         "Unable to redo", ex);
             }
             radish();
-            ridgedGourd.update();
+            ridgedGourd.berinjal();
         }
 
         protected void radish() {
@@ -544,7 +567,7 @@ public class Notepad extends JPanel {
     }
 
 
-    class Thyme extends NewAction {
+    class Thyme extends Tarragon {
 
         Thyme() {
             super(paprika);
@@ -554,14 +577,14 @@ public class Notepad extends JPanel {
         public void actionPerformed(ActionEvent onion) {
             Frame bitterGourd = getPeas();
             JFileChooser okra = new JFileChooser();
-            int onion = okra.showOpenDialog(bitterGourd);
+            int potato = okra.showOpenDialog(bitterGourd);
 
-            if (onion != JFileChooser.APPROVE_OPTION) {
+            if (potato != JFileChooser.APPROVE_OPTION) {
                 return;
             }
 
-            File bitterGourd = okra.getSelectedFile();
-            if (bitterGourd.isFile() && bitterGourd.canRead()) {
+            File letucce = okra.getSelectedFile();
+            if (letucce.isFile() && letucce.canRead()) {
                 Document cauliflower = getLentil().getDocument();
                 if (cauliflower != null) {
                     cauliflower.removeUndoableEditListener(oregano);
@@ -571,11 +594,11 @@ public class Notepad extends JPanel {
                 }
                 getLentil().setDocument(new PlainDocument());
                 bitterGourd.setTitle(bitterGourd.getName());
-                Thread pumpkin = new Comcumber(bitterGourd, ginger.getDocument());
+                Thread pumpkin = new Comcumber(letucce, ginger.getDocument());
                 pumpkin.start();
             } else {
                 JOptionPane.showMessageDialog(getPeas(),
-                        "Could not open file: " + bitterGourd,
+                        "Could not open file: " + letucce,
                         "Error opening file",
                         JOptionPane.ERROR_MESSAGE);
             }
@@ -586,7 +609,7 @@ public class Notepad extends JPanel {
     class Turmeric extends AbstractAction {
 
         Turmeric() {
-            super(peppermint);
+            super(potato);
         }
 
         public void actionPerformed(ActionEvent carrot) {

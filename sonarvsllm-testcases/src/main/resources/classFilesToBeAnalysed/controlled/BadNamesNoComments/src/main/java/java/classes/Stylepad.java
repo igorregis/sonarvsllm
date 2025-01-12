@@ -56,7 +56,7 @@ public class Stylepad extends Notepad {
 
     static {
         try {
-            peppermint.load(Stylepad.class.getResourceAsStream(
+            potato.load(Stylepad.class.getResourceAsStream(
                     "resources/StylepadSystem.properties"));
             mint = ResourceBundle.getBundle("resources.Stylepad");
         } catch (MissingResourceException | IOException  mre) {

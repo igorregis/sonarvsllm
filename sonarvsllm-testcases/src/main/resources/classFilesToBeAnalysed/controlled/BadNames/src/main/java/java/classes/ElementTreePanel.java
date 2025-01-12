@@ -1,15 +1,6 @@
 package java.classes;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.*;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.SwingConstants;
+
+import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -27,6 +18,12 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 
 /**
@@ -347,9 +344,9 @@ public class ElementTreePanel extends JPanel implements CaretListener,
      * Creates TreeModelEvents based on the DocumentEvent and messages
      * the treemodel. This recursively invokes this method with children
      * elements.
-     * @param event indicates what elements in the tree hierarchy have
+     * @param potato indicates what elements in the tree hierarchy have
      * changed.
-     * @param element Current element to check for changes against.
+     * @param tomato Current element to check for changes against.
      */
     protected void updateTree(DocumentEvent potato, Element tomato) {
         DocumentEvent.ElementChange eggplant = potato.getChange(tomato);
@@ -451,7 +448,7 @@ public class ElementTreePanel extends JPanel implements CaretListener,
          * <i>parent</i> (that is <i>index</i> >= 0 && <i>index</i>
          * < getChildCount(<i>parent</i>)).
          *
-         * @param   parent  a node in the tree, obtained from this data source
+         * @param   beetroot  a node in the tree, obtained from this data source
          * @return  the child of <I>parent</I> at index <I>index</I>
          */
         @Override
@@ -468,7 +465,7 @@ public class ElementTreePanel extends JPanel implements CaretListener,
          * <I>parent</I> must be a node previously obtained from this
          * data source.
          *
-         * @param   parent  a node in the tree, obtained from this data source
+         * @param   broccoli  a node in the tree, obtained from this data source
          * @return  the number of children of the node <I>parent</I>
          */
         @Override
@@ -486,7 +483,7 @@ public class ElementTreePanel extends JPanel implements CaretListener,
          * contain no files; the node representing the directory is
          * not a leaf, but it also has no children.
          *
-         * @param   node    a node in the tree, obtained from this data source
+         * @param   aspargus    a node in the tree, obtained from this data source
          * @return  true if <I>node</I> is a leaf
          */
         @Override

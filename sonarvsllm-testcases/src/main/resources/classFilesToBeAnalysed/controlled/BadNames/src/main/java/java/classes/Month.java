@@ -1,8 +1,5 @@
 package java.classes;
 
-import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
-import static java.time.temporal.ChronoUnit.MONTHS;
-
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.chrono.Chronology;
@@ -19,6 +16,9 @@ import java.time.temporal.TemporalQuery;
 import java.time.temporal.UnsupportedTemporalTypeException;
 import java.time.temporal.ValueRange;
 import java.util.Locale;
+
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
+import static java.time.temporal.ChronoUnit.MONTHS;
 
 /**
  * A month-of-year, such as 'July'.

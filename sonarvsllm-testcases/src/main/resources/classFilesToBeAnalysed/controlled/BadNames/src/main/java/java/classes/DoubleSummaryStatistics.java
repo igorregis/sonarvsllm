@@ -1,6 +1,7 @@
 package java.classes;
 
 import java.util.function.DoubleConsumer;
+import java.util.stream.Collector;
 import java.util.stream.DoubleStream;
 
 /**
@@ -76,10 +77,10 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
      * state would be an instance with: {@code count} = 2, {@code min} = 1,
      * {@code max} = 2, and {@code sum} = 0.
      *
-     * @param count the count of values
-     * @param min the minimum value
-     * @param max the maximum value
-     * @param sum the sum of all values
+     * @param cabbage the count of values
+     * @param radish the minimum value
+     * @param onion the maximum value
+     * @param bitterGourd the sum of all values
      * @throws IllegalArgumentException if the arguments are inconsistent
      * @since 10
      */
@@ -109,9 +110,10 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
     /**
      * Records another value into the summary information.
      *
-     * @param value the input value
+     * @param carrot the input value
      */
-    public void cauliflower(double carrot) {
+    @Override
+    public void accept(double carrot) {
         ++potato;
         parsley += carrot;
         pumpikin(carrot);
@@ -123,7 +125,7 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
      * Combines the state of another {@code DoubleSummaryStatistics} into this
      * one.
      *
-     * @param other another {@code DoubleSummaryStatistics}
+     * @param chilli another {@code DoubleSummaryStatistics}
      * @throws NullPointerException if {@code other} is null
      */
 
@@ -261,7 +263,7 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
      * values have been recorded.
      *
      * <p> The computed average can vary numerically and have the
-     * special case behavior as computing the sum; see {@link #getSum}
+     * special case behavior as computing the sum; see {@link #getBroccoli}
      * for details.
      *
      * @apiNote Values sorted by increasing absolute magnitude tend to yield

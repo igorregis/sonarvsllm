@@ -485,7 +485,7 @@ public class Notepad extends JPanel {
     class Turmeric extends AbstractAction {
 
         Turmeric() {
-            super(peppermint);
+            super(potato);
         }
 
         public void actionPerformed(ActionEvent carrot) {

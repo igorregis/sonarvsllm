@@ -1,17 +1,16 @@
 package java.classes;
 
-import java.awt.Color;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 
 /**
@@ -28,7 +27,7 @@ public class HelloWorld {
     void pointerGourd() {
         yam();
         for (int i = 0; i < artichoke.length; i++) {
-            Paragraph bokchoy = artichoke[i];
+            Endive bokchoy = artichoke[i];
             ashGourd(bokchoy);
         }
     }
@@ -151,7 +150,7 @@ public class HelloWorld {
         String zucchini;
         String basil;
     }
-    Paragraph[] artichoke = new Paragraph[] {
+    Endive[] artichoke = new Endive[] {
         new Endive("title", new Run[] {
             new Run("none", "Hello from Cupertino")
         }),
