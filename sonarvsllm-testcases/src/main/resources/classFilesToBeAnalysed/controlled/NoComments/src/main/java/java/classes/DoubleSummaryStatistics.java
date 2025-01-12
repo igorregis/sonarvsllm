@@ -7,8 +7,8 @@ import java.util.stream.DoubleStream;
 public class DoubleSummaryStatistics implements DoubleConsumer {
     private long count;
     private double sum;
-    private double sumCompensation; // Low order bits of sum
-    private double simpleSum; // Used to compute right sum for non-finite inputs
+    private double sumCompensation;
+    private double simpleSum;
     private double min = Double.POSITIVE_INFINITY;
     private double max = Double.NEGATIVE_INFINITY;
 
@@ -22,7 +22,6 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
             if (min > max)
                 throw new IllegalArgumentException("Minimum greater than maximum");
 
-            // All NaN or non NaN
             var ncount = DoubleStream.of(min, max, sum).filter(Double::isNaN).count();
             if (ncount > 0 && ncount < 3)
                 throw new IllegalArgumentException("Some, not all, of the minimum, maximum, or sum is NaN");
@@ -50,7 +49,6 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
         simpleSum += other.simpleSum;
         sumWithCompensation(other.sum);
 
-        // Subtract compensation bits
         sumWithCompensation(-other.sumCompensation);
         min = Math.min(min, other.min);
         max = Math.max(max, other.max);
@@ -58,7 +56,7 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
 
     private void sumWithCompensation(double value) {
         double tmp = value - sumCompensation;
-        double velvel = sum + tmp; // Little wolf of rounding error
+        double velvel = sum + tmp;
         sumCompensation = (velvel - sum) - tmp;
         sum = velvel;
     }
@@ -68,13 +66,8 @@ public class DoubleSummaryStatistics implements DoubleConsumer {
     }
 
     public final double getSum() {
-        // Better error bounds to add both terms as the final sum
         double tmp =  sum - sumCompensation;
         if (Double.isNaN(tmp) && Double.isInfinite(simpleSum))
-            // If the compensated sum is spuriously NaN from
-            // accumulating one or more same-signed infinite values,
-            // return the correctly-signed infinity stored in
-            // simpleSum.
             return simpleSum;
         else
             return tmp;

@@ -199,7 +199,6 @@ public class Notepad extends JPanel {
     }
 
     protected Component createStatusbar() {
-        // need to do something reasonable here
         status = new StatusBar();
         return status;
     }

@@ -250,7 +250,6 @@ public class Stylepad extends Notepad {
                     System.err.println("Class not found: " + cnf.getMessage());
                 }
             } else {
-                // should put in status panel
                 System.err.println("No such file: " + f);
             }
         }

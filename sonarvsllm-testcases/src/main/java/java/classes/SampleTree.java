@@ -17,13 +17,39 @@ import javax.swing.border.*;
 import javax.swing.tree.*;
 
 
+/**
+ * A demo for illustrating how to do different things with JTree.
+ * The data that this displays is rather boring, that is each node will
+ * have 7 children that have random names based on the fonts.  Each node
+ * is then drawn with that font and in a different color.
+ * While the data isn't interesting the example illustrates a number
+ * of things:
+ *
+ * For an example of dynamicaly loading children refer to DynamicTreeNode.
+ * For an example of adding/removing/inserting/reloading refer to the inner
+ *     classes of this class, AddAction, RemovAction, InsertAction and
+ *     ReloadAction.
+ * For an example of creating your own cell renderer refer to
+ *     SampleTreeCellRenderer.
+ * For an example of subclassing JTreeModel for editing refer to
+ *     SampleTreeModel.
+ *
+ * @author Scott Violet
+ */
 public final class SampleTree {
 
+    /** Window for showing Tree. */
     protected JFrame frame;
+    /** Tree used for the example. */
     protected JTree tree;
+    /** Tree model. */
     protected DefaultTreeModel treeModel;
 
+    /**
+     * Constructs a new instance of SampleTree.
+     */
     public SampleTree() {
+        // Trying to set Nimbus look and feel
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -42,21 +68,30 @@ public final class SampleTree {
         frame.setJMenuBar(menuBar);
         frame.setBackground(Color.lightGray);
 
+        /* Create the JTreeModel. */
         DefaultMutableTreeNode root = createNewNode("Root");
         treeModel = new SampleTreeModel(root);
 
+        /* Create the tree. */
         tree = new JTree(treeModel);
 
+        /* Enable tool tips for the tree, without this tool tips will not
+        be picked up. */
         ToolTipManager.sharedInstance().registerComponent(tree);
 
+        /* Make the tree use an instance of SampleTreeCellRenderer for
+        drawing. */
         tree.setCellRenderer(new SampleTreeCellRenderer());
 
+        /* Make tree ask for the height of each row. */
         tree.setRowHeight(-1);
 
+        /* Put the Tree in a scroller. */
         JScrollPane sp = new JScrollPane();
         sp.setPreferredSize(new Dimension(300, 300));
         sp.getViewport().add(tree);
 
+        /* And show it. */
         panel.setLayout(new BorderLayout());
         panel.add("Center", sp);
         panel.add("South", constructOptionsPanel());
@@ -66,6 +101,8 @@ public final class SampleTree {
         frame.setVisible(true);
     }
 
+    /** Constructs a JPanel containing check boxes for the different
+     * options that tree supports. */
     @SuppressWarnings("serial")
     private JPanel constructOptionsPanel() {
         JCheckBox aCheckbox;
@@ -93,6 +130,8 @@ public final class SampleTree {
 
         borderPane.add(retPanel, BorderLayout.CENTER);
 
+        /* Create a set of radio buttons that dictate what selection should
+        be allowed in the tree. */
         ButtonGroup group = new ButtonGroup();
         JPanel buttonPane = new JPanel(false);
         JRadioButton button;
@@ -148,6 +187,9 @@ public final class SampleTree {
 
         borderPane.add(buttonPane, BorderLayout.SOUTH);
 
+        // NOTE: This will be enabled in a future release.
+        // Create a label and combobox to determine how many clicks are
+        // needed to expand.
 /*
         JPanel               clickPanel = new JPanel();
         Object[]             values = { "Never", new Integer(1),
@@ -173,11 +215,13 @@ public final class SampleTree {
         return borderPane;
     }
 
+    /** Construct a menu. */
     private JMenuBar constructMenuBar() {
         JMenu menu;
         JMenuBar menuBar = new JMenuBar();
         JMenuItem menuItem;
 
+        /* Good ol exit. */
         menu = new JMenu("File");
         menuBar.add(menu);
 
@@ -189,6 +233,7 @@ public final class SampleTree {
             }
         });
 
+        /* Tree related stuff. */
         menu = new JMenu("Tree");
         menuBar.add(menu);
 
@@ -207,6 +252,10 @@ public final class SampleTree {
         return menuBar;
     }
 
+    /**
+     * Returns the TreeNode instance that is selected in the tree.
+     * If nothing is selected, null is returned.
+     */
     protected DefaultMutableTreeNode getSelectedNode() {
         TreePath selPath = tree.getSelectionPath();
 
@@ -216,6 +265,10 @@ public final class SampleTree {
         return null;
     }
 
+    /**
+     * Returns the selected TreePaths in the tree, may return null if
+     * nothing is selected.
+     */
     protected TreePath[] getSelectedPaths() {
         return tree.getSelectionPaths();
     }
@@ -225,14 +278,25 @@ public final class SampleTree {
     }
 
 
+    /**
+     * AddAction is used to add a new item after the selected item.
+     */
     class AddAction extends Object implements ActionListener {
 
+        /** Number of nodes that have been added. */
         public int addCount;
 
+        /**
+         * Messaged when the user clicks on the Add menu item.
+         * Determines the selection from the Tree and adds an item
+         * after that.  If nothing is selected, an item is added to
+         * the root.
+         */
         public void actionPerformed(ActionEvent e) {
             DefaultMutableTreeNode lastItem = getSelectedNode();
             DefaultMutableTreeNode parent;
 
+            /* Determine where to create the new node. */
             if (lastItem != null) {
                 parent = (DefaultMutableTreeNode) lastItem.getParent();
                 if (parent == null) {
@@ -243,6 +307,7 @@ public final class SampleTree {
                 parent = (DefaultMutableTreeNode) treeModel.getRoot();
             }
             if (parent == null) {
+                // new root
                 treeModel.setRoot(createNewNode("Added " + Integer.toString(
                         addCount++)));
             } else {
@@ -253,22 +318,34 @@ public final class SampleTree {
                     newIndex = parent.getIndex(lastItem) + 1;
                 }
 
+                /* Let the treemodel know. */
                 treeModel.insertNodeInto(createNewNode("Added " + Integer.
                                 toString(addCount++)),
                         parent, newIndex);
             }
         }
-    }
+    } // End of SampleTree.AddAction
 
 
+    /**
+     * InsertAction is used to insert a new item before the selected item.
+     */
     class InsertAction extends Object implements ActionListener {
 
+        /** Number of nodes that have been added. */
         public int insertCount;
 
+        /**
+         * Messaged when the user clicks on the Insert menu item.
+         * Determines the selection from the Tree and inserts an item
+         * after that.  If nothing is selected, an item is added to
+         * the root.
+         */
         public void actionPerformed(ActionEvent e) {
             DefaultMutableTreeNode lastItem = getSelectedNode();
             DefaultMutableTreeNode parent;
 
+            /* Determine where to create the new node. */
             if (lastItem != null) {
                 parent = (DefaultMutableTreeNode) lastItem.getParent();
                 if (parent == null) {
@@ -279,6 +356,7 @@ public final class SampleTree {
                 parent = (DefaultMutableTreeNode) treeModel.getRoot();
             }
             if (parent == null) {
+                // new root
                 treeModel.setRoot(createNewNode("Inserted " + Integer.toString(
                         insertCount++)));
             } else {
@@ -290,16 +368,26 @@ public final class SampleTree {
                     newIndex = parent.getIndex(lastItem);
                 }
 
+                /* Let the treemodel know. */
                 treeModel.insertNodeInto(createNewNode("Inserted " + Integer.
                                 toString(insertCount++)),
                         parent, newIndex);
             }
         }
-    }
+    } // End of SampleTree.InsertAction
 
 
+    /**
+     * ReloadAction is used to reload from the selected node.  If nothing
+     * is selected, reload is not issued.
+     */
     class ReloadAction extends Object implements ActionListener {
 
+        /**
+         * Messaged when the user clicks on the Reload menu item.
+         * Determines the selection from the Tree and asks the treemodel
+         * to reload from that node.
+         */
         public void actionPerformed(ActionEvent e) {
             DefaultMutableTreeNode lastItem = getSelectedNode();
 
@@ -307,35 +395,60 @@ public final class SampleTree {
                 treeModel.reload(lastItem);
             }
         }
-    }
+    } // End of SampleTree.ReloadAction
 
 
+    /**
+     * RemoveAction removes the selected node from the tree.  If
+     * The root or nothing is selected nothing is removed.
+     */
     class RemoveAction extends Object implements ActionListener {
 
+        /**
+         * Removes the selected item as long as it isn't root.
+         */
         public void actionPerformed(ActionEvent e) {
             TreePath[] selected = getSelectedPaths();
 
             if (selected != null && selected.length > 0) {
                 TreePath shallowest;
 
+                // The remove process consists of the following steps:
+                // 1 - find the shallowest selected TreePath, the shallowest
+                //     path is the path with the smallest number of path
+                //     components.
+                // 2 - Find the siblings of this TreePath
+                // 3 - Remove from selected the TreePaths that are descendants
+                //     of the paths that are going to be removed. They will
+                //     be removed as a result of their ancestors being
+                //     removed.
+                // 4 - continue until selected contains only null paths.
                 while ((shallowest = findShallowestPath(selected)) != null) {
                     removeSiblings(shallowest, selected);
                 }
             }
         }
 
+        /**
+         * Removes the sibling TreePaths of <code>path</code>, that are
+         * located in <code>paths</code>.
+         */
         private void removeSiblings(TreePath path, TreePath[] paths) {
+            // Find the siblings
             if (path.getPathCount() == 1) {
+                // Special case, set the root to null
                 for (int counter = paths.length - 1; counter >= 0; counter--) {
                     paths[counter] = null;
                 }
                 treeModel.setRoot(null);
             } else {
+                // Find the siblings of path.
                 TreePath parent = path.getParentPath();
                 MutableTreeNode parentNode = (MutableTreeNode) parent.
                         getLastPathComponent();
                 ArrayList<TreePath> toRemove = new ArrayList<TreePath>();
 
+                // First pass, find paths with a parent TreePath of parent
                 for (int counter = paths.length - 1; counter >= 0; counter--) {
                     if (paths[counter] != null && paths[counter].getParentPath().
                             equals(parent)) {
@@ -344,6 +457,10 @@ public final class SampleTree {
                     }
                 }
 
+                // Second pass, remove any paths that are descendants of the
+                // paths that are going to be removed. These paths are
+                // implicitly removed as a result of removing the paths in
+                // toRemove
                 int rCount = toRemove.size();
                 for (int counter = paths.length - 1; counter >= 0; counter--) {
                     if (paths[counter] != null) {
@@ -357,6 +474,7 @@ public final class SampleTree {
                     }
                 }
 
+                // Sort the siblings based on position in the model
                 if (rCount > 1) {
                     Collections.sort(toRemove, new PositionComparator());
                 }
@@ -373,6 +491,11 @@ public final class SampleTree {
             }
         }
 
+        /**
+         * Returns the TreePath with the smallest path count in
+         * <code>paths</code>. Will return null if there is no non-null
+         * TreePath is <code>paths</code>.
+         */
         private TreePath findShallowestPath(TreePath[] paths) {
             int shallowest = -1;
             TreePath shallowestPath = null;
@@ -397,6 +520,13 @@ public final class SampleTree {
         }
 
 
+        /**
+         * An Comparator that bases the return value on the index of the
+         * passed in objects in the TreeModel.
+         * <p>
+         * This is actually rather expensive, it would be more efficient
+         * to extract the indices and then do the comparision.
+         */
         private class PositionComparator implements Comparator<TreePath> {
 
             public int compare(TreePath p1, TreePath p2) {
@@ -407,29 +537,44 @@ public final class SampleTree {
                 return p1Index - p2Index;
             }
         }
-    }
+    } // End of SampleTree.RemoveAction
 
+
+    /**
+     * ShowHandlesChangeListener implements the ChangeListener interface
+     * to toggle the state of showing the handles in the tree.
+     */
     class ShowHandlesChangeListener extends Object implements ChangeListener {
 
         public void stateChanged(ChangeEvent e) {
             tree.setShowsRootHandles(((JCheckBox) e.getSource()).isSelected());
         }
-    }
+    } // End of class SampleTree.ShowHandlesChangeListener
 
+
+    /**
+     * ShowRootChangeListener implements the ChangeListener interface
+     * to toggle the state of showing the root node in the tree.
+     */
     class ShowRootChangeListener extends Object implements ChangeListener {
 
         public void stateChanged(ChangeEvent e) {
             tree.setRootVisible(((JCheckBox) e.getSource()).isSelected());
         }
-    }
+    } // End of class SampleTree.ShowRootChangeListener
 
 
+    /**
+     * TreeEditableChangeListener implements the ChangeListener interface
+     * to toggle between allowing editing and now allowing editing in
+     * the tree.
+     */
     class TreeEditableChangeListener extends Object implements ChangeListener {
 
         public void stateChanged(ChangeEvent e) {
             tree.setEditable(((JCheckBox) e.getSource()).isSelected());
         }
-    }
+    } // End of class SampleTree.TreeEditableChangeListener
 
     public static void main(String[] args) {
         try {

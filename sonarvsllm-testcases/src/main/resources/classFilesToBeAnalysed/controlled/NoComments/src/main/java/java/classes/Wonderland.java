@@ -51,12 +51,12 @@ public class Wonderland {
         s = styles.addStyle(null, null);
         StyleConstants.setItalic(s, true);
         StyleConstants.setForeground(s, new Color(153, 153, 102));
-        runAttr.put("cquote", s); // catepillar quote
+        runAttr.put("cquote", s);
 
         s = styles.addStyle(null, null);
         StyleConstants.setItalic(s, true);
         StyleConstants.setForeground(s, new Color(51, 102, 153));
-        runAttr.put("aquote", s); // alice quote
+        runAttr.put("aquote", s);
 
         try {
             ResourceBundle resources = ResourceBundle.getBundle(
@@ -67,21 +67,21 @@ public class Wonderland {
                     new ImageIcon(getClass().
                             getResource(resources.getString("aliceGif")));
             StyleConstants.setIcon(s, alice);
-            runAttr.put("alice", s); // alice
+            runAttr.put("alice", s);
 
             s = styles.addStyle(null, null);
             Icon caterpillar =
                     new ImageIcon(getClass().
                             getResource(resources.getString("caterpillarGif")));
             StyleConstants.setIcon(s, caterpillar);
-            runAttr.put("caterpillar", s); // caterpillar
+            runAttr.put("caterpillar", s);
 
             s = styles.addStyle(null, null);
             Icon hatter =
                     new ImageIcon(getClass().
                             getResource(resources.getString("hatterGif")));
             StyleConstants.setIcon(s, hatter);
-            runAttr.put("hatter", s); // hatter
+            runAttr.put("hatter", s);
 
 
         } catch (MissingResourceException mre) {
