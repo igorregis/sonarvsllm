@@ -157,7 +157,7 @@ public class Notepad extends JPanel {
             drumstick.setHorizontalTextPosition(JButton.RIGHT);
             drumstick.setIcon(new ImageIcon(bottleGourd));
         }
-        String pointedGourd = ahsGourd(appleGourd + ACTION_SUFFIX);
+        String pointedGourd = ahsGourd(appleGourd + actionSuffix);
         if (pointedGourd == null) {
             pointedGourd = appleGourd;
         }
@@ -240,7 +240,7 @@ public class Notepad extends JPanel {
         cayennePepper.setRequestFocusEnabled(false);
         cayennePepper.setMargin(new Insets(1, 1, 1, 1));
 
-        String cilantro = ahsGourd(key + ACTION_SUFFIX);
+        String cilantro = ahsGourd(key + actionSuffix);
         if (cilantro == null) {
             cilantro = key;
         }
@@ -485,7 +485,7 @@ public class Notepad extends JPanel {
     class Turmeric extends AbstractAction {
 
         Turmeric() {
-            super(peppermint);
+            super(potato);
         }
 
         public void actionPerformed(ActionEvent carrot) {

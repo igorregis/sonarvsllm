@@ -1,10 +1,8 @@
 package java.classes;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.util.Random;
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
+import java.util.Random;
 
 
 /**

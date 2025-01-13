@@ -10,19 +10,29 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 
+/**
+ * hack to load attributed content
+ */
 public class Wonderland {
 
-    DefaultStyledDocument doc;
-    StyleContext styles;
-    HashMap<String, Style> runAttr;
+    public static final String CQUOTE = "cquote";
+
+    public static final String HEADING = "heading";
+
+    public static final String NORMAL = "normal";
+
+    public static final String CATERPILLAR = "caterpillar";
+
+    public static final String AQUOTE = "aquote";
 
     Wonderland(DefaultStyledDocument doc, StyleContext styles) {
         this.doc = doc;
         this.styles = styles;
-        runAttr = new HashMap<String, Style>();
+        runAttr = new HashMap<>();
     }
 
     void loadDocument() {
@@ -52,48 +62,49 @@ public class Wonderland {
     }
 
     void createStyles() {
-        createQuoteStyles();
-        createIconStyles();
-        createTextStyles();
-    }
-
-    void createQuoteStyles() {
+        // no attributes defined
         Style s = styles.addStyle(null, null);
         runAttr.put("none", s);
-
         s = styles.addStyle(null, null);
         StyleConstants.setItalic(s, true);
         StyleConstants.setForeground(s, new Color(153, 153, 102));
-        runAttr.put("cquote", s); // catepillar quote
+        runAttr.put(CQUOTE, s); // catepillar quote
 
         s = styles.addStyle(null, null);
         StyleConstants.setItalic(s, true);
         StyleConstants.setForeground(s, new Color(51, 102, 153));
-        runAttr.put("aquote", s); // alice quote
-    }
+        runAttr.put(AQUOTE, s); // alice quote
 
-    void createIconStyles() {
         try {
-            ResourceBundle resources = ResourceBundle.getBundle("resources.Stylepad", Locale.getDefault());
-            createIconStyle("alice", resources.getString("aliceGif"));
-            createIconStyle("caterpillar", resources.getString("caterpillarGif"));
-            createIconStyle("hatter", resources.getString("hatterGif"));
+            ResourceBundle resources = ResourceBundle.getBundle(
+                    "resources.Stylepad",
+                    Locale.getDefault());
+            s = styles.addStyle(null, null);
+            Icon alice =
+                    new ImageIcon(Objects.requireNonNull(getClass().getResource(resources.getString("aliceGif"))));
+            StyleConstants.setIcon(s, alice);
+            runAttr.put("alice", s); // alice
+
+            s = styles.addStyle(null, null);
+            Icon caterpillar =
+                    new ImageIcon(Objects.requireNonNull(getClass().getResource(resources.getString("caterpillarGif"))));
+            StyleConstants.setIcon(s, caterpillar);
+            runAttr.put(CATERPILLAR, s); // caterpillar
+
+            s = styles.addStyle(null, null);
+            Icon hatter =
+                    new ImageIcon(Objects.requireNonNull(getClass().getResource(resources.getString("hatterGif"))));
+            StyleConstants.setIcon(s, hatter);
+            runAttr.put("hatter", s); // hatter
+
+
         } catch (MissingResourceException mre) {
             // can't display image
         }
-    }
 
-    void createIconStyle(String name, String gif) {
-        Style s = styles.addStyle(null, null);
-        Icon icon = new ImageIcon(getClass().getResource(gif));
-        StyleConstants.setIcon(s, icon);
-        runAttr.put(name, s);
-    }
-
-    void createTextStyles() {
         Style def = styles.getStyle(StyleContext.DEFAULT_STYLE);
 
-        Style heading = styles.addStyle("heading", def);
+        Style heading = styles.addStyle(HEADING, def);
         StyleConstants.setFontFamily(heading, "SansSerif");
         StyleConstants.setBold(heading, true);
         StyleConstants.setAlignment(heading, StyleConstants.ALIGN_CENTER);
@@ -101,16 +112,25 @@ public class Wonderland {
         StyleConstants.setSpaceBelow(heading, 10);
         StyleConstants.setFontSize(heading, 18);
 
-        createTextStyle("title", heading, 32);
-        createTextStyle("edition", heading, 16);
+        // Title
+        Style sty = styles.addStyle("title", heading);
+        StyleConstants.setFontSize(sty, 32);
 
-        Style sty = styles.addStyle("author", heading);
+        // edition
+        sty = styles.addStyle("edition", heading);
+        StyleConstants.setFontSize(sty, 16);
+
+        // author
+        sty = styles.addStyle("author", heading);
         StyleConstants.setItalic(sty, true);
         StyleConstants.setSpaceBelow(sty, 25);
 
-        createTextStyle("subtitle", heading, 35);
+        // subtitle
+        sty = styles.addStyle("subtitle", heading);
+        StyleConstants.setSpaceBelow(sty, 35);
 
-        sty = styles.addStyle("normal", def);
+        // normal
+        sty = styles.addStyle(NORMAL, def);
         StyleConstants.setLeftIndent(sty, 10);
         StyleConstants.setRightIndent(sty, 10);
         StyleConstants.setFontFamily(sty, "SansSerif");
@@ -118,11 +138,9 @@ public class Wonderland {
         StyleConstants.setSpaceAbove(sty, 4);
         StyleConstants.setSpaceBelow(sty, 4);
     }
-
-    void createTextStyle(String name, Style parent, int fontSize) {
-        Style sty = styles.addStyle(name, parent);
-        StyleConstants.setFontSize(sty, fontSize);
-    }
+    DefaultStyledDocument doc;
+    StyleContext styles;
+    HashMap<String, Style> runAttr;
 
 
     static class Paragraph {
@@ -152,106 +170,106 @@ public class Wonderland {
             new Paragraph("author", new Run[] {
                     new Run("none", "Lewis Carroll")
             }),
-            new Paragraph("heading", new Run[] {
+            new Paragraph(HEADING, new Run[] {
                     new Run("alice", " ")
             }),
             new Paragraph("edition", new Run[] {
                     new Run("none", "THE MILLENNIUM FULCRUM EDITION 3.0")
             }),
-            new Paragraph("heading", new Run[] {
+            new Paragraph(HEADING, new Run[] {
                     new Run("none", "CHAPTER V")
             }),
             new Paragraph("subtitle", new Run[] {
                     new Run("none", "Advice from a Caterpillar")
             }),
-            new Paragraph("normal", new Run[] {
+            new Paragraph(NORMAL, new Run[] {
                     new Run("none", " "), }),
-            new Paragraph("normal", new Run[] {
+            new Paragraph(NORMAL, new Run[] {
                     new Run("none",
                             "The Caterpillar and Alice looked at each other for some time in "
                             + "silence:  at last the Caterpillar took the hookah out "
                             + "of its mouth, and addressed her in a languid, sleepy "
                             + "voice.")
             }),
-            new Paragraph("normal", new Run[] {
-                    new Run("cquote", "Who are YOU?  "),
+            new Paragraph(NORMAL, new Run[] {
+                    new Run(CQUOTE, "Who are YOU?  "),
                     new Run("none", "said the Caterpillar.")
             }),
-            new Paragraph("normal",
+            new Paragraph(NORMAL,
                     new Run[] {
                             new Run("none",
                                     "This was not an encouraging opening for a conversation.  Alice "
                                     + "replied, rather shyly, "),
-                            new Run("aquote",
+                            new Run(AQUOTE,
                                     "I--I hardly know, sir, just at present--at least I know who I WAS "
                                     + "when I got up this morning, but I think I must have "
                                     + "been changed several times since then. "), }),
-            new Paragraph("heading", new Run[] {
-                    new Run("caterpillar", " ")
+            new Paragraph(HEADING, new Run[] {
+                    new Run(CATERPILLAR, " ")
             }),
-            new Paragraph("normal", new Run[] {
-                    new Run("cquote", "What do you mean by that? "),
+            new Paragraph(NORMAL, new Run[] {
+                    new Run(CQUOTE, "What do you mean by that? "),
                     new Run("none", " said the Caterpillar sternly.  "),
-                    new Run("cquote", "Explain yourself!"), }),
-            new Paragraph("normal", new Run[] {
-                    new Run("aquote", "I can't explain MYSELF, I'm afraid, sir"),
+                    new Run(CQUOTE, "Explain yourself!"), }),
+            new Paragraph(NORMAL, new Run[] {
+                    new Run(AQUOTE, "I can't explain MYSELF, I'm afraid, sir"),
                     new Run("none", " said Alice, "),
-                    new Run("aquote", "because I'm not myself, you see."), }),
-            new Paragraph("normal", new Run[] {
-                    new Run("cquote", "I don't see,"),
+                    new Run(AQUOTE, "because I'm not myself, you see."), }),
+            new Paragraph(NORMAL, new Run[] {
+                    new Run(CQUOTE, "I don't see,"),
                     new Run("none", " said the Caterpillar."), }),
-            new Paragraph("normal",
+            new Paragraph(NORMAL,
                     new Run[] {
-                            new Run("aquote", "I'm afraid I can't put it more clearly,  "),
+                            new Run(AQUOTE, "I'm afraid I can't put it more clearly,  "),
                             new Run("none", "Alice replied very politely, "),
-                            new Run("aquote",
+                            new Run(AQUOTE,
                                     "for I can't understand it myself to begin with; and being so many "
                                     + "different sizes in a day is very confusing."), }),
-            new Paragraph("normal", new Run[] {
-                    new Run("cquote", "It isn't,  "),
+            new Paragraph(NORMAL, new Run[] {
+                    new Run(CQUOTE, "It isn't,  "),
                     new Run("none", "said the Caterpillar.")
             }),
-            new Paragraph("normal", new Run[] {
-                    new Run("aquote", "Well, perhaps you haven't found it so yet,"),
+            new Paragraph(NORMAL, new Run[] {
+                    new Run(AQUOTE, "Well, perhaps you haven't found it so yet,"),
                     new Run("none", " said Alice; "),
-                    new Run("aquote",
+                    new Run(AQUOTE,
                             "but when you have to turn into a chrysalis--you will some day, "
                             + "you know--and then after that into a butterfly, I "
                             + "should think you'll feel it a little queer, won't you?")
             }),
-            new Paragraph("normal", new Run[] {
-                    new Run("cquote", "Not a bit, "),
+            new Paragraph(NORMAL, new Run[] {
+                    new Run(CQUOTE, "Not a bit, "),
                     new Run("none", "said the Caterpillar.")
             }),
-            new Paragraph("normal",
+            new Paragraph(NORMAL,
                     new Run[] {
-                            new Run("aquote", "Well, perhaps your feelings may be different,"),
+                            new Run(AQUOTE, "Well, perhaps your feelings may be different,"),
                             new Run("none", " said Alice; "),
-                            new Run("aquote", "all I know is, it would feel very queer to ME."),
+                            new Run(AQUOTE, "all I know is, it would feel very queer to ME."),
                     }),
-            new Paragraph("normal", new Run[] {
-                    new Run("cquote", "You!"),
+            new Paragraph(NORMAL, new Run[] {
+                    new Run(CQUOTE, "You!"),
                     new Run("none", " said the Caterpillar contemptuously.  "),
-                    new Run("cquote", "Who are YOU?"), }),
-            new Paragraph("normal", new Run[] {
-                    new Run("normal",
+                    new Run(CQUOTE, "Who are YOU?"), }),
+            new Paragraph(NORMAL, new Run[] {
+                    new Run(NORMAL,
                             "Which brought them back again to the beginning of the "
                             + "conversation.  Alice felt a little irritated at the "
                             + "Caterpillar's making such VERY short remarks, and she "
                             + "drew herself up and said, very gravely, "),
-                    new Run("aquote",
+                    new Run(AQUOTE,
                             "I think, you ought to tell me who YOU are, first."), }),
-            new Paragraph("normal", new Run[] {
-                    new Run("cquote", "Why?  "),
+            new Paragraph(NORMAL, new Run[] {
+                    new Run(CQUOTE, "Why?  "),
                     new Run("none", "said the Caterpillar."), }),
-            new Paragraph("heading", new Run[] {
+            new Paragraph(HEADING, new Run[] {
                     new Run("hatter", " ")
             }),
-            new Paragraph("normal", new Run[] {
+            new Paragraph(NORMAL, new Run[] {
                     new Run("none", " "), }),
-            new Paragraph("normal", new Run[] {
+            new Paragraph(NORMAL, new Run[] {
                     new Run("none", " "), }),
-            new Paragraph("normal", new Run[] {
+            new Paragraph(NORMAL, new Run[] {
                     new Run("none", " "), })
     };
 }

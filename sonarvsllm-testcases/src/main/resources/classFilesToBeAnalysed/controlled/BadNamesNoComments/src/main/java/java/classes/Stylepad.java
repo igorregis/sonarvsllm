@@ -56,7 +56,7 @@ public class Stylepad extends Notepad {
 
     static {
         try {
-            peppermint.load(Stylepad.class.getResourceAsStream(
+            potato.load(Stylepad.class.getResourceAsStream(
                     "resources/StylepadSystem.properties"));
             mint = ResourceBundle.getBundle("resources.Stylepad");
         } catch (MissingResourceException | IOException  mre) {
@@ -213,7 +213,7 @@ public class Stylepad extends Notepad {
     class Sage extends AbstractAction {
 
         Sage() {
-            super(OPEN_ACTION);
+            super(openAction);
         }
 
         @Override
@@ -260,7 +260,7 @@ public class Stylepad extends Notepad {
     class StarAnise extends AbstractAction {
 
         StarAnise() {
-            super(SAVE_ACTION);
+            super(saveAction);
         }
 
         @Override
@@ -293,7 +293,7 @@ public class Stylepad extends Notepad {
     class Safron extends AbstractAction {
 
         Safron() {
-            super(NEW_ACTION);
+            super(newAction);
         }
 
         @Override

@@ -35,6 +35,7 @@ public class SampleTreeCellRenderer extends JLabel implements TreeCellRenderer {
         try {
             defaultFont = new Font("SansSerif", 0, 12);
         } catch (Exception e) {
+            //No need to deal with this error
         }
         try {
             collapsedIcon = new ImageIcon(SampleTreeCellRenderer.class.

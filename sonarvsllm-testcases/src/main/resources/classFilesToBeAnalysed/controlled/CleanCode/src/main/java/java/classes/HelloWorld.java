@@ -13,12 +13,17 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 
+/**
+ * hack to load attributed content.
+ */
 public class HelloWorld {
+
+    public static final String TITLE = "title";
 
     HelloWorld(DefaultStyledDocument doc, StyleContext styles) {
         this.doc = doc;
         this.styles = styles;
-        runAttr = new HashMap<String, Style>();
+        runAttr = new HashMap<>();
     }
 
     void loadDocument() {
@@ -38,6 +43,7 @@ public class HelloWorld {
                 doc.insertString(doc.getLength(), run.content, s);
             }
 
+            // set logical style
             Style ls = styles.getStyle(p.logical);
             doc.setLogicalStyle(doc.getLength() - 1, ls);
             doc.insertString(doc.getLength(), "\n", null);
@@ -47,6 +53,7 @@ public class HelloWorld {
     }
 
     void createStyles() {
+        // no attributes defined
         Style s = styles.addStyle(null, null);
         runAttr.put("none", s);
         s = styles.addStyle(null, null);
@@ -81,35 +88,39 @@ public class HelloWorld {
 
 
         } catch (MissingResourceException mre) {
+            // can't display image
         }
 
         Style def = styles.getStyle(StyleContext.DEFAULT_STYLE);
 
         Style heading = styles.addStyle("heading", def);
-        //StyleConstants.setFontFamily(heading, "SansSerif");
         StyleConstants.setBold(heading, true);
         StyleConstants.setAlignment(heading, StyleConstants.ALIGN_CENTER);
         StyleConstants.setSpaceAbove(heading, 10);
         StyleConstants.setSpaceBelow(heading, 10);
         StyleConstants.setFontSize(heading, 18);
 
-        Style sty = styles.addStyle("title", heading);
+        // Title
+        Style sty = styles.addStyle(TITLE, heading);
         StyleConstants.setFontSize(sty, 32);
 
+        // edition
         sty = styles.addStyle("edition", heading);
         StyleConstants.setFontSize(sty, 16);
 
+        // author
         sty = styles.addStyle("author", heading);
         StyleConstants.setItalic(sty, true);
         StyleConstants.setSpaceBelow(sty, 25);
 
+        // subtitle
         sty = styles.addStyle("subtitle", heading);
         StyleConstants.setSpaceBelow(sty, 35);
 
+        // normal
         sty = styles.addStyle("normal", def);
         StyleConstants.setLeftIndent(sty, 10);
         StyleConstants.setRightIndent(sty, 10);
-        //StyleConstants.setFontFamily(sty, "SansSerif");
         StyleConstants.setFontSize(sty, 14);
         StyleConstants.setSpaceAbove(sty, 4);
         StyleConstants.setSpaceBelow(sty, 4);
@@ -140,26 +151,26 @@ public class HelloWorld {
         String content;
     }
     Paragraph[] data = new Paragraph[] {
-            new Paragraph("title", new Run[] {
+            new Paragraph(TITLE, new Run[] {
                     new Run("none", "Hello from Cupertino")
             }),
-            new Paragraph("title", new Run[] {
+            new Paragraph(TITLE, new Run[] {
                     new Run("none", "\u53F0\u5317\u554F\u5019\u60A8\u0021")
             }),
-            new Paragraph("title", new Run[] {
+            new Paragraph(TITLE, new Run[] {
                     new Run("none", "\u0391\u03B8\u03B7\u03BD\u03B1\u03B9\u0020" // Greek
                                     + "\u03B1\u03C3\u03C0\u03B1\u03B6\u03BF\u03BD"
                                     + "\u03C4\u03B1\u03B9\u0020\u03C5\u03BC\u03B1"
                                     + "\u03C2\u0021")
             }),
-            new Paragraph("title", new Run[] {
+            new Paragraph(TITLE, new Run[] {
                     new Run("none", "\u6771\u4eac\u304b\u3089\u4eca\u65e5\u306f")
             }),
-            new Paragraph("title", new Run[] {
+            new Paragraph(TITLE, new Run[] {
                     new Run("none", "\u05e9\u05dc\u05d5\u05dd \u05de\u05d9\u05e8\u05d5"
                                     + "\u05e9\u05dc\u05d9\u05dd")
             }),
-            new Paragraph("title", new Run[] {
+            new Paragraph(TITLE, new Run[] {
                     new Run("none", "\u0633\u0644\u0627\u0645")
             }), };
 }

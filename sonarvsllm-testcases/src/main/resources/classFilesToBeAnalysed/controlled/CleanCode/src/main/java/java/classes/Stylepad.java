@@ -24,13 +24,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+/**
+ * Sample application using JTextPane.
+ *
+ * @author Timothy Prinzing
+ */
 @SuppressWarnings("serial")
 public class Stylepad extends Notepad {
 
     private static ResourceBundle resources;
     private FileDialog fileDialog;
 
-    private static final String[] MENUBAR_KEYS = {"file", "edit", "color",
+    public static final String COLOR = "color";
+
+    private static final String[] MENUBAR_KEYS = {"file", "edit", COLOR,
             "font", "debug"};
     private static final String[] FONT_KEYS = {"family1", "family2", "family3",
             "family4", "-", "size1", "size2", "size3", "size4", "size5", "-",
@@ -57,32 +64,36 @@ public class Stylepad extends Notepad {
 
     public static void main(String[] args) {
         try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-
-                public void run() {
-                    JFrame frame = new JFrame();
-                    frame.setTitle(resources.getString("Title"));
-                    frame.setBackground(Color.lightGray);
-                    frame.getContentPane().
-                            setLayout(new BorderLayout());
-                    Stylepad stylepad = new Stylepad();
-                    frame.getContentPane().add("Center", stylepad);
-                    frame.setJMenuBar(stylepad.createMenubar());
-                    frame.addWindowListener(new AppCloser());
-                    frame.pack();
-                    frame.setSize(600, 480);
-                    frame.setVisible(true);
-                }
+            SwingUtilities.invokeAndWait(() -> {
+                JFrame frame = new JFrame();
+                frame.setTitle(resources.getString("Title"));
+                frame.setBackground(Color.lightGray);
+                frame.getContentPane().
+                        setLayout(new BorderLayout());
+                Stylepad stylepad = new Stylepad();
+                frame.getContentPane().add("Center", stylepad);
+                frame.setJMenuBar(stylepad.createMenubar());
+                frame.addWindowListener(new AppCloser());
+                frame.pack();
+                frame.setSize(600, 480);
+                frame.setVisible(true);
             });
         } catch (InterruptedException ex) {
             Logger.getLogger(Stylepad.class.getName()).log(Level.SEVERE, null,
                     ex);
+            Thread.currentThread().interrupt();
         } catch (InvocationTargetException ex) {
             Logger.getLogger(Stylepad.class.getName()).log(Level.SEVERE, null,
                     ex);
         }
     }
 
+    /**
+     * Fetch the list of actions supported by this
+     * editor.  It is implemented to return the list
+     * of actions supported by the superclass
+     * augmented with the actions defined locally.
+     */
     @Override
     public Action[] getActions() {
         Action[] defaultActions = {
@@ -91,10 +102,14 @@ public class Stylepad extends Notepad {
                 new SaveAction(),
                 new StyledEditorKit.FontFamilyAction("font-family-SansSerif",
                         "SansSerif"), };
-        Action[] a = TextAction.augmentList(super.getActions(), defaultActions);
-        return a;
+        return TextAction.augmentList(super.getActions(), defaultActions);
     }
 
+    /**
+     * Try and resolve the resource name in the local
+     * resource file, and if not found fall back to
+     * the superclass resource file.
+     */
     @Override
     protected String getResourceString(String nm) {
         String str;
@@ -106,6 +121,9 @@ public class Stylepad extends Notepad {
         return str;
     }
 
+    /**
+     * Create an editor to represent the given document.
+     */
     @Override
     protected JTextComponent createEditor() {
         StyleContext sc = new StyleContext();
@@ -113,15 +131,16 @@ public class Stylepad extends Notepad {
         initDocument(doc, sc);
         JTextPane p = new JTextPane(doc);
         p.setDragEnabled(true);
-
-        //p.getCaret().setBlinkRate(0);
-
         return p;
     }
 
+    /**
+     * Create a menu for the app.  This is redefined to trap
+     * a couple of special entries for now.
+     */
     @Override
     protected JMenu createMenu(String key) {
-        if (key.equals("color")) {
+        if (key.equals(COLOR)) {
             return createColorMenu();
         }
         return super.createMenu(key);
@@ -129,12 +148,10 @@ public class Stylepad extends Notepad {
 
     @Override
     protected String[] getItemKeys(String key) {
-        switch (key) {
-            case "font":
-                return FONT_KEYS;
-            default:
-                return super.getItemKeys(key);
+        if (key.equals("font")) {
+            return FONT_KEYS;
         }
+        return super.getItemKeys(key);
     }
 
     @Override
@@ -147,33 +164,31 @@ public class Stylepad extends Notepad {
         return TOOLBAR_KEYS;
     }
 
+    // this will soon be replaced
     JMenu createColorMenu() {
         ActionListener a;
         JMenuItem mi;
-        JMenu menu = new JMenu(getResourceString("color" + labelSuffix));
+        JMenu menu = new JMenu(getResourceString(COLOR + LABEL_SUFFIX));
         mi = new JMenuItem(resources.getString("Red"));
-        mi.setHorizontalTextPosition(JButton.RIGHT);
+        mi.setHorizontalTextPosition(SwingConstants.RIGHT);
         mi.setIcon(new ColoredSquare(Color.red));
         a =
                 new StyledEditorKit.ForegroundAction("set-foreground-red",
                         Color.red);
-        //a = new ColorAction(se, Color.red);
         mi.addActionListener(a);
         menu.add(mi);
         mi = new JMenuItem(resources.getString("Green"));
-        mi.setHorizontalTextPosition(JButton.RIGHT);
+        mi.setHorizontalTextPosition(SwingConstants.RIGHT);
         mi.setIcon(new ColoredSquare(Color.green));
         a = new StyledEditorKit.ForegroundAction("set-foreground-green",
                 Color.green);
-        //a = new ColorAction(se, Color.green);
         mi.addActionListener(a);
         menu.add(mi);
         mi = new JMenuItem(resources.getString("Blue"));
-        mi.setHorizontalTextPosition(JButton.RIGHT);
+        mi.setHorizontalTextPosition(SwingConstants.RIGHT);
         mi.setIcon(new ColoredSquare(Color.blue));
         a = new StyledEditorKit.ForegroundAction("set-foreground-blue",
                 Color.blue);
-        //a = new ColorAction(se, Color.blue);
         mi.addActionListener(a);
         menu.add(mi);
 
@@ -196,24 +211,19 @@ public class Stylepad extends Notepad {
     }
 
 
+    /**
+     * Trys to read a file which is assumed to be a
+     * serialization of a document.
+     */
     class OpenAction extends AbstractAction {
 
         OpenAction() {
-            super(openAction);
+            super(OPEN_ACTION);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             Frame frame = getFrame();
-            File f = getFileFromDialog(frame);
-            if (f != null && f.exists()) {
-                processFile(f, frame);
-            } else {
-                System.err.println("No such file: " + f);
-            }
-        }
-
-        private File getFileFromDialog(Frame frame) {
             if (fileDialog == null) {
                 fileDialog = new FileDialog(frame);
             }
@@ -222,39 +232,48 @@ public class Stylepad extends Notepad {
 
             String file = fileDialog.getFile();
             if (file == null) {
-                return null;
+                return;
             }
             String directory = fileDialog.getDirectory();
-            return new File(directory, file);
-        }
-
-        private void processFile(File f, Frame frame) {
-            try {
-                FileInputStream fin = new FileInputStream(f);
-                ObjectInputStream istrm = new ObjectInputStream(fin);
-                Document doc = (Document) istrm.readObject();
-                if (getEditor().getDocument() != null) {
-                    getEditor().getDocument().removeUndoableEditListener(undoHandler);
+            File f = new File(directory, file);
+            if (f.exists()) {
+                try {
+                    ObjectInputStream istrm;
+                    try (FileInputStream fin = new FileInputStream(f)) {
+                        istrm = new ObjectInputStream(fin);
+                    }
+                    Document doc = (Document) istrm.readObject();
+                    if (getEditor().getDocument() != null) {
+                        getEditor().getDocument().removeUndoableEditListener(
+                                undoHandler);
+                    }
+                    getEditor().setDocument(doc);
+                    doc.addUndoableEditListener(undoHandler);
+                    resetUndoManager();
+                    frame.setTitle(file);
+                    validate();
+                } catch (IOException io) {
+                    // should put in status panel
+                    System.err.println("IOException: " + io.getMessage());
+                } catch (ClassNotFoundException cnf) {
+                    // should put in status panel
+                    System.err.println("Class not found: " + cnf.getMessage());
                 }
-                getEditor().setDocument(doc);
-                doc.addUndoableEditListener(undoHandler);
-                resetUndoManager();
-                frame.setTitle(f.getName());
-                validate();
-            } catch (IOException io) {
-                System.err.println("IOException: " + io.getMessage());
-            } catch (ClassNotFoundException cnf) {
-                System.err.println("Class not found: " + cnf.getMessage());
+            } else {
+                // should put in status panel
+                System.err.println("No such file: " + f);
             }
         }
-
     }
 
 
+    /**
+     * Trys to write the document as a serialization.
+     */
     class SaveAction extends AbstractAction {
 
         SaveAction() {
-            super(saveAction);
+            super(SAVE_ACTION);
         }
 
         @Override
@@ -272,22 +291,28 @@ public class Stylepad extends Notepad {
             String directory = fileDialog.getDirectory();
             File f = new File(directory, file);
             try {
-                FileOutputStream fstrm = new FileOutputStream(f);
-                ObjectOutput ostrm = new ObjectOutputStream(fstrm);
+                ObjectOutput ostrm;
+                try (FileOutputStream fstrm = new FileOutputStream(f)) {
+                    ostrm = new ObjectOutputStream(fstrm);
+                }
                 ostrm.writeObject(getEditor().getDocument());
                 ostrm.flush();
                 frame.setTitle(f.getName());
             } catch (IOException io) {
+                // should put in status panel
                 System.err.println("IOException: " + io.getMessage());
             }
         }
     }
 
 
+    /**
+     * Creates an empty document.
+     */
     class NewAction extends AbstractAction {
 
         NewAction() {
-            super(newAction);
+            super(NEW_ACTION);
         }
 
         @Override
