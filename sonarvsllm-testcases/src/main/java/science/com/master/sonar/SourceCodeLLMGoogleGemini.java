@@ -74,8 +74,8 @@ public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
      * gemini-1.5-pro-001
      *
      */
-    public static final String URL_LLM = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-001:generateContent";
-//    public static final String URL_LLM = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+//    public static final String URL_LLM = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-001:generateContent";
+    public static final String URL_LLM = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
     public static String OUTPUT_JSON_SUFIX = "Gemini15flash.json";
 
@@ -86,7 +86,8 @@ public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
     public static final String SCENARIO_ORIGINAL = "Original";
     public static final String SCENARIO_NO_COMMENTS = "NoComments";
     public static final String SCENARIO_BAD_NAMES = "BadNames";
-    public static final String SCENARIO_AFTER_REFACTOR = "AfterRefactor";
+    public static final String SCENARIO_BAD_NAMES_NO_COMMENTS = "BadNamesNoComments";
+    public static final String SCENARIO_CLEAN_CODE = "CleanCode";
     //    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "shattered-pixel-dungeon";
     //    public static final String CLASS_FILES_TO_BE_ANALYSED = "classFilesToBeAnalysed" + File.separator + "quarkus";
 
@@ -200,7 +201,7 @@ public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
 
         //        correcao();
 
-        String[] scenarios = {SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_AFTER_REFACTOR};
+        String[] scenarios = {SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_BAD_NAMES_NO_COMMENTS, SCENARIO_CLEAN_CODE};
 
         for (String scenario : scenarios) {
             for (int i=2; i<=10; i++) {

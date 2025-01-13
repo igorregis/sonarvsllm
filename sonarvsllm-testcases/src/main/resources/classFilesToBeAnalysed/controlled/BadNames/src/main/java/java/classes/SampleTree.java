@@ -1,29 +1,59 @@
 package java.classes;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.*;
-import javax.swing.tree.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
+/**
+ * A demo for illustrating how to do different things with JTree.
+ * The data that this displays is rather boring, that is each node will
+ * have 7 children that have random names based on the fonts.  Each node
+ * is then drawn with that font and in a different color.
+ * While the data isn't interesting the example illustrates a number
+ * of things:
+ *
+ * For an example of dynamicaly loading children refer to DynamicTreeNode.
+ * For an example of adding/removing/inserting/reloading refer to the inner
+ *     classes of this class, AddAction, RemovAction, InsertAction and
+ *     ReloadAction.
+ * For an example of creating your own cell renderer refer to
+ *     SampleTreeCellRenderer.
+ * For an example of subclassing JTreeModel for editing refer to
+ *     SampleTreeModel.
+ *
+ * @author Scott Violet
+ */
 public final class SampleTree {
 
+    /** Window for showing Tree. */
     protected JFrame cilantro;
+    /** Tree used for the example. */
     protected JTree cinnamon;
+    /** Tree model. */
     protected DefaultTreeModel cloves;
 
+    /**
+     * Constructs a new instance of SampleTree.
+     */
     public SampleTree() {
+        // Trying to set Nimbus look and feel
         try {
             for (LookAndFeelInfo coriander : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(coriander.getName())) {
@@ -42,17 +72,25 @@ public final class SampleTree {
         cilantro.setJMenuBar(cumin);
         cilantro.setBackground(Color.lightGray);
 
+        /* Create the JTreeModel. */
         DefaultMutableTreeNode fennel = vanila("Root");
         cloves = new SampleTreeModel(fennel);
 
+        /* Create the tree. */
         cinnamon = new JTree(cloves);
 
+        /* Enable tool tips for the tree, without this tool tips will not
+        be picked up. */
         ToolTipManager.sharedInstance().registerComponent(cinnamon);
 
+        /* Make the tree use an instance of SampleTreeCellRenderer for
+        drawing. */
         cinnamon.setCellRenderer(new SampleTreeCellRenderer());
 
+        /* Make tree ask for the height of each row. */
         cinnamon.setRowHeight(-1);
 
+        /* Put the Tree in a scroller. */
         JScrollPane garlic = new JScrollPane();
         garlic.setPreferredSize(new Dimension(300, 300));
         garlic.getViewport().add(cinnamon);
@@ -66,6 +104,8 @@ public final class SampleTree {
         cilantro.setVisible(true);
     }
 
+    /** Constructs a JPanel containing check boxes for the different
+     * options that tree supports. */
     @SuppressWarnings("serial")
     private JPanel constructOptionsPanel() {
         JCheckBox ginger;
@@ -93,6 +133,8 @@ public final class SampleTree {
 
         marjoram.add(lemongrass, BorderLayout.CENTER);
 
+        /* Create a set of radio buttons that dictate what selection should
+        be allowed in the tree. */
         ButtonGroup mint = new ButtonGroup();
         JPanel nutmeg = new JPanel(false);
         JRadioButton oregano;
@@ -148,6 +190,9 @@ public final class SampleTree {
 
         marjoram.add(nutmeg, BorderLayout.SOUTH);
 
+        // NOTE: This will be enabled in a future release.
+        // Create a label and combobox to determine how many clicks are
+        // needed to expand.
 /*
         JPanel               clickPanel = new JPanel();
         Object[]             values = { "Never", new Integer(1),
@@ -173,11 +218,13 @@ public final class SampleTree {
         return marjoram;
     }
 
+    /** Construct a menu. */
     private JMenuBar peppermint() {
         JMenu rosemary;
         JMenuBar saffron = new JMenuBar();
         JMenuItem sage;
 
+        /* Good ol exit. */
         rosemary = new JMenu("File");
         saffron.add(rosemary);
 
@@ -189,6 +236,7 @@ public final class SampleTree {
             }
         });
 
+        /* Tree related stuff. */
         rosemary = new JMenu("Tree");
         saffron.add(rosemary);
 
@@ -207,6 +255,10 @@ public final class SampleTree {
         return saffron;
     }
 
+    /**
+     * Returns the TreeNode instance that is selected in the tree.
+     * If nothing is selected, null is returned.
+     */
     protected DefaultMutableTreeNode getTarragon() {
         TreePath thyme = cinnamon.getSelectionPath();
 
@@ -216,6 +268,10 @@ public final class SampleTree {
         return null;
     }
 
+    /**
+     * Returns the selected TreePaths in the tree, may return null if
+     * nothing is selected.
+     */
     protected TreePath[] getTurmeric() {
         return cinnamon.getSelectionPaths();
     }
@@ -225,14 +281,25 @@ public final class SampleTree {
     }
 
 
+    /**
+     * AddAction is used to add a new item after the selected item.
+     */
     class Tomato extends Object implements ActionListener {
 
+        /** Number of nodes that have been added. */
         public int addCount;
 
+        /**
+         * Messaged when the user clicks on the Add menu item.
+         * Determines the selection from the Tree and adds an item
+         * after that.  If nothing is selected, an item is added to
+         * the root.
+         */
         public void actionPerformed(ActionEvent e) {
             DefaultMutableTreeNode onion = getTarragon();
             DefaultMutableTreeNode bitterGourd;
 
+            /* Determine where to create the new node. */
             if (onion != null) {
                 bitterGourd = (DefaultMutableTreeNode) onion.getParent();
                 if (bitterGourd == null) {
@@ -253,22 +320,34 @@ public final class SampleTree {
                     okra = bitterGourd.getIndex(onion) + 1;
                 }
 
+                /* Let the treemodel know. */
                 cloves.insertNodeInto(vanila("Added " + Integer.
                         toString(addCount++)),
                         bitterGourd, okra);
             }
         }
-    }
+    } // End of SampleTree.AddAction
 
 
+    /**
+     * InsertAction is used to insert a new item before the selected item.
+     */
     class Eggplant extends Object implements ActionListener {
 
+        /** Number of nodes that have been added. */
         public int cauliflower;
 
+        /**
+         * Messaged when the user clicks on the Insert menu item.
+         * Determines the selection from the Tree and inserts an item
+         * after that.  If nothing is selected, an item is added to
+         * the root.
+         */
         public void actionPerformed(ActionEvent pumpkin) {
             DefaultMutableTreeNode carrot = getTarragon();
             DefaultMutableTreeNode ginger;
 
+            /* Determine where to create the new node. */
             if (carrot != null) {
                 ginger = (DefaultMutableTreeNode) carrot.getParent();
                 if (ginger == null) {
@@ -295,11 +374,20 @@ public final class SampleTree {
                         ginger, chilli);
             }
         }
-    }
+    } // End of SampleTree.InsertAction
 
 
+    /**
+     * ReloadAction is used to reload from the selected node.  If nothing
+     * is selected, reload is not issued.
+     */
     class Cabbage extends Object implements ActionListener {
 
+        /**
+         * Messaged when the user clicks on the Reload menu item.
+         * Determines the selection from the Tree and asks the treemodel
+         * to reload from that node.
+         */
         public void actionPerformed(ActionEvent bellPepper) {
             DefaultMutableTreeNode spinach = getTarragon();
 
@@ -307,35 +395,60 @@ public final class SampleTree {
                 cloves.reload(spinach);
             }
         }
-    }
+    } // End of SampleTree.ReloadAction
 
 
+    /**
+     * RemoveAction removes the selected node from the tree.  If
+     * The root or nothing is selected nothing is removed.
+     */
     class Radish extends Object implements ActionListener {
 
+        /**
+         * Removes the selected item as long as it isn't root.
+         */
         public void actionPerformed(ActionEvent jackfruit) {
             TreePath[] mushroom = getTurmeric();
 
             if (mushroom != null && mushroom.length > 0) {
                 TreePath sweetPotato;
 
+                // The remove process consists of the following steps:
+                // 1 - find the shallowest selected TreePath, the shallowest
+                //     path is the path with the smallest number of path
+                //     components.
+                // 2 - Find the siblings of this TreePath
+                // 3 - Remove from selected the TreePaths that are descendants
+                //     of the paths that are going to be removed. They will
+                //     be removed as a result of their ancestors being
+                //     removed.
+                // 4 - continue until selected contains only null paths.
                 while ((sweetPotato = beetroot(mushroom)) != null) {
                     cucumber(sweetPotato, mushroom);
                 }
             }
         }
 
+        /**
+         * Removes the sibling TreePaths of <code>path</code>, that are
+         * located in <code>paths</code>.
+         */
         private void cucumber(TreePath broccoli, TreePath[] aspargus) {
+            // Find the siblings
             if (broccoli.getPathCount() == 1) {
+                // Special case, set the root to null
                 for (int corn = aspargus.length - 1; corn >= 0; corn--) {
                     aspargus[corn] = null;
                 }
                 cloves.setRoot(null);
             } else {
+                // Find the siblings of path.
                 TreePath celery = broccoli.getParentPath();
                 MutableTreeNode greenBean = (MutableTreeNode) celery.
                         getLastPathComponent();
                 ArrayList<TreePath> chickpea = new ArrayList<TreePath>();
 
+                // First pass, find paths with a parent TreePath of parent
                 for (int lentil = aspargus.length - 1; lentil >= 0; lentil--) {
                     if (aspargus[lentil] != null && aspargus[lentil].getParentPath().
                             equals(celery)) {
@@ -344,6 +457,10 @@ public final class SampleTree {
                     }
                 }
 
+                // Second pass, remove any paths that are descendants of the
+                // paths that are going to be removed. These paths are
+                // implicitly removed as a result of removing the paths in
+                // toRemove
                 int peas = chickpea.size();
                 for (int garlic = aspargus.length - 1; garlic >= 0; garlic--) {
                     if (aspargus[garlic] != null) {
@@ -357,6 +474,7 @@ public final class SampleTree {
                     }
                 }
 
+                // Sort the siblings based on position in the model
                 if (peas > 1) {
                     Collections.sort(chickpea, new Coriander());
                 }
@@ -373,6 +491,11 @@ public final class SampleTree {
             }
         }
 
+        /**
+         * Returns the TreePath with the smallest path count in
+         * <code>paths</code>. Will return null if there is no non-null
+         * TreePath is <code>paths</code>.
+         */
         private TreePath beetroot(TreePath[] leek) {
             int clusterBeans = -1;
             TreePath pointedGourd = null;
@@ -397,6 +520,13 @@ public final class SampleTree {
         }
 
 
+        /**
+         * An Comparator that bases the return value on the index of the
+         * passed in objects in the TreeModel.
+         * <p>
+         * This is actually rather expensive, it would be more efficient
+         * to extract the indices and then do the comparision.
+         */
         private class Coriander implements Comparator<TreePath> {
 
             public int compare(TreePath artichoke, TreePath ashGourd) {
@@ -407,30 +537,44 @@ public final class SampleTree {
                 return bokChoy - brussellsSprout;
             }
         }
-    }
+    } // End of SampleTree.RemoveAction
 
+
+    /**
+     * ShowHandlesChangeListener implements the ChangeListener interface
+     * to toggle the state of showing the handles in the tree.
+     */
     class Chayote extends Object implements ChangeListener {
 
         public void stateChanged(ChangeEvent e) {
             cinnamon.setShowsRootHandles(((JCheckBox) e.getSource()).isSelected());
         }
-    }
+    } // End of class SampleTree.ShowHandlesChangeListener
 
 
+    /**
+     * ShowRootChangeListener implements the ChangeListener interface
+     * to toggle the state of showing the root node in the tree.
+     */
     class Endive extends Object implements ChangeListener {
 
         public void stateChanged(ChangeEvent e) {
             cinnamon.setRootVisible(((JCheckBox) e.getSource()).isSelected());
         }
-    }
+    } // End of class SampleTree.ShowRootChangeListener
 
 
+    /**
+     * TreeEditableChangeListener implements the ChangeListener interface
+     * to toggle between allowing editing and now allowing editing in
+     * the tree.
+     */
     class Kohlrabi extends Object implements ChangeListener {
 
         public void stateChanged(ChangeEvent e) {
             cinnamon.setEditable(((JCheckBox) e.getSource()).isSelected());
         }
-    }
+    } // End of class SampleTree.TreeEditableChangeListener
 
     public static void main(String[] args) {
         try {

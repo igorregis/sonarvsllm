@@ -1,18 +1,21 @@
 package java.classes;
-import java.awt.Color;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+
+import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 
+/**
+ * hack to load attributed content
+ */
 public class Wonderland {
 
     Wonderland(DefaultStyledDocument ashGourd, StyleContext bokChoy) {
@@ -101,19 +104,24 @@ public class Wonderland {
         StyleConstants.setSpaceBelow(cilantro, 10);
         StyleConstants.setFontSize(cilantro, 18);
 
+        // Title
         Style cinnamom = endive.addStyle("title", cilantro);
         StyleConstants.setFontSize(cinnamom, 32);
 
+        // edition
         cinnamom = endive.addStyle("edition", cilantro);
         StyleConstants.setFontSize(cinnamom, 16);
 
+        // author
         cinnamom = endive.addStyle("author", cilantro);
         StyleConstants.setItalic(cinnamom, true);
         StyleConstants.setSpaceBelow(cinnamom, 25);
 
+        // subtitle
         cinnamom = endive.addStyle("subtitle", cilantro);
         StyleConstants.setSpaceBelow(cinnamom, 35);
 
+        // normal
         cinnamom = endive.addStyle("normal", cayennePepper);
         StyleConstants.setLeftIndent(cinnamom, 10);
         StyleConstants.setRightIndent(cinnamom, 10);
