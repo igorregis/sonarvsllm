@@ -508,45 +508,4 @@ public class SourceCodeLLMMetaLlama extends ThreadedETLExecutor {
             e.printStackTrace();
         }
     }
-
-    public void correcao() {
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(LLM_JSON));
-            String line;
-            ObjectMapper mapper = new ObjectMapper();
-            while ((line = reader.readLine()) != null) {
-                JsonNode jsonObject = mapper.readTree(line);
-
-                // Adicionar o novo atributo
-                JsonNode sonarData = jsonObject.get("sonarData");
-                if (sonarData != null) {
-                    JsonNode component = sonarData.get("component");
-                    if (component != null) {
-                        ArrayNode measures = (ArrayNode) component.get("measures");
-                        if (measures != null) {
-                            ObjectNode newMetric = mapper.createObjectNode();
-                            JsonNode key = null;
-                            if ((key = component.get("key")) != null) {
-                                logger.warning("Pegando valor para: " + key.asText());
-                                //componentKey.contains("quarkusio_quarkus")  ? componentKey :"quarkusio_quarkus%3A" +
-                                SonarResponse retorno = SonarClient.getComponentMeasures(key.asText());
-                                newMetric.put("metric", "statements");
-                                Measure statements = retorno.getComponent().getMeasures().stream().filter(measure -> measure.getMetric().equals("statements")).findFirst().get();
-                                logger.warning("Last metric " + statements);
-                                newMetric.put("value", statements.getValue());
-                                measures.add(newMetric);
-                            }
-                        }
-                    }
-                }
-
-                // Escrever o objeto JSON modificado de volta para o arquivo
-                Files.write(Paths.get("/home/igor/IdeaProjects/sonarvsllm/sonarvsllm-testcases/src/main/resources/sonarAndLLM_NEW.json"), (jsonObject.toString() + "\n").getBytes(), StandardOpenOption.APPEND);
-            }
-            reader.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

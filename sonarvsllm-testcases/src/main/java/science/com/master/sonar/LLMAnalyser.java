@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author f4353008
  */
 @QuarkusMain(name = "stats")
-public class GitlabCrawler implements QuarkusApplication {
+public class LLMAnalyser implements QuarkusApplication {
 
 
     @Inject
@@ -43,7 +43,7 @@ public class GitlabCrawler implements QuarkusApplication {
 
     private Logger logger;
 
-    public GitlabCrawler() {
+    public LLMAnalyser() {
     }
 
     @PostConstruct
@@ -54,7 +54,9 @@ public class GitlabCrawler implements QuarkusApplication {
 
     @Override
     public int run(String... args) throws Exception {
-        sourceCodeLLMGoogleGeminivsHuman.run();
+//        sourceCodeLLMGoogleGemini.run();
+        sourceCodeLLMAnthropicClaude.run();
+//        sourceCodeLLMGoogleGeminivsHuman.run();
 //        sourceCodeLLM4o.run();
 //        sourceCodeLLMMetaLlama.run();
 //        sourceCodeLLMAnthropicClaude.run();

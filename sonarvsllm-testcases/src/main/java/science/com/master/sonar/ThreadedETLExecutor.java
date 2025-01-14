@@ -1,8 +1,18 @@
 package science.com.master.sonar;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +27,9 @@ public class ThreadedETLExecutor {
 
     @ConfigProperty(name = "quarkus.datasource.jdbc.min-size")
     protected int threadNumber;
+
+    @Inject
+    protected SonarClient sonarClient;
 
     @PostConstruct
     public void init() {
@@ -37,4 +50,5 @@ public class ThreadedETLExecutor {
             logger.warning("Fim do processo " + this.getClass().getName());
         }
     }
+
 }

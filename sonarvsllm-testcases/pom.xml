@@ -84,6 +84,10 @@
             <artifactId>google-cloud-vertexai</artifactId>
             <version>1.6.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-client</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
