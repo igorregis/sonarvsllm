@@ -4,6 +4,7 @@ import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import java.util.logging.Logger;
 
@@ -22,24 +23,33 @@ public class LLMAnalyser implements QuarkusApplication {
     @Inject
     private SourceCodeLLM sourceCodeLLM;
     @Inject
+    @Named("SourceCodeLLM4oControlled")
     private SourceCodeLLM4o sourceCodeLLM4o;
     @Inject
+    @Named("SourceCodeLLMGoogleGeminiControlled")
     private SourceCodeLLMGoogleGemini sourceCodeLLMGoogleGemini;
     @Inject
+    @Named("SourceCodeLLMMetaLlamaControlled")
     private SourceCodeLLMMetaLlama sourceCodeLLMMetaLlama;
     @Inject
+    @Named("SourceCodeLLMAnthropicClaudeControlled")
     private SourceCodeLLMAnthropicClaude sourceCodeLLMAnthropicClaude;
 
     @Inject
-    private science.com.master.sonar.llmvshuman.SourceCodeLLM4o sourceCodeLLMvsHuman;
-    @Inject
-    private science.com.master.sonar.llmvshuman.SourceCodeLLM4o sourceCodeLLM4ovsHuman;
-    @Inject
+    @Named("SourceCodeLLMGoogleGeminiLLMvsHuman")
     private science.com.master.sonar.llmvshuman.SourceCodeLLMGoogleGemini sourceCodeLLMGoogleGeminivsHuman;
+
     @Inject
-    private science.com.master.sonar.llmvshuman.SourceCodeLLMMetaLlama sourceCodeLLMMetaLlamavsHuman;
+    @Named("SourceCodeLLM4oLLMvsHuman")
+    private science.com.master.sonar.llmvshuman.SourceCodeLLM4o sourceCodeLLM4ovsHuman;
+
     @Inject
+    @Named("SourceCodeLLMAnthropicClaudeLLMvsHuman")
     private science.com.master.sonar.llmvshuman.SourceCodeLLMAnthropicClaude sourceCodeLLMAnthropicClaudevsHuman;
+
+    @Inject
+    @Named("SourceCodeLLMMetaLlamaLLMvsHuman")
+    private science.com.master.sonar.llmvshuman.SourceCodeLLMMetaLlama sourceCodeLLMMetaLlamavsHuman;
 
     private Logger logger;
 
@@ -54,12 +64,16 @@ public class LLMAnalyser implements QuarkusApplication {
 
     @Override
     public int run(String... args) throws Exception {
-//        sourceCodeLLMGoogleGemini.run();
-        sourceCodeLLMAnthropicClaude.run();
-//        sourceCodeLLMGoogleGeminivsHuman.run();
-//        sourceCodeLLM4o.run();
-//        sourceCodeLLMMetaLlama.run();
-//        sourceCodeLLMAnthropicClaude.run();
+//        sourceCodeLLMGoogleGemini.run(false);
+//            sourceCodeLLM4o.run(true);
+//        sourceCodeLLMAnthropicClaude.run(false);
+//        sourceCodeLLMMetaLlama.run(false);
+
+
+        sourceCodeLLMGoogleGeminivsHuman.run(false);
+//        sourceCodeLLM4ovsHuman.run(true);
+//        sourceCodeLLMMetaLlamavsHuman.run(false);
+//        sourceCodeLLMAnthropicClaudevsHuman.run(true);
         return 0;
     }
 }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class GPTResponse {
+public class GPTResponse {
 
     @JsonProperty("score")
     public String score;
@@ -17,6 +17,9 @@ class GPTResponse {
     public Integer tokens;
     @JsonProperty("lineCount")
     public Integer lineCount;
+
+    @JsonProperty("name")
+    public String name;
 
     public SonarResponse sonarData;
 
