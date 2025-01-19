@@ -1,0 +1,10 @@
+        b = createText(280, 50, 230, 512)
+        setTextAlignment(1,b)
+        setText("Column B", b)
+        setFontSize(12, b)
+        c = createText(510, 50, 230, 512)
+        setTextAlignment(1,b)
+        setText("Column C", c)
+        setFontSize(12, c)
+        #saveDocAs("3columnUS.sla")
+        
