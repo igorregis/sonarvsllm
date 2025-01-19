@@ -248,7 +248,7 @@ public abstract class ThreadedETLExecutor {
 
         for (String scenario : scenarios) {
             batchEntryId = 1;
-            for (int i=1; i<=41; i++) {
+            for (int i=1; i<=100; i++) {
                 OUTPUT_JSON_SUFIX = getLLMModel() + "-" + i + ".json";
 
                 PAPER_PREFIX = PAPER + scenario;

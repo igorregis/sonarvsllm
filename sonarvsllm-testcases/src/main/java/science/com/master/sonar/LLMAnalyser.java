@@ -64,13 +64,13 @@ public class LLMAnalyser implements QuarkusApplication {
 
     @Override
     public int run(String... args) throws Exception {
-//        sourceCodeLLMGoogleGemini.run(false);
+        sourceCodeLLMGoogleGemini.run(false);
 //            sourceCodeLLM4o.run(true);
 //        sourceCodeLLMAnthropicClaude.run(false);
 //        sourceCodeLLMMetaLlama.run(false);
 
 
-        sourceCodeLLMGoogleGeminivsHuman.run(false);
+//        sourceCodeLLMGoogleGeminivsHuman.run(false);
 //        sourceCodeLLM4ovsHuman.run(true);
 //        sourceCodeLLMMetaLlamavsHuman.run(false);
 //        sourceCodeLLMAnthropicClaudevsHuman.run(true);

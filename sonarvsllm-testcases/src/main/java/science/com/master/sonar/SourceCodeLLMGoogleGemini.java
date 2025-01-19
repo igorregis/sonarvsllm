@@ -44,8 +44,8 @@ import java.util.stream.Stream;
 @Named("SourceCodeLLMGoogleGeminiControlled")
 public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
 
-//    public static final String LLM_MODEL = "Gemini15flash";
-    public static final String LLM_MODEL = "Gemini20flash";
+    public static final String LLM_MODEL = "Gemini15flash";
+//    public static final String LLM_MODEL = "Gemini20flash";
 //    public static final String LLM_MODEL = "Gemini15pro";
 
     private final Map<String, String> MODEL_PARAM = Map.of("Gemini15flash", "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
