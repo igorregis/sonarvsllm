@@ -90,16 +90,6 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
     private final Map<String, String> MODEL_PARAM = Map.of("GPT4o", "gpt-4o",
                                                           "GPT4o-mini", "gpt-4o-mini");
 
-    /**
-     * Inicio do prompt do usuário
-     */
-    protected String USER_PROMPT_START;
-
-    /**
-     * Marcador do final do prompt do usuário
-     */
-    protected String USER_PROMPT_END;
-
     @ConfigProperty(name = "api.key.llm4o")
     private String apiKeyLLM;
     @ConfigProperty(name = "org.id")
@@ -130,7 +120,8 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
     }
 
     protected String @NotNull [] getScenarios() {
-        return new String[]{SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_BAD_NAMES_NO_COMMENTS, SCENARIO_CLEAN_CODE};
+        return new String[]{SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_BAD_NAMES_NO_COMMENTS, SCENARIO_CLEAN_CODE,
+                SCENARIO_BUSE_AND_WEIMER, SCENARIO_BORN, SCENARIO_SCALABRINO};
     }
 
     /**

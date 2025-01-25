@@ -16,6 +16,7 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.CompletableFuture;
@@ -41,9 +42,17 @@ public abstract class ThreadedETLExecutor {
     public static final String SCENARIO_BAD_NAMES = "BadNames";
     public static final String SCENARIO_BAD_NAMES_NO_COMMENTS = "BadNamesNoComments";
     public static final String SCENARIO_CLEAN_CODE = "CleanCode";
-    public static final Map<@NotNull String, @NotNull String> BRANCHES = Map.of(SCENARIO_ORIGINAL, "main", SCENARIO_NO_COMMENTS, "no_comments",
-            SCENARIO_BAD_NAMES, "bad_names", SCENARIO_BAD_NAMES_NO_COMMENTS, "bad_names_no_comments", SCENARIO_CLEAN_CODE, "clean_code");
 
+    public static final String SCENARIO_BUSE_AND_WEIMER = "BuseAndWeimer";
+    public static final String SCENARIO_BORN = "Dorn";
+    public static final String SCENARIO_SCALABRINO = "Scalabrino";
+
+    public static final Map<@NotNull String, @NotNull String> BRANCHES = Map.of(SCENARIO_ORIGINAL, "main", SCENARIO_NO_COMMENTS, "no_comments",
+            SCENARIO_BAD_NAMES, "bad_names", SCENARIO_BAD_NAMES_NO_COMMENTS, "bad_names_no_comments", SCENARIO_CLEAN_CODE, "clean_code",
+            SCENARIO_BUSE_AND_WEIMER, "buse_and_weimer", SCENARIO_BORN, "born", SCENARIO_SCALABRINO, "scalabrino");
+
+    public static final Map<@NotNull String, @NotNull String> NO_BRANCHES = Map.of(SCENARIO_BUSE_AND_WEIMER, "buse_and_weimer",
+            SCENARIO_BORN, "born", SCENARIO_SCALABRINO, "scalabrino");
 
     /**
      * Número máximo de Threads a serem disparadas para realizar chamadas simultâneas ao Chat GPT
@@ -101,7 +110,20 @@ public abstract class ThreadedETLExecutor {
 
     protected int batchEntryId = 1;
 
-    public ThreadedETLExecutor() {OBJECT_MAPPER = new ObjectMapper();}
+    /**
+     * Inicio do prompt do usuário
+     */
+    protected String USER_PROMPT_START;
+
+    /**
+     * Marcador do final do prompt do usuário
+     */
+    protected String USER_PROMPT_END;
+
+    public ThreadedETLExecutor() {OBJECT_MAPPER = new ObjectMapper();
+        USER_PROMPT_START = "Evaluate the following Java source code: ";
+        USER_PROMPT_END = "This is the end of the class file, the assistant should present your json answer:";
+    }
 
     protected static void assertCreated(String file) {
         File outputFile = new File(file);
@@ -210,7 +232,6 @@ public abstract class ThreadedETLExecutor {
                 evaluation.score = evaluation.score.substring(0, evaluation.score.length() - 1);
             }
             decorateData(classAndPackage, scenario, evaluation);
-            System.out.println(evaluation);
             return evaluation;
         } catch (Throwable e) {
             logger.log(Level.SEVERE, "Error building DiffGPTResponse " + response, e);
@@ -220,7 +241,12 @@ public abstract class ThreadedETLExecutor {
     }
 
     protected void decorateData(String classAndPackage, String scenario, GPTResponse evaluation) {
-        evaluation.sonarData = sonarClient.getComponentMeasures(SONAR_COMPONENT + "%3A" + classAndPackage, scenario);
+        if (NO_BRANCHES.containsValue(scenario)) {
+            evaluation.name = classAndPackage;
+        }else {
+            //If it's a scenario that we have analysis by SonarQube, we get the data from SonarQube
+            evaluation.sonarData = sonarClient.getComponentMeasures(SONAR_COMPONENT + "%3A" + classAndPackage, scenario);
+        }
     }
 
     protected abstract String parseGPTResponse(String o);
@@ -248,7 +274,14 @@ public abstract class ThreadedETLExecutor {
 
         for (String scenario : scenarios) {
             batchEntryId = 1;
-            for (int i=1; i<=100; i++) {
+            int iteractions;
+            if (NO_BRANCHES.containsKey(scenario)) {
+                iteractions = 5; // We execute 10 times for previous works datasets
+                redefinePrompt(); // We redefine the prompt to expect code snippets instead of full classes
+            } else {
+                iteractions = 100; //We execute 100 times for our controlled inerventions
+            }
+            for (int i=1; i<=iteractions; i++) {
                 OUTPUT_JSON_SUFIX = getLLMModel() + "-" + i + ".json";
 
                 PAPER_PREFIX = PAPER + scenario;
@@ -265,5 +298,17 @@ public abstract class ThreadedETLExecutor {
             }
 
         }
+    }
+
+    private void redefinePrompt() {
+        SYSTEM_PROMPT.setLength(0);
+        SYSTEM_PROMPT.append("The assistant is a seasoned senior software engineer, with deep programming expertise on Java/Python/C, ");
+        SYSTEM_PROMPT.append("doing source code evaluation as part of a due diligence process, these source code are presented in the form of code snippets. ");
+        SYSTEM_PROMPT.append("Your task is to assign a score from 0 to 100 based on the readability level and overall ease of comprehension.\n");
+        SYSTEM_PROMPT.append("Your answers MUST be presented ONLY in the following json format: {\"score\":\"N\", \"reasoning\":\"your explanation about the score\" } ");
+        SYSTEM_PROMPT.append("- The \"explanation\" attribute must not surpass 450 characters and MUST NOT contain especial characters or new lines\n");
+
+        USER_PROMPT_START = "Evaluate the following code snippet: ";
+        USER_PROMPT_END = "This is the end of the code snippet, the assistant should present your json answer:";
     }
 }

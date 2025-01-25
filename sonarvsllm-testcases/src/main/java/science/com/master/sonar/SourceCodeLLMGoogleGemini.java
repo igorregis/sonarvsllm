@@ -44,8 +44,8 @@ import java.util.stream.Stream;
 @Named("SourceCodeLLMGoogleGeminiControlled")
 public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
 
-    public static final String LLM_MODEL = "Gemini15flash";
-//    public static final String LLM_MODEL = "Gemini20flash";
+//    public static final String LLM_MODEL = "Gemini15flash";
+    public static final String LLM_MODEL = "Gemini20flash";
 //    public static final String LLM_MODEL = "Gemini15pro";
 
     private final Map<String, String> MODEL_PARAM = Map.of("Gemini15flash", "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
@@ -53,16 +53,6 @@ public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
                                                             "Gemini15pro", "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-001:generateContent");
 
     public final String URL_LLM = MODEL_PARAM.get(LLM_MODEL);
-
-    /**
-     * Inicio do prompt do usuário
-     */
-    protected String USER_PROMPT_START;
-
-    /**
-     * Marcador do final do prompt do usuário
-     */
-    protected String USER_PROMPT_END;
 
     @ConfigProperty(name = "api.key.llmGemini")
     private String apiKeyLLM;
@@ -79,9 +69,6 @@ public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
         SYSTEM_PROMPT.append("Your answers MUST be presented ONLY in the following json format: {\"score\":\"NN%\", \"reasoning\":\"your explanation about the score\" } ");
         SYSTEM_PROMPT.append("- The \"explanation\" attribute must not surpass 450 characters and MUST NOT contain especial characters or new lines\n");
 
-        USER_PROMPT_START = "Evaluate the following Java source code: ";
-        USER_PROMPT_END = "This is the end of the class file, the assistant should present your json answer:";
-
         JsonFactory factory = new JsonFactory();
         factory.enable(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS);
         OBJECT_MAPPER.enable(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT);
@@ -91,7 +78,8 @@ public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
 
     @Override
     protected String @NotNull [] getScenarios() {
-        return new String[]{SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_BAD_NAMES_NO_COMMENTS, SCENARIO_CLEAN_CODE};
+        return new String[]{SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_BAD_NAMES_NO_COMMENTS, SCENARIO_CLEAN_CODE,
+        SCENARIO_BUSE_AND_WEIMER, SCENARIO_BORN, SCENARIO_SCALABRINO};
     }
 
     /**
@@ -228,7 +216,7 @@ public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
     protected HttpResponse<String> avaliaOcorrenciaDeErro(String classAndPackage, String systemPrompt, String userPromptStart, StringBuilder javaClass, String commandEnd, HttpResponse<String> response, String scenario, boolean createInputBatch) {
         if (response.statusCode() == 429 || response.statusCode() == 500 || response.statusCode() == 503) {//Este erro ocorre quando atingimos o limite de chamadas por minuto da API da OpenAI
             try {
-                logger.warning("Erro de excesso de requisições, realizando sleep para tentar novamente");
+                logger.warning("Erro de excesso de requisições, realizando sleep para tentar novamente " + response.body());
                 Thread.sleep(100000);
 //                Thread.sleep(60000);
                 //Precisamos liberar um slot do controle de Threads aqui, pois o método abaixo irá tentar fazer acquire.

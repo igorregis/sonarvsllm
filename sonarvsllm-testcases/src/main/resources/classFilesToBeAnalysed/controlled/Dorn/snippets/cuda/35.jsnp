@@ -1,0 +1,10 @@
+		seqs_mapQ_de,
+		seqs_pos_de,
+		seqs_maxdiff_mapQ_de,
+		seqs_sa_de,
+		n_seqs,
+		n_block,
+		n_seq_per_block,
+		block_mod,
+		max_mm,
+		fnr);

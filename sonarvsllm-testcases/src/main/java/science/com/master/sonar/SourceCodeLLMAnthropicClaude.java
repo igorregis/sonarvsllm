@@ -73,16 +73,6 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
      */
     protected final StringBuilder SYSTEM_PROMPT = new StringBuilder();
 
-    /**
-     * Inicio do prompt do usuário
-     */
-    protected String USER_PROMPT_START;
-
-    /**
-     * Marcador do final do prompt do usuário
-     */
-    protected String USER_PROMPT_END;
-
     @ConfigProperty(name = "api.key.anthropic")
     private String apiKeyLLM;
 
@@ -107,7 +97,8 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
 
     @Override
     protected String @NotNull [] getScenarios() {
-        return new String[]{SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_BAD_NAMES_NO_COMMENTS, SCENARIO_CLEAN_CODE};
+        return new String[]{SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_BAD_NAMES_NO_COMMENTS, SCENARIO_CLEAN_CODE,
+                SCENARIO_BUSE_AND_WEIMER, SCENARIO_BORN, SCENARIO_SCALABRINO};
     }
 
     /**
