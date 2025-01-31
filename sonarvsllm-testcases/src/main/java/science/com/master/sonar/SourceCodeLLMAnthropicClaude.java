@@ -2,9 +2,7 @@ package science.com.master.sonar;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.json.JsonObject;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,14 +12,12 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
@@ -33,10 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
@@ -98,7 +90,7 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
     @Override
     protected String @NotNull [] getScenarios() {
         return new String[]{SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_BAD_NAMES_NO_COMMENTS, SCENARIO_CLEAN_CODE,
-                SCENARIO_BUSE_AND_WEIMER, SCENARIO_BORN, SCENARIO_SCALABRINO};
+                SCENARIO_BUSE_AND_WEIMER, SCENARIO_DORN, SCENARIO_SCALABRINO};
     }
 
     /**

@@ -16,7 +16,6 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.CompletableFuture;
@@ -44,15 +43,14 @@ public abstract class ThreadedETLExecutor {
     public static final String SCENARIO_CLEAN_CODE = "CleanCode";
 
     public static final String SCENARIO_BUSE_AND_WEIMER = "BuseAndWeimer";
-    public static final String SCENARIO_BORN = "Dorn";
+    public static final String SCENARIO_DORN = "Dorn";
     public static final String SCENARIO_SCALABRINO = "Scalabrino";
 
     public static final Map<@NotNull String, @NotNull String> BRANCHES = Map.of(SCENARIO_ORIGINAL, "main", SCENARIO_NO_COMMENTS, "no_comments",
             SCENARIO_BAD_NAMES, "bad_names", SCENARIO_BAD_NAMES_NO_COMMENTS, "bad_names_no_comments", SCENARIO_CLEAN_CODE, "clean_code",
-            SCENARIO_BUSE_AND_WEIMER, "buse_and_weimer", SCENARIO_BORN, "born", SCENARIO_SCALABRINO, "scalabrino");
+            SCENARIO_BUSE_AND_WEIMER, "buse_and_weimer", SCENARIO_DORN, "born", SCENARIO_SCALABRINO, "scalabrino");
 
-    public static final Map<@NotNull String, @NotNull String> NO_BRANCHES = Map.of(SCENARIO_BUSE_AND_WEIMER, "buse_and_weimer",
-            SCENARIO_BORN, "born", SCENARIO_SCALABRINO, "scalabrino");
+    public static final Map<@NotNull String, @NotNull String> NO_BRANCHES = Map.of(SCENARIO_BUSE_AND_WEIMER, "buse_and_weimer", SCENARIO_DORN, "born", SCENARIO_SCALABRINO, "scalabrino");
 
     /**
      * Número máximo de Threads a serem disparadas para realizar chamadas simultâneas ao Chat GPT

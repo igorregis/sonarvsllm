@@ -61,3 +61,8 @@ The names of the textual metrics extracted by the tool (the one with the prefix 
 - Number of Concepts (`NOC`): `Semantic Text Coherence`
 
 The other metrics marked as `New` are either old versions of the same metrics or experimental ones. They are not used in the final model.
+
+
+References:
+https://dibt.unimol.it/report/readability/
+For future: https://dibt.unimol.it/report/understandability-tse/

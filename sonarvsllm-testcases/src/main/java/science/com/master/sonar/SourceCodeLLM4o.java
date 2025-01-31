@@ -121,7 +121,7 @@ public class SourceCodeLLM4o extends ThreadedETLExecutor {
 
     protected String @NotNull [] getScenarios() {
         return new String[]{SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_BAD_NAMES_NO_COMMENTS, SCENARIO_CLEAN_CODE,
-                SCENARIO_BUSE_AND_WEIMER, SCENARIO_BORN, SCENARIO_SCALABRINO};
+                SCENARIO_BUSE_AND_WEIMER, SCENARIO_DORN, SCENARIO_SCALABRINO};
     }
 
     /**
