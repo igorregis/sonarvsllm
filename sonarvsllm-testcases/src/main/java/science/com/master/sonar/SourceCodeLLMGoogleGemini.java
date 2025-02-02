@@ -45,8 +45,8 @@ import java.util.stream.Stream;
 public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
 
 //    public static final String LLM_MODEL = "Gemini15flash";
-//    public static final String LLM_MODEL = "Gemini20flash";
-    public static final String LLM_MODEL = "Gemini15pro";
+    public static final String LLM_MODEL = "Gemini20flash";
+//    public static final String LLM_MODEL = "Gemini15pro";
 
     private final Map<String, String> MODEL_PARAM = Map.of("Gemini15flash", "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
                                                             "Gemini20flash", "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
@@ -80,7 +80,7 @@ public class SourceCodeLLMGoogleGemini extends ThreadedETLExecutor {
     protected String @NotNull [] getScenarios() {
         return new String[]{
 //            SCENARIO_ORIGINAL, SCENARIO_NO_COMMENTS, SCENARIO_BAD_NAMES, SCENARIO_BAD_NAMES_NO_COMMENTS, SCENARIO_CLEAN_CODE,
-                SCENARIO_DORN, SCENARIO_BUSE_AND_WEIMER, SCENARIO_SCALABRINO};
+                SCENARIO_BUSE_AND_WEIMER, SCENARIO_DORN, SCENARIO_SCALABRINO, SCENARIO_QUARKUS, SCENARIO_SPD};
     }
 
     /**

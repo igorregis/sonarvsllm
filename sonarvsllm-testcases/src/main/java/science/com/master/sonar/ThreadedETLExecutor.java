@@ -45,12 +45,15 @@ public abstract class ThreadedETLExecutor {
     public static final String SCENARIO_BUSE_AND_WEIMER = "BuseAndWeimer";
     public static final String SCENARIO_DORN = "Dorn";
     public static final String SCENARIO_SCALABRINO = "Scalabrino";
+    public static final String SCENARIO_QUARKUS = "Quarkus";
+    public static final String SCENARIO_SPD = "SPD";
 
     public static final Map<@NotNull String, @NotNull String> BRANCHES = Map.of(SCENARIO_ORIGINAL, "main", SCENARIO_NO_COMMENTS, "no_comments",
             SCENARIO_BAD_NAMES, "bad_names", SCENARIO_BAD_NAMES_NO_COMMENTS, "bad_names_no_comments", SCENARIO_CLEAN_CODE, "clean_code",
-            SCENARIO_BUSE_AND_WEIMER, "buse_and_weimer", SCENARIO_DORN, "born", SCENARIO_SCALABRINO, "scalabrino");
+            SCENARIO_BUSE_AND_WEIMER, "buse_and_weimer", SCENARIO_DORN, "born", SCENARIO_SCALABRINO, "scalabrino", SCENARIO_QUARKUS, "quarkus", SCENARIO_SPD, "spd");
 
-    public static final Map<@NotNull String, @NotNull String> NO_BRANCHES = Map.of(SCENARIO_BUSE_AND_WEIMER, "buse_and_weimer", SCENARIO_DORN, "born", SCENARIO_SCALABRINO, "scalabrino");
+    public static final Map<@NotNull String, @NotNull String> NO_BRANCHES = Map.of(SCENARIO_BUSE_AND_WEIMER, "buse_and_weimer", SCENARIO_DORN, "born",
+            SCENARIO_SCALABRINO, "scalabrino", SCENARIO_QUARKUS, "quarkus", SCENARIO_SPD, "spd");
 
     /**
      * Número máximo de Threads a serem disparadas para realizar chamadas simultâneas ao Chat GPT
@@ -269,12 +272,13 @@ public abstract class ThreadedETLExecutor {
         setupHttpClient();
 
         String[] scenarios = getScenarios();
-
+        String likert = "";
         for (String scenario : scenarios) {
             batchEntryId = 1;
             int iteractions;
             if (NO_BRANCHES.containsKey(scenario)) {
-                iteractions = 5; // We execute 10 times for previous works datasets
+//                likert = "-likert-";
+                iteractions = 1; // We execute 10 times for previous works datasets
                 redefinePrompt(); // We redefine the prompt to expect code snippets instead of full classes
             } else {
                 iteractions = 100; //We execute 100 times for our controlled inerventions
@@ -283,7 +287,7 @@ public abstract class ThreadedETLExecutor {
                 OUTPUT_JSON_SUFIX = getLLMModel() + "-" + i + ".json";
 
                 PAPER_PREFIX = PAPER + scenario;
-                LLM_JSON = BASE_FILE_SYSTEM + getLLMModel() + "/" + PAPER_PREFIX + OUTPUT_JSON_SUFIX;
+                LLM_JSON = BASE_FILE_SYSTEM + getLLMModel() + "/" + PAPER_PREFIX + likert + OUTPUT_JSON_SUFIX;
                 LLM_INPUT_BATCH_JSON = BASE_FILE_SYSTEM + getLLMModel() + "/" + PAPER_PREFIX + INPUT_BATCH_JSON_SUFIX;
 
                 if (createInputBatch) {
@@ -302,6 +306,7 @@ public abstract class ThreadedETLExecutor {
         SYSTEM_PROMPT.setLength(0);
         SYSTEM_PROMPT.append("The assistant is a seasoned senior software engineer, with deep programming expertise on Java/Python/C, ");
         SYSTEM_PROMPT.append("doing source code evaluation as part of a due diligence process, these source code are presented in the form of code snippets. ");
+//        SYSTEM_PROMPT.append("Your task is to assign a score on a 1-5 likert scale, from 1 (very unreadable) to 5 (very readable) based on the readability level.\n");
         SYSTEM_PROMPT.append("Your task is to assign a score from 0 to 100 based on the readability level and overall ease of comprehension.\n");
         SYSTEM_PROMPT.append("Your answers MUST be presented ONLY in the following json format: {\"score\":\"N\", \"reasoning\":\"your explanation about the score\" } ");
         SYSTEM_PROMPT.append("- The \"explanation\" attribute must not surpass 450 characters and MUST NOT contain especial characters or new lines\n");
