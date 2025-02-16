@@ -49,7 +49,7 @@ import java.util.stream.Stream;
  *
  * Selected Files from Quarkus Project with less tham 800 lines of code:
  *
- * Executar de dentro da pasta core do projeto:
+ * This is legacy code, used for early evaluations with Chat GPT 3.5 Turbo, it is not used anymore.
  */
 @ApplicationScoped
 public class SourceCodeLLM extends ThreadedETLExecutor {

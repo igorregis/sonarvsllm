@@ -281,7 +281,7 @@ public abstract class ThreadedETLExecutor {
                 iteractions = 1; // We execute 10 times for previous works datasets
                 redefinePrompt(); // We redefine the prompt to expect code snippets instead of full classes
             } else {
-                iteractions = 100; //We execute 100 times for our controlled inerventions
+                iteractions = 10; //We execute 100 times for our controlled inerventions
             }
             for (int i=1; i<=iteractions; i++) {
                 OUTPUT_JSON_SUFIX = getLLMModel() + "-" + i + ".json";

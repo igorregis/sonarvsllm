@@ -272,27 +272,6 @@ public class SourceCodeLLMAnthropicClaude extends ThreadedETLExecutor {
         }
     }
 
-    /**
-     * %
-     * Este método registra a avaliação do GPT no banco de dados
-     * Ele inicia uma transação, encontra o CommitDiff correspondente no banco de dados e atualiza seus campos com os valores da avaliação.
-     * Em seguida, persiste as alterações e faz o commit da transação.
-     * Se ocorrer um erro durante esse processo, ele é registrado e a thread é liberada.
-     *
-     * @param fileName   Java Class File Name
-     * @param evaluation A avaliação do GPT para o CommitDiff.
-     */
-    protected synchronized void registraAvaliacao(String fileName, GPTResponse evaluation) {
-        try {
-            if (evaluation != null) {
-                logger.warning("Evaluation result for " + fileName + ": \n" + evaluation);
-                Files.write(Paths.get(LLM_JSON), (evaluation + System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
-            }
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, fileName + ": " + evaluation, e);
-        }
-    }
-
     @Override
     protected String getLLMModel() {
         return LLM_MODEL;
